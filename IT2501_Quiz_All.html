@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>IT2501 Quiz – Modules 1 &amp; 2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;padding-bottom:90px}
+header{background:linear-gradient(160deg,#161b22 0%,#0d1117 100%);border-bottom:1px solid #30363d;padding:28px 20px 22px;text-align:center}
+.tag{display:inline-block;background:rgba(0,229,255,.13);color:#00e5ff;border:1px solid rgba(0,229,255,.3);border-radius:20px;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;margin-bottom:12px}
+h1{font-size:clamp(20px,5vw,34px);font-weight:800;line-height:1.2;color:#e6edf3}
+h1 em{color:#00e5ff;font-style:normal}
+.sub{margin-top:8px;color:#8b949e;font-size:13px}
+
+/* TAB SWITCHER */
+.tabs{max-width:720px;margin:20px auto 0;padding:0 16px;display:flex;gap:10px}
+.tab{flex:1;padding:12px;border-radius:10px;border:1px solid #30363d;background:#161b22;color:#8b949e;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;transition:all .2s}
+.tab.active{background:rgba(0,229,255,.12);border-color:#00e5ff;color:#00e5ff}
+
+/* PROGRESS */
+.prog-wrap{max-width:720px;margin:16px auto 0;padding:0 16px}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;color:#8b949e;margin-bottom:6px}
+.prog-bg{background:#21262d;border-radius:99px;height:5px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#00e5ff,#b8ff57);border-radius:99px;transition:width .4s;width:0%}
+
+/* QUIZ */
+.quiz{max-width:720px;margin:16px auto 0;padding:0 16px;display:flex;flex-direction:column;gap:14px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:18px;transition:border-color .2s}
+.card.ok{border-color:#238636}
+.card.bad{border-color:#da3633}
+.qnum{font-size:11px;letter-spacing:2px;color:#00e5ff;text-transform:uppercase;margin-bottom:8px}
+.qtext{font-size:15px;font-weight:600;color:#e6edf3;margin-bottom:14px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;background:#21262d;border:1px solid #30363d;border-radius:10px;padding:11px 14px;cursor:pointer;font-size:14px;line-height:1.4;color:#c9d1d9;text-align:left;width:100%;font-family:inherit;-webkit-appearance:none;appearance:none;transition:all .15s}
+.opt:active:not(.done){transform:scale(.99)}
+.opt.done{cursor:default}
+.opt.right{background:rgba(35,134,54,.15);border-color:#238636;color:#7ee787}
+.opt.wrong{background:rgba(218,54,51,.15);border-color:#da3633;color:#f85149}
+.letter{font-size:11px;font-weight:700;color:#8b949e;flex-shrink:0;margin-top:2px}
+.opt.right .letter{color:#238636}
+.opt.wrong .letter{color:#da3633}
+.fb{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.5;display:none}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(35,134,54,.08);border-left:3px solid #238636;color:#7ee787}
+.fb.bad-fb{background:rgba(218,54,51,.08);border-left:3px solid #da3633;color:#f85149}
+
+/* SCORE */
+.score-wrap{max-width:720px;margin:24px auto 0;padding:0 16px;display:none}
+.score-wrap.show{display:block}
+.score-card{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:36px 24px;text-align:center}
+.score-num{font-size:72px;font-weight:900;color:#00e5ff;line-height:1}
+.score-sub{color:#8b949e;font-size:13px;margin-top:4px}
+.score-msg{margin-top:18px;font-size:17px;font-weight:600;color:#e6edf3}
+
+/* BUTTONS */
+.actions{max-width:720px;margin:20px auto 0;padding:0 16px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{font-size:14px;font-weight:700;padding:13px 28px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
+.btn-p{background:#00e5ff;color:#000}
+.btn-s{background:transparent;color:#e6edf3;border:1px solid #30363d}
+
+/* STICKY */
+.sticky{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid #21262d;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:999}
+.sticky-info{font-size:13px;color:#8b949e}
+.sticky-info b{color:#b8ff57}
+.sticky-btns{display:flex;gap:8px}
+.sbtn{font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
+.sbtn-p{background:#00e5ff;color:#000}
+.sbtn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">IT2501</div>
+  <h1>Information Security<br><em>Quiz Reviewer</em></h1>
+  <p class="sub">Module 1 &amp; Module 2 &nbsp;·&nbsp; Tap the best answer</p>
+</header>
+
+<!-- Tab switcher -->
+<div class="tabs">
+  <button class="tab active" id="tab1" onclick="switchModule(1)">📘 Module 1<br><small style="font-weight:400;font-size:11px">Info Security Fundamentals</small></button>
+  <button class="tab" id="tab2" onclick="switchModule(2)">📗 Module 2<br><small style="font-weight:400;font-size:11px">Ethical Hacking</small></button>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-row"><span id="ptxt">0 / 50 answered</span><span id="ppct">0%</span></div>
+  <div class="prog-bg"><div class="prog-fill" id="pfill"></div></div>
+</div>
+
+<div class="quiz" id="quiz"></div>
+
+<div class="actions">
+  <button class="btn btn-p" onclick="submitQuiz()">Submit &amp; See Score</button>
+  <button class="btn btn-s" onclick="resetQuiz()">&#8635; Reset</button>
+</div>
+
+<div class="score-wrap" id="score-wrap">
+  <div class="score-card">
+    <div class="score-num" id="fscore">0</div>
+    <div class="score-sub" id="fsub">out of 50</div>
+    <div class="score-msg" id="fmsg"></div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="resetQuiz()">&#8635; Retake</button>
+      <button class="btn btn-s" onclick="switchModule(currentModule===1?2:1)">Switch Module</button>
+    </div>
+  </div>
+</div>
+
+<div class="sticky">
+  <span class="sticky-info">Answered: <b id="lcount">0</b> / <b id="ltotal">50</b></span>
+  <div class="sticky-btns">
+    <button class="sbtn sbtn-s" onclick="resetQuiz()">&#8635; Reset</button>
+    <button class="sbtn sbtn-p" onclick="submitQuiz()">Submit</button>
+  </div>
+</div>
+
+<script>
+var M1=[
+  {q:"What is information security?",o:["A firewall configuration system","The protection of information systems from unauthorized access, disclosure, alteration, and destruction","A policy that restricts internet usage","A network monitoring protocol"],a:1,e:"Information security is the protection of information systems from unauthorized access, disclosure, alteration, and destruction."},
+  {q:"Which element ensures information is accessible only to authorized people?",o:["Integrity","Availability","Confidentiality","Non-repudiation"],a:2,e:"Confidentiality is the assurance that information is accessible only to authorized people."},
+  {q:"A checksum is used to maintain which security element?",o:["Availability","Confidentiality","Non-repudiation","Integrity"],a:3,e:"A checksum verifies that a block of data has not been changed — a measure for maintaining Integrity."},
+  {q:"Disk arrays and clustered machines maintain which security element?",o:["Confidentiality","Availability","Integrity","Authenticity"],a:1,e:"Availability measures include disk arrays for redundant systems and clustered machines."},
+  {q:"Digital signatures are primarily used to ensure:",o:["Confidentiality","Integrity","Non-repudiation","Availability"],a:2,e:"Individuals and organizations use digital signatures to ensure non-repudiation."},
+  {q:"Biometrics, smart cards, and digital certificates ensure which element?",o:["Non-repudiation","Integrity","Confidentiality","Authenticity"],a:3,e:"Controls such as biometrics, smart cards, and digital certificates ensure Authenticity."},
+  {q:"Non-repudiation guarantees that:",o:["Data is encrypted in transit","The sender cannot deny sending and the recipient cannot deny receiving a message","Users are authenticated before access","Data is backed up regularly"],a:1,e:"Non-repudiation guarantees the sender cannot deny sending and the recipient cannot deny receiving a message."},
+  {q:"DDoS prevention systems mainly protect which security element?",o:["Confidentiality","Integrity","Non-repudiation","Availability"],a:3,e:"DDoS prevention systems are among the measures used to maintain data Availability."},
+  {q:"In the Security Triangle, 'Usability' refers to:",o:["Encryption strength","Restrictions imposed on the system","GUI components used to design the system for ease of use","Features provided by the system"],a:2,e:"Usability refers to the GUI components used to design the system for ease of use."},
+  {q:"Moving the 'ball' toward Security in the triangle means:",o:["Increased functionality and usability","Decreased functionality and usability","Balanced security and functionality","Increased usability only"],a:1,e:"Moving the ball toward security means increased security and decreased functionality and usability."},
+  {q:"When the ball is at the center of the Security Triangle:",o:["Security is maximized","Usability is maximized","All three components are balanced","The system is most vulnerable"],a:2,e:"If the ball is in the center, all three components are balanced."},
+  {q:"Which attack involves intercepting network traffic WITHOUT tampering with data?",o:["Active Attack","Insider Attack","Passive Attack","Distribution Attack"],a:2,e:"Passive attacks involve intercepting and monitoring network traffic without tampering with the data."},
+  {q:"Sniffing and eavesdropping are examples of which attack type?",o:["Active Attacks","Close-in Attacks","Distribution Attacks","Passive Attacks"],a:3,e:"Sniffing and eavesdropping are examples of Passive Attacks."},
+  {q:"A Denial-of-Service (DoS) attack is classified as:",o:["Passive Attack","Distribution Attack","Active Attack","Insider Attack"],a:2,e:"DoS attacks are examples of Active Attacks, which tamper with data or disrupt communication."},
+  {q:"Man-in-the-Middle Attack is an example of:",o:["Passive Attack","Close-in Attack","Active Attack","Distribution Attack"],a:2,e:"Man-in-the-Middle Attack is listed as an Active Attack."},
+  {q:"Shoulder surfing is most associated with which attack category?",o:["Passive Attack","Active Attack","Close-in Attack","Distribution Attack"],a:2,e:"Shoulder surfing is an example of a Close-in Attack performed when the attacker is in close physical proximity."},
+  {q:"Pod slurping (stealing data via USB) is an example of:",o:["Distribution Attack","Passive Attack","Close-in Attack","Insider Attack"],a:3,e:"Pod slurping is listed as an example of an Insider Attack."},
+  {q:"Distribution Attacks occur when:",o:["Attackers remotely monitor network traffic","Attackers physically approach the target","Attackers tamper with hardware or software before installation","Insiders misuse access privileges"],a:2,e:"Distribution Attacks occur when attackers tamper with hardware or software before installation or while in transit."},
+  {q:"Backdoors created by vendors at manufacture time are examples of:",o:["Insider Attacks","Passive Attacks","Close-in Attacks","Distribution Attacks"],a:3,e:"Distribution attack examples include backdoors created by vendors at the time of manufacture."},
+  {q:"Which attack most directly affects the CIA triad via misuse of privileged access?",o:["Passive Attack","Active Attack","Insider Attack","Distribution Attack"],a:2,e:"Insider attacks misuse privileged access to directly affect confidentiality, integrity, and availability (CIA triad)."},
+  {q:"According to IATF, security attacks are classified into how many categories?",o:["3","4","5","6"],a:2,e:"According to IATF, security attacks are classified into five (5) categories."},
+  {q:"APT attacks are generally targeted at:",o:["Home users and small businesses","Large companies and government networks","Mobile device users only","E-commerce websites only"],a:1,e:"APT attacks are generally targeted at large companies and government networks."},
+  {q:"What best distinguishes a virus from a worm?",o:["A virus spreads through networks; a worm attaches to programs","A worm attaches to programs; a virus spreads across networks","A virus attaches to programs to replicate; a worm replicates and spreads across network connections","They are identical in behavior"],a:2,e:"A virus self-replicates by attaching to a program, while a worm replicates and spreads across network connections independently."},
+  {q:"Ransomware demands:",o:["User credentials","An online ransom payment to remove file access restrictions","Physical access to the server","Deletion of antivirus software"],a:1,e:"Ransomware restricts access to files/folders and demands an online ransom payment to remove the restrictions."},
+  {q:"Phishing attacks aim to acquire:",o:["System administrator privileges","A user's personal or account information through deceptive emails or links","Network topology data","Application source code"],a:1,e:"Phishing sends illegitimate emails to acquire a user's personal or account information."},
+  {q:"SQL injection and cross-site scripting are primarily threats to:",o:["IoT devices","Mobile phones","Web applications","Botnets"],a:2,e:"SQL injection and cross-site scripting have made web applications a favorite target for attackers."},
+  {q:"Why are IoT devices particularly vulnerable?",o:["They use outdated operating systems","Due to hardware constraints, they often lack complex security mechanisms","They always connect via VPN","They rely solely on biometric authentication"],a:1,e:"Due to hardware constraints like memory and battery, IoT applications do not include complex security mechanisms."},
+  {q:"A botnet is best described as:",o:["A single compromised server","A type of antivirus software","A huge network of compromised systems used to perform DoS attacks","A firewall configuration tool"],a:2,e:"A botnet is a huge network of compromised systems used by attackers to perform Denial-of-Service attacks."},
+  {q:"Cloud computing threats can arise when:",o:["Employees access data from home","A flaw in one client's cloud app allows access to another client's data","Cloud providers update their servers","Users set weak passwords"],a:1,e:"A flaw in one client's application cloud could potentially allow attackers to access another client's data."},
+  {q:"The formula for an attack is:",o:["Motive + Target + Tool","Motive (Goal) + Method + Vulnerability","Vulnerability + Resource + Access","Intent + Opportunity + Capability"],a:1,e:"Attacks = Motive (Goal) + Method + Vulnerability."},
+  {q:"Which is NOT listed as an attack motive in the handout?",o:["Disrupt business continuity","Demand ransom","Improve network performance","Take revenge"],a:2,e:"Improving network performance is not a listed motive. Actual motives include disrupting continuity, demanding ransom, and revenge."},
+  {q:"PCI DSS applies to organizations that:",o:["Store classified government data only","Handle cardholder information for debit, credit, prepaid, ATM, and POS cards","Operate healthcare services only","Provide internet access services"],a:1,e:"PCI DSS is a standard for organizations that handle cardholder information for major debit, credit, prepaid, ATM, and POS cards."},
+  {q:"Failure to meet PCI DSS requirements may result in:",o:["Criminal prosecution","Mandatory system shutdown","Fines or termination of payment-card processing privileges","Loss of government contracts"],a:2,e:"Failure to meet PCI DSS requirements may result in fines or termination of payment-card processing privileges."},
+  {q:"ISO/IEC 27001:2013 was jointly developed by:",o:["NIST and DHS","ISO and IEC","EU and WIPO","PCI Council and ISACA"],a:1,e:"ISO/IEC 27001:2013 is from the International Organization for Standardization (ISO) and the International Electrotechnical Commission (IEC)."},
+  {q:"ISO/IEC 27001:2013 specifies requirements for:",o:["Payment card data encryption only","Establishing, implementing, maintaining, and continually improving an information security management system","Healthcare records management","Government contract bidding"],a:1,e:"ISO/IEC 27001:2013 specifies requirements for establishing, implementing, maintaining, and continually improving an ISMS."},
+  {q:"The HIPAA Privacy Rule:",o:["Automatically encrypts all healthcare data","Provides federal protections for individually identifiable health information and gives patients rights to it","Mandates biometric authentication for hospitals","Requires hospitals to use blockchain for records"],a:1,e:"The HIPAA Privacy Rule provides federal protections for individually identifiable health information and gives patients rights to that information."},
+  {q:"The HIPAA Security Rule ensures which triad?",o:["Privacy, Portability, and Accountability","Encryption, Authentication, and Non-repudiation","Confidentiality, Integrity, and Availability","Authorization, Access, and Auditability"],a:2,e:"The Security Rule specifies safeguards to ensure confidentiality, integrity, and availability of electronically protected health information."},
+  {q:"The National Provider Identifier (NPI) under HIPAA is:",o:["A 6-digit billing code","A 10-position, intelligence-free numeric identifier for covered health care providers","A password standard for EHR systems","A state-issued license number"],a:1,e:"The NPI is a unique 10-position, intelligence-free numeric identifier assigned to covered health care providers."},
+  {q:"The Sarbanes-Oxley (SOX) Act was enacted in:",o:["1996","1999","2002","2010"],a:2,e:"Enacted in 2002, the SOX Act protects the public and investors by increasing the accuracy and reliability of corporate disclosures."},
+  {q:"SOX Title III mandates that:",o:["External auditors are independent","Senior executives take individual responsibility for the accuracy of corporate financial reports","CEOs sign company tax returns","The SEC performs annual studies"],a:1,e:"Title III mandates senior executives take individual responsibility for the accuracy and completeness of corporate financial reports."},
+  {q:"SOX Title VIII is also known as the:",o:["White Collar Crime Penalty Enhancement Act","Corporate and Criminal Fraud Accountability Act of 2002","Public Company Accounting Oversight Board Act","Corporate Tax Returns Act"],a:1,e:"Title VIII is also known as the Corporate and Criminal Fraud Accountability Act of 2002."},
+  {q:"SOX Title IX increases:",o:["The power of the SEC to approve auditors","Criminal penalties associated with white-collar crimes and corporate fraud","The required number of board members","Financial disclosure periods"],a:1,e:"Title IX increases criminal penalties for white-collar crimes and corporate fraud."},
+  {q:"The DMCA implements two 1996 treaties from:",o:["The United Nations","The World Intellectual Property Organization (WIPO)","The European Union","The ITU"],a:1,e:"The DMCA implements two 1996 treaties from the World Intellectual Property Organization (WIPO)."},
+  {q:"DMCA Title II adds which section to the Copyright Act?",o:["Section 17","Section 101","Section 512","Section 301"],a:2,e:"Title II adds a new section 512 to the Copyright Act, creating four new limitations on liability for copyright infringement by online service providers."},
+  {q:"FISMA requires each federal agency to:",o:["Use only open-source software","Develop, document, and implement an agency-wide information security program","Conduct annual penetration testing","Outsource security to certified vendors"],a:1,e:"FISMA requires each federal agency to develop, document, and implement an agency-wide information security program."},
+  {q:"The GDPR was drafted and passed by:",o:["The United States Congress","The United Nations","The European Union","NIST"],a:2,e:"The GDPR was drafted and passed by the European Union (EU)."},
+  {q:"GDPR's 'Data Minimization' principle means:",o:["Storing data for the minimum required time","Collecting and processing only as much data as necessary for specified purposes","Using the smallest possible encryption key","Minimizing the number of data controllers"],a:1,e:"Data minimization means collecting and processing only as much data as necessary for the specified purposes."},
+  {q:"Which GDPR principle requires processing with appropriate security, integrity, and confidentiality?",o:["Purpose Limitation","Data Minimization","Storage Limitation","Integrity and Confidentiality"],a:3,e:"The 'Integrity and Confidentiality' principle states processing must ensure appropriate security, integrity, and confidentiality."},
+  {q:"The Data Protection Act 2018 (DPA) replaced the:",o:["Data Protection Act 1995","Data Protection Act 1998","GDPR 2016","Computer Misuse Act 1990"],a:1,e:"The DPA 2018 updates and replaces the Data Protection Act 1998, coming into effect on 25 May 2018."},
+  {q:"Violating cyberlaws results in:",o:["Automatic system shutdown","Loss of internet access permanently","Punishments ranging from fines to imprisonment","Mandatory cybersecurity training"],a:2,e:"Violating cyber laws results in punishments ranging from fines to imprisonment."},
+  {q:"A security policy is defined as:",o:["A firewall rule set","A specification of how objects in a security domain are allowed to interact","An intrusion detection algorithm","A data backup procedure"],a:1,e:"A security policy is a specification of how objects in a security domain are allowed to interact."}
+];
+
+var M2=[
+  {q:"What is the Cyber Kill Chain?",o:["A type of malware that spreads across networks","A framework illustrating how an adversary attacks a target organization through multiple phases","A firewall configuration method","A network scanning tool"],a:1,e:"The cyber kill chain is an efficient and effective way of illustrating how an adversary can attack the target organization across multiple phases."},
+  {q:"How many phases does the Cyber Kill Chain have?",o:["5","6","7","8"],a:2,e:"The cyber kill chain is equipped with a seven-phase protection mechanism to mitigate and reduce cyber threats."},
+  {q:"Which company developed the Cyber Kill Chain framework?",o:["Microsoft","IBM","Lockheed Martin","EC-Council"],a:2,e:"The cyber kill chain is a framework developed by Lockheed Martin based on the concept of military kill chains."},
+  {q:"What is the FIRST phase of the Cyber Kill Chain?",o:["Weaponization","Delivery","Exploitation","Reconnaissance"],a:3,e:"Reconnaissance is the first phase, where the adversary collects as much information about the target as possible."},
+  {q:"In which phase does the adversary create a malicious payload?",o:["Reconnaissance","Weaponization","Delivery","Installation"],a:1,e:"In the Weaponization phase, the adversary selects or creates a tailored malicious payload using an exploit and a backdoor."},
+  {q:"What does the Delivery phase measure?",o:["The attacker's skill level","The effectiveness of the target organization's defense strategies","The number of vulnerabilities found","The speed of the attack"],a:1,e:"Delivery is a key stage that measures the effectiveness of the defense strategies implemented by the target organization."},
+  {q:"In the Exploitation phase, what does the adversary's code target?",o:["Network bandwidth","A vulnerability in the OS, application, or server","The organization's email server","The firewall configuration"],a:1,e:"Exploitation triggers the adversary's malicious code to exploit a vulnerability in the operating system, application, or server."},
+  {q:"What is the goal of the Installation phase?",o:["To gather target information","To transmit the payload","To maintain access to the target network for an extended period","To erase log files"],a:2,e:"In the Installation phase, the adversary downloads and installs more malicious software to maintain access to the target network for an extended period."},
+  {q:"What does the Command and Control phase establish?",o:["A vulnerability database","A two-way communication channel between the victim's system and the adversary-controlled server","A backdoor in the firewall","A phishing website"],a:1,e:"The Command and Control phase creates a channel that establishes two-way communication between the victim's system and the adversary-controlled server."},
+  {q:"What happens in the 'Actions on Objectives' phase?",o:["The adversary gathers initial information","The adversary creates the malware payload","The adversary accomplishes their intended goals after gaining full control","The adversary installs a backdoor"],a:2,e:"In Actions on Objectives, the adversary controls the victim's system from a remote location and finally accomplishes their intended goals."},
+  {q:"What does TTPs stand for?",o:["Tools, Targets, and Platforms","Tactics, Techniques, and Procedures","Threats, Targets, and Priorities","Tracking, Testing, and Prevention"],a:1,e:"TTPs stands for Tactics, Techniques, and Procedures — patterns of activities associated with specific threat actors."},
+  {q:"How is 'Tactics' defined in TTPs?",o:["The organizational approach to launching an attack","Technical methods used to achieve intermediate results","A guideline describing how an attacker performs their attack from beginning to end","A database of known vulnerabilities"],a:2,e:"Tactics is defined as a guideline that describes the way an attacker performs their attack from beginning to end."},
+  {q:"How are 'Procedures' defined in TTPs?",o:["A guideline describing the overall attack","Technical methods used during attack execution","A sequence of actions performed by threat actors to execute different steps of an attack life cycle","A set of tools used in an attack"],a:2,e:"Procedures involve a sequence of actions performed by the threat actors to execute different steps of an attack life cycle."},
+  {q:"Understanding tactics helps security professionals to:",o:["Erase log files","Predict and detect evolving threats in the early stages","Set up a botnet","Perform SQL injection"],a:1,e:"Understanding the tactics of an attacker helps to predict and detect evolving threats in the early stages."},
+  {q:"What are Indicators of Compromise (IoCs)?",o:["A list of known hackers","Clues, artifacts, and pieces of forensic data found on a network that indicate a potential intrusion","A type of encryption algorithm","A network scanning protocol"],a:1,e:"IoCs are the clues, artifacts, and pieces of forensic data found on a network or OS that indicate a potential intrusion or malicious activity."},
+  {q:"IoCs are best described as:",o:["Intelligence reports","A good source of information about threats that serve as data points in the intelligence process","A type of malware","Firewall rules"],a:1,e:"IoCs act as a good source of information about threats that serve as data points in the intelligence process — not intelligence themselves."},
+  {q:"IP addresses and e-mail addresses are examples of which IoC type?",o:["Computed indicators","Behavioral indicators","Atomic indicators","Network indicators"],a:2,e:"Atomic indicators cannot be segmented into smaller parts. Examples include IP addresses and e-mail addresses."},
+  {q:"Hash values and regular expressions are examples of which IoC type?",o:["Atomic indicators","Computed indicators","Behavioral indicators","Host-based indicators"],a:1,e:"Computed indicators are obtained from data extracted from a security incident. Examples include hash values and regular expressions."},
+  {q:"Which IoC category includes URLs, domain names, and IP addresses?",o:["Email Indicators","Host-Based Indicators","Behavioral Indicators","Network Indicators"],a:3,e:"Network Indicators include URLs, domain names, and IP addresses, useful for command and control and malware delivery."},
+  {q:"Filenames, file hashes, registry keys, DLLs, and mutex are examples of:",o:["Network Indicators","Email Indicators","Host-Based Indicators","Behavioral Indicators"],a:2,e:"Host-Based Indicators are found by analyzing an infected system. Examples include filenames, file hashes, registry keys, DLLs, and mutex."},
+  {q:"Executing a PowerShell script is an example of which IoC category?",o:["Email Indicator","Network Indicator","Host-Based Indicator","Behavioral Indicator"],a:3,e:"Behavioral Indicators identify specific behavior related to malicious activities. Examples include executing a PowerShell script and remote command execution."},
+  {q:"Black Hat hackers are also known as:",o:["Penetration testers","Crackers","Hacktivists","Script Kiddies"],a:1,e:"Black Hats use their computing skills for illegal or malicious purposes and are also known as crackers."},
+  {q:"White Hat hackers are also known as:",o:["Crackers","Cyber Terrorists","Penetration testers","Script Kiddies"],a:2,e:"White Hats, or penetration testers, use their hacking skills for defensive purposes and have permission from the system owner."},
+  {q:"Gray Hat hackers are characterized by:",o:["Working solely for criminal organizations","Working both offensively and defensively at various times","Only using pre-made hacking scripts","Being employed by the government"],a:1,e:"Gray Hats work both offensively and defensively at various times, helping find vulnerabilities and helping vendors improve products."},
+  {q:"Script Kiddies are best described as:",o:["Highly skilled hackers who create new exploits","Unskilled hackers who use scripts and tools developed by real hackers","Government-employed hackers","Hackers motivated by political beliefs"],a:1,e:"Script Kiddies are unskilled hackers who compromise systems by running scripts, tools, and software developed by real hackers."},
+  {q:"Hacktivism is:",o:["Hacking for financial gain","A form of activism where hackers break into systems as an act of protest","Corporate espionage through hacking","Hacking to bring down critical infrastructure"],a:1,e:"Hacktivism is a form of activism where hackers break into government or corporate computer systems as an act of protest."},
+  {q:"State-Sponsored Hackers are primarily employed to:",o:["Commit financial fraud","Penetrate and damage information systems of other government or military organizations","Create social media disinformation","Sell stolen data on the dark web"],a:1,e:"State-Sponsored Hackers are employed by the government to penetrate, gain top-secret information from, and damage information systems of other government or military organizations."},
+  {q:"Industrial Spies focus on stealing:",o:["Credit card numbers","Personal social media data","Blueprints, formulas, product designs, and trade secrets","Government classified files"],a:2,e:"Industrial Spies perform corporate espionage, focusing on stealing blueprints, formulas, product designs, and trade secrets."},
+  {q:"Insider threats generally arise from:",o:["Foreign government agents","Disgruntled employees, terminated employees, and undertrained staff","Script kiddies accessing the network remotely","Hacktivists targeting the company"],a:1,e:"Generally, insider threats arise from disgruntled employees, terminated employees, and undertrained staff members."},
+  {q:"How many phases are there in the general Hacking Cycle?",o:["3","4","5","6"],a:2,e:"In general, there are five (5) phases of hacking: Reconnaissance, Scanning, Gaining Access, Maintaining Access, and Clearing Tracks."},
+  {q:"Reconnaissance is best described as:",o:["The phase where real hacking occurs","The preparatory phase where an attacker gathers as much information as possible about the target","The phase where the attacker installs backdoors","The phase where tracks are cleared"],a:1,e:"Reconnaissance is the preparatory phase in which an attacker gathers as much information as possible about the target prior to launching the attack."},
+  {q:"Dumpster diving involves:",o:["Scanning open network ports","Looking through an organization's trash for discarded sensitive information","Sending phishing emails","Using Google hacking techniques"],a:1,e:"Dumpster diving is looking through an organization's trash for any discarded sensitive information such as usernames, passwords, and account numbers."},
+  {q:"Passive reconnaissance differs from active reconnaissance in that:",o:["Passive uses more advanced tools","Passive does not interact with the target directly and relies on publicly available information","Active uses only public information","Active never touches the target network"],a:1,e:"Passive reconnaissance does not interact with the target directly, relying on publicly available information or non-contact methods."},
+  {q:"Active reconnaissance involves:",o:["Only reading public news releases","Direct interactions with the target system using tools to detect open ports and accessible hosts","Looking through trash","Reviewing company websites only"],a:1,e:"Active reconnaissance involves direct interactions with the target system using tools to detect open ports, accessible hosts, router locations, and OS details."},
+  {q:"The Scanning phase is best described as:",o:["The first phase of hacking","The phase immediately preceding the attack, using details from reconnaissance to probe the network","The phase where the attacker maintains access","The phase where tracks are erased"],a:1,e:"Scanning is the phase immediately preceding the attack, using details gathered during reconnaissance to scan the network for specific information."},
+  {q:"Port scanners are primarily used to:",o:["Encrypt network traffic","Detect listening ports and find information about services running on the target machine","Install backdoors","Perform social engineering"],a:1,e:"Port scanners detect listening ports to find information about the nature of services running on the target machine."},
+  {q:"Vulnerability scanners give attackers an advantage because:",o:["They are free to use","The attacker only needs to find one means of entry while defenders must secure all vulnerabilities","They can bypass firewalls automatically","They are undetectable by IDS"],a:1,e:"Vulnerability scanners give attackers an advantage because they only need to find a single means of entry, while the systems professional must secure all vulnerabilities."},
+  {q:"In the Gaining Access phase, what technique involves pretending to be a legitimate user?",o:["Phishing","Dumpster diving","Spoofing","Scanning"],a:2,e:"Spoofing is used to exploit the system by pretending to be a legitimate user or a different system."},
+  {q:"Rootkits gain access at which level?",o:["Application level","Network level","Operating system level","Database level"],a:2,e:"Rootkits gain access at the operating system level, while Trojans gain access at the application level."},
+  {q:"In the Maintaining Access phase, attackers use sniffers to:",o:["Encrypt their communications","Capture all network traffic including Telnet and FTP sessions","Remove evidence of their entry","Scan for new vulnerabilities"],a:1,e:"The hacker could implement a sniffer to capture all network traffic, including Telnet and FTP sessions with other systems."},
+  {q:"Clearing Tracks refers to:",o:["Reinstalling the operating system","Activities carried out by an attacker to hide malicious acts","Deleting malware from infected systems","Reporting vulnerabilities to the system owner"],a:1,e:"Clearing tracks refers to the activities carried out by an attacker to hide malicious acts, including removing evidence that might lead to prosecution."},
+  {q:"Steganography is:",o:["A network scanning technique","The process of hiding data in other data, such as in image and sound files","A type of encryption algorithm","A method for bypassing firewalls"],a:1,e:"Steganography is the process of hiding data in other data, for instance, in image and sound files."},
+  {q:"Tunneling takes advantage of:",o:["Social engineering","The transmission protocol by carrying one protocol over another","Weak passwords","Unpatched operating systems"],a:1,e:"Tunneling takes advantage of the transmission protocol by carrying one protocol over another to hide information."},
+  {q:"The key distinction between ethical hackers and crackers is:",o:["Their level of technical skill","Consent — ethical hackers always have permission, crackers do not","The tools they use","Their nationality"],a:1,e:"The important distinction between ethical hackers and crackers is consent. Crackers attempt unauthorized access, while ethical hackers are open and transparent with permission."},
+  {q:"What is a Tiger Team in ethical hacking?",o:["A government cyber unit","A team that works together to perform a full-scale test covering all aspects of the network and physical intrusion","A group of script kiddies","A malware analysis team"],a:1,e:"A tiger team works together to perform a full-scale test covering all aspects of the network, as well as physical and system intrusion."},
+  {q:"Before an ethical hacker begins testing, they must:",o:["Complete a certification exam","Receive a signed legal document giving express permission to perform hacking activities","Submit a report to law enforcement","Inform all employees of the target organization"],a:1,e:"No ethical hacking activities should begin before receiving a signed legal document giving the ethical hacker express permission to perform the hacking activities."},
+  {q:"Google hacking is:",o:["Hacking into Google's servers","The use of advanced Google search operators to extract sensitive or hidden information","A type of phishing attack","A method for bypassing two-factor authentication"],a:1,e:"Google hacking is the use of advanced Google search operators for creating complex search queries to extract sensitive or hidden information."},
+  {q:"Which Google operator restricts results to a specific site or domain?",o:["inurl:","allintitle:","site:","cache:"],a:2,e:"The 'site:' operator restricts search results to the specified site or domain."},
+  {q:"What does the Google 'cache:' operator do?",o:["Searches for cached passwords","Displays Google's cached version of a web page instead of the current version","Finds files of a specific type","Shows related websites"],a:1,e:"The 'cache:' operator displays Google's cached version of a web page instead of the current version."},
+  {q:"Nmap (Network Mapper) is primarily used for:",o:["Password cracking","Discovering hosts, ports, and services on a network to create a network map","Sending phishing emails","Installing backdoors"],a:1,e:"Nmap is a security scanner that allows you to discover hosts, ports, and services on a computer network, creating a 'map' of the network."}
+];
+
+var currentModule=1;
+var currentQ=M1;
+var ans={};
+
+function switchModule(m){
+  currentModule=m;
+  currentQ=(m===1)?M1:M2;
+  document.getElementById('tab1').className='tab'+(m===1?' active':'');
+  document.getElementById('tab2').className='tab'+(m===2?' active':'');
+  document.getElementById('score-wrap').classList.remove('show');
+  ans={};
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildQuiz(){
+  var c=document.getElementById('quiz');
+  c.innerHTML='';
+  ans={};
+  updateProg();
+  var L=['A','B','C','D'];
+  var total=currentQ.length;
+  for(var i=0;i<total;i++){
+    (function(i){
+      var q=currentQ[i];
+      var card=document.createElement('div');
+      card.className='card';
+      card.id='c'+i;
+      var html='<div class="qnum">Q'+String(i+1).padStart(2,'0')+' / '+total+'</div>';
+      html+='<div class="qtext">'+q.q+'</div>';
+      html+='<div class="opts">';
+      for(var j=0;j<q.o.length;j++){
+        html+='<button class="opt" id="o'+i+'_'+j+'" data-q="'+i+'" data-j="'+j+'"><span class="letter">'+L[j]+'.</span> '+q.o[j]+'</button>';
+      }
+      html+='</div><div class="fb" id="fb'+i+'"></div>';
+      card.innerHTML=html;
+      c.appendChild(card);
+      var opts=card.querySelectorAll('.opt');
+      for(var k=0;k<opts.length;k++){
+        opts[k].addEventListener('click',function(){
+          pick(parseInt(this.getAttribute('data-q')),parseInt(this.getAttribute('data-j')));
+        });
+      }
+    })(i);
+  }
+  document.getElementById('ltotal').textContent=total;
+}
+
+function pick(i,j){
+  if(ans[i]!==undefined)return;
+  ans[i]=j;
+  updateProg();
+  var q=currentQ[i];
+  for(var k=0;k<4;k++){
+    var el=document.getElementById('o'+i+'_'+k);
+    el.classList.add('done');
+    if(k===q.a)el.classList.add('right');
+    else if(k===j)el.classList.add('wrong');
+  }
+  var fb=document.getElementById('fb'+i);
+  var card=document.getElementById('c'+i);
+  if(j===q.a){card.classList.add('ok');fb.className='fb show ok-fb';fb.innerHTML='<b>Correct!</b> '+q.e;}
+  else{card.classList.add('bad');fb.className='fb show bad-fb';fb.innerHTML='<b>Incorrect.</b> '+q.e;}
+}
+
+function updateProg(){
+  var n=Object.keys(ans).length;
+  var total=currentQ.length;
+  var p=Math.round(n/total*100);
+  document.getElementById('ptxt').textContent=n+' / '+total+' answered';
+  document.getElementById('ppct').textContent=p+'%';
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('lcount').textContent=n;
+}
+
+function submitQuiz(){
+  var score=0;
+  var total=currentQ.length;
+  for(var i=0;i<total;i++){
+    var q=currentQ[i];
+    if(ans[i]===q.a)score++;
+    if(ans[i]===undefined){
+      for(var k=0;k<4;k++){
+        var el=document.getElementById('o'+i+'_'+k);
+        el.classList.add('done');
+        if(k===q.a)el.classList.add('right');
+      }
+      var fb=document.getElementById('fb'+i);
+      var card=document.getElementById('c'+i);
+      card.classList.add('bad');
+      fb.className='fb show bad-fb';
+      fb.innerHTML='<b>Not answered.</b> '+q.e;
+    }
+  }
+  document.getElementById('fscore').textContent=score;
+  document.getElementById('fsub').textContent='out of '+total;
+  var p=Math.round(score/total*100);
+  var m=p>=90?'Outstanding! Excellent mastery.':p>=75?'Great work! Solid understanding.':p>=60?'Good effort! Review weak areas.':'Keep studying and retake!';
+  document.getElementById('fmsg').textContent=(p>=90?'🏆 ':p>=75?'✅ ':p>=60?'📘 ':'📖 ')+m;
+  var sw=document.getElementById('score-wrap');
+  sw.classList.add('show');
+  sw.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function resetQuiz(){
+  document.getElementById('score-wrap').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(buildQuiz,200);
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
