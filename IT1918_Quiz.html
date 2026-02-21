@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>IT1918 Quiz – Mobile App Development</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;padding-bottom:90px}
+header{background:linear-gradient(160deg,#161b22 0%,#0d1117 100%);border-bottom:1px solid #30363d;padding:28px 20px 22px;text-align:center}
+.tag{display:inline-block;background:rgba(184,255,87,.1);color:#b8ff57;border:1px solid rgba(184,255,87,.3);border-radius:20px;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;margin-bottom:12px}
+h1{font-size:clamp(20px,5vw,34px);font-weight:800;line-height:1.2;color:#e6edf3}
+h1 em{color:#b8ff57;font-style:normal}
+.sub{margin-top:8px;color:#8b949e;font-size:13px}
+.tabs{max-width:720px;margin:20px auto 0;padding:0 16px;display:flex;gap:10px}
+.tab{flex:1;padding:12px 8px;border-radius:10px;border:1px solid #30363d;background:#161b22;color:#8b949e;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;transition:all .2s;-webkit-appearance:none}
+.tab.active{background:rgba(184,255,87,.1);border-color:#b8ff57;color:#b8ff57}
+.prog-wrap{max-width:720px;margin:16px auto 0;padding:0 16px}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;color:#8b949e;margin-bottom:6px}
+.prog-bg{background:#21262d;border-radius:99px;height:5px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#b8ff57,#00e5ff);border-radius:99px;transition:width .4s;width:0%}
+.quiz{max-width:720px;margin:16px auto 0;padding:0 16px;display:flex;flex-direction:column;gap:14px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:18px;transition:border-color .2s}
+.card.ok{border-color:#238636}
+.card.bad{border-color:#da3633}
+.qnum{font-size:11px;letter-spacing:2px;color:#b8ff57;text-transform:uppercase;margin-bottom:8px}
+.qtext{font-size:15px;font-weight:600;color:#e6edf3;margin-bottom:14px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;background:#21262d;border:1px solid #30363d;border-radius:10px;padding:11px 14px;cursor:pointer;font-size:14px;line-height:1.4;color:#c9d1d9;text-align:left;width:100%;font-family:inherit;-webkit-appearance:none;appearance:none;transition:all .15s}
+.opt:active:not(.done){transform:scale(.99)}
+.opt.done{cursor:default}
+.opt.right{background:rgba(35,134,54,.15);border-color:#238636;color:#7ee787}
+.opt.wrong{background:rgba(218,54,51,.15);border-color:#da3633;color:#f85149}
+.letter{font-size:11px;font-weight:700;color:#8b949e;flex-shrink:0;margin-top:2px}
+.opt.right .letter{color:#238636}
+.opt.wrong .letter{color:#da3633}
+.fb{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.5;display:none}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(35,134,54,.08);border-left:3px solid #238636;color:#7ee787}
+.fb.bad-fb{background:rgba(218,54,51,.08);border-left:3px solid #da3633;color:#f85149}
+.score-wrap{max-width:720px;margin:24px auto 0;padding:0 16px;display:none}
+.score-wrap.show{display:block}
+.score-card{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:36px 24px;text-align:center}
+.score-num{font-size:72px;font-weight:900;color:#b8ff57;line-height:1}
+.score-sub{color:#8b949e;font-size:13px;margin-top:4px}
+.score-msg{margin-top:18px;font-size:17px;font-weight:600;color:#e6edf3}
+.actions{max-width:720px;margin:20px auto 0;padding:0 16px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{font-size:14px;font-weight:700;padding:13px 28px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
+.btn-p{background:#b8ff57;color:#000}
+.btn-s{background:transparent;color:#e6edf3;border:1px solid #30363d}
+.sticky{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid #21262d;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:999}
+.sticky-info{font-size:13px;color:#8b949e}
+.sticky-info b{color:#b8ff57}
+.sticky-btns{display:flex;gap:8px}
+.sbtn{font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
+.sbtn-p{background:#b8ff57;color:#000}
+.sbtn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">IT1918</div>
+  <h1>Mobile App Development<br><em>Quiz Reviewer</em></h1>
+  <p class="sub">Module 1 &amp; Module 2 &nbsp;·&nbsp; Tap the best answer</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" id="tab1" onclick="switchModule(1)">📱 Module 1<br><small style="font-weight:400;font-size:11px">App Dev Overview</small></button>
+  <button class="tab" id="tab2" onclick="switchModule(2)">🤖 Module 2<br><small style="font-weight:400;font-size:11px">Android Basics</small></button>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-row"><span id="ptxt">0 / 25 answered</span><span id="ppct">0%</span></div>
+  <div class="prog-bg"><div class="prog-fill" id="pfill"></div></div>
+</div>
+
+<div class="quiz" id="quiz"></div>
+
+<div class="actions">
+  <button class="btn btn-p" onclick="submitQuiz()">Submit &amp; See Score</button>
+  <button class="btn btn-s" onclick="resetQuiz()">&#8635; Reset</button>
+</div>
+
+<div class="score-wrap" id="score-wrap">
+  <div class="score-card">
+    <div class="score-num" id="fscore">0</div>
+    <div class="score-sub" id="fsub">out of 25</div>
+    <div class="score-msg" id="fmsg"></div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="resetQuiz()">&#8635; Retake</button>
+      <button class="btn btn-s" onclick="switchModule(currentModule===1?2:1)">Switch Module</button>
+    </div>
+  </div>
+</div>
+
+<div class="sticky">
+  <span class="sticky-info">Answered: <b id="lcount">0</b> / <b id="ltotal">25</b></span>
+  <div class="sticky-btns">
+    <button class="sbtn sbtn-s" onclick="resetQuiz()">&#8635; Reset</button>
+    <button class="sbtn sbtn-p" onclick="submitQuiz()">Submit</button>
+  </div>
+</div>
+
+<script>
+var M1=[
+  {q:"Which benefit of mobile apps allows users to access information anytime or anywhere?",o:["Productivity","Personalization","Convenience","Compatibility"],a:2,e:"Convenience allows a mobile app user to access and share information anytime or anywhere. Internet connection is not required on most apps."},
+  {q:"Which mobile app benefit allows users to change settings based on their preferences and receive real-time notifications?",o:["Convenience","Personalization","Productivity","Security"],a:1,e:"Personalization allows a user to change the settings of the mobile app based on their preferences and receive notifications in real time."},
+  {q:"Which benefit allows users to write, read, and present reports using only their mobile phones?",o:["Convenience","Personalization","Productivity","Compatibility"],a:2,e:"Productivity allows users to write, read, and present reports using only their mobile phones, and manage multimedia files."},
+  {q:"What does IDE stand for?",o:["Integrated Design Environment","Integrated Development Environment","Internal Development Engine","Interface Design Editor"],a:1,e:"IDE stands for Integrated Development Environment — a programming environment packaged as an application program."},
+  {q:"An IDE typically consists of which components?",o:["Code editor, compiler, debugger, and GUI builder","Browser, server, database, and API","Framework, library, runtime, and SDK","Emulator, simulator, tester, and deployer"],a:0,e:"An IDE typically consists of a code editor, compiler, debugger, and a GUI builder."},
+  {q:"Which IDE is the official IDE for Android application development?",o:["Xcode","Xamarin","Android Studio","Eclipse"],a:2,e:"Android Studio is the official IDE for Android application development, based on IntelliJ IDEA (a Java IDE)."},
+  {q:"Android Studio is based on which Java IDE?",o:["Eclipse","NetBeans","IntelliJ IDEA","BlueJ"],a:2,e:"Android Studio is based on IntelliJ IDEA, a Java IDE."},
+  {q:"Which IDE allows users to build apps and run them directly on Apple devices?",o:["Android Studio","Xamarin","Corona","Xcode"],a:3,e:"Xcode allows users to build apps and run them directly on their Apple devices."},
+  {q:"Which programming language does Xcode use, created by Apple?",o:["Kotlin","Java","Swift","Lua"],a:2,e:"Xcode uses Swift, created by Apple for iOS, OS X, and watchOS development."},
+  {q:"Which IDE extends the .NET developer platform with tools for building cross-platform apps?",o:["Xcode","Android Studio","Corona","Xamarin"],a:3,e:"Xamarin extends the .NET developer platform with tools and libraries specifically for building cross-platform apps."},
+  {q:"Which IDE is a free, cross-platform framework ideal for creating mobile apps and games?",o:["Xamarin","Apache Cordova","Corona","Xcode"],a:2,e:"Corona is a free, cross-platform framework ideal for creating mobile apps and games."},
+  {q:"Which scripting language does Corona use?",o:["Swift","JavaScript","Kotlin","Lua"],a:3,e:"Corona uses Lua, an easy-to-learn scripting language."},
+  {q:"Apache Cordova allows cross-platform development using which web technologies?",o:["PHP, SQL, and Python","HTML5, CSS3, and JavaScript","Kotlin, Swift, and Java","XML, JSON, and YAML"],a:1,e:"Apache Cordova is an open-source framework that allows use of HTML5, CSS3, and JavaScript for cross-platform development."},
+  {q:"Which challenge involves studying the current market and addressing user needs?",o:["Supporting multiple screen types","Maximizing app performance","Understanding the market and the user","Remaining compatible with older versions"],a:2,e:"Understanding the market and the user requires studying the current market scenario and addressing the needs of the target users."},
+  {q:"Which challenge involves dealing with devices of different sizes and shapes affecting UI design?",o:["Maximizing app performance","Supporting multiple screen types","Securing users","Understanding the market"],a:1,e:"Supporting multiple screen types is a challenge because devices come in different sizes and shapes, affecting how you design screens and UI elements."},
+  {q:"Which factors affect app performance according to the handout?",o:["RAM, CPU speed, and screen resolution","Battery life, multimedia content, and internet access","Storage capacity, app size, and network speed","OS version, firmware, and hardware drivers"],a:1,e:"The performance of an app is affected by battery life, multimedia content, and internet access."},
+  {q:"Which challenge refers to protecting users' sensitive information at all times?",o:["Maximizing app performance","Remaining compatible with older versions","Supporting multiple screen types","Securing users"],a:3,e:"Securing users is a challenge because users' data is the most valuable asset and sensitive information must be protected at all times."},
+  {q:"Which challenge involves ensuring the app works for users who have not upgraded their devices?",o:["Securing users","Maximizing app performance","Remaining compatible with older versions","Understanding the market"],a:2,e:"Remaining compatible with older versions is a challenge because not all users may have upgraded or may be able to upgrade their devices."},
+  {q:"What happens during the Setup phase of the App Development Workflow?",o:["You write code and design the UI","You install and set up your chosen IDE and create an emulator","You build the project into a package","You eliminate bugs and optimize performance"],a:1,e:"During Setup, you install and set up your chosen IDE, create an emulator, and connect hardware devices where you can install your apps."},
+  {q:"What happens during the Development phase?",o:["You install and set up your IDE","You write code, design a UI, and create resources for different device types","You build your project into a package","You distribute the app to users"],a:1,e:"During Development, you write code, design a UI, and create resources for different device types."},
+  {q:"What is produced during the Building and Running phase?",o:["A finalized app report","A package that can be installed and run on the emulator or an Android-powered device","A list of discovered bugs","A published app on the app store"],a:1,e:"During Building and Running, you build your project into a package that you can install and run on the emulator or an Android-powered device."},
+  {q:"The Debugging, Profiling, and Testing phase focuses on:",o:["Installing the IDE and emulator","Writing initial code","Eliminating bugs and optimizing app performance","Distributing the app to users"],a:2,e:"Debugging, Profiling, and Testing is the iterative phase focused on eliminating bugs and optimizing app performance (profiling)."},
+  {q:"During which phase is the app configured, built for release, and distributed to users?",o:["Setup","Development","Building and Running","Publishing"],a:3,e:"During Publishing, the app is configured and built for release and distributed to users."},
+  {q:"What is the correct order of the App Development Workflow?",o:["Development → Setup → Building and Running → Debugging → Publishing","Setup → Development → Building and Running → Debugging, Profiling, and Testing → Publishing","Setup → Building and Running → Development → Debugging → Publishing","Development → Building and Running → Setup → Publishing → Debugging"],a:1,e:"The correct order is: Setup → Development → Building and Running → Debugging, Profiling, and Testing → Publishing."},
+  {q:"Apache Cordova is described as:",o:["A proprietary mobile development tool","An open-source mobile development framework","A Java-based IDE for Android","A scripting engine for iOS development"],a:1,e:"Apache Cordova is an open-source mobile development framework that allows use of standard web technologies for cross-platform development."}
+];
+
+var M2=[
+  {q:"Which programming language is close to C# and Java, making it easy for programmers to switch?",o:["Kotlin","Swift","C++","Lua"],a:2,e:"C++ is close to C# and Java, making it easy for programmers to switch to C++ or vice versa."},
+  {q:"Swift is the official programming language for which platform?",o:["Android","Windows Mobile","iOS","Cross-platform"],a:2,e:"Swift is the official programming language for iOS."},
+  {q:"Kotlin combines which two programming features?",o:["Procedural and functional programming","Object-oriented and functional programming features","Scripting and compiled programming","Declarative and imperative programming"],a:1,e:"Kotlin combines object-oriented and functional programming features."},
+  {q:"In Kotlin, which keyword declares a variable that NEVER changes?",o:["var","let","const","val"],a:3,e:"Kotlin uses 'val' for variables that never change and 'var' for variables that can change."},
+  {q:"In Kotlin, which keyword declares a variable that CAN change?",o:["val","let","const","var"],a:3,e:"Kotlin uses 'var' to declare variables that can change, and 'val' for those that never change."},
+  {q:"What are the essential building blocks of an Android app called?",o:["App modules","App services","App components","App fragments"],a:2,e:"The app components are the essential building blocks of an Android app."},
+  {q:"Which app component is the entry point for interacting with the user and represents a single screen?",o:["Service","Broadcast Receiver","Content Provider","Activity"],a:3,e:"Activity is the entry point for interacting with the user. It represents a single screen with a user interface."},
+  {q:"An activity that shows a list of new emails is an example of which component?",o:["Service","Content Provider","Broadcast Receiver","Activity"],a:3,e:"An activity that shows a list of new emails is an example of an Activity — a single screen with a user interface."},
+  {q:"Which app component runs in the background to perform long-running operations?",o:["Activity","Broadcast Receiver","Service","Content Provider"],a:2,e:"Service runs in the background to perform long-running operations or to perform work for remote processes."},
+  {q:"Playing music in the background while using a different app is an example of which component?",o:["Activity","Content Provider","Broadcast Receiver","Service"],a:3,e:"Playing music in the background while using a different app is an example of a Service."},
+  {q:"Which component enables the system to deliver events to the app outside of regular user flow?",o:["Activity","Service","Broadcast Receiver","Content Provider"],a:2,e:"Broadcast Receiver enables the system to deliver events to the app outside of a regular user flow, allowing it to respond to system-wide broadcast announcements."},
+  {q:"A broadcast indicating the battery is low is an example of which component?",o:["Activity","Service","Content Provider","Broadcast Receiver"],a:3,e:"A broadcast indicating the battery is low is an example of a Broadcast Receiver."},
+  {q:"Which component manages a shared set of app data that can be accessed by other apps?",o:["Activity","Service","Broadcast Receiver","Content Provider"],a:3,e:"Content Provider manages a shared set of app data that you can store, which your app or another app can access."},
+  {q:"Which components are activated by intents?",o:["Activities, Services, and Content Providers","Activities, Services, and Broadcast Receivers","Services, Broadcast Receivers, and Content Providers","Activities, Broadcast Receivers, and Content Providers"],a:1,e:"App activities, services, and broadcast receivers are activated by intents."},
+  {q:"An intent is defined as:",o:["A type of app component","A message defined by an Intent object that describes an action to perform","A manifest file element","A type of programming language"],a:1,e:"An intent is a message defined by an Intent object that describes an action to perform, including the data to be acted upon and the category of component that should perform the action."},
+  {q:"What is the filename of the Android manifest file?",o:["AppManifest.xml","AndroidManifest.xml","AppConfig.xml","AndroidConfig.xml"],a:1,e:"The manifest file is called AndroidManifest.xml and it details the components that exist in an app."},
+  {q:"What is the root element of the AndroidManifest.xml file?",o:["<application>","<activity>","<manifest>","<intent-filter>"],a:2,e:"The <manifest> element is the root element of the AndroidManifest.xml file."},
+  {q:"Which element contains sub-elements that declare each of the application's components?",o:["<manifest>","<application>","<activity>","<service>"],a:1,e:"The <application> element contains sub-elements that declare each of the application's components and has attributes that affect all components."},
+  {q:"Which elements are required in the manifest file and should occur only once?",o:["<activity> and <service>","<manifest> and <application>","<intent-filter> and <action>","<receiver> and <provider>"],a:1,e:"The required elements in the manifest file are <manifest> and <application>, which should occur only once."},
+  {q:"The <application> element must be positioned where inside the manifest?",o:["The first element inside <manifest>","Anywhere inside <manifest>","The last element inside <manifest>","Outside the <manifest> element"],a:2,e:"The <application> element must be the last element inside the <manifest> element."},
+  {q:"The icon and label set in the <application> element serve as:",o:["The app's splash screen settings","The default icon and label for each of the app's components","The app's permission settings","The app's hardware requirements"],a:1,e:"The icon and label set in the <application> element are the default icon and label for each of the app's components."},
+  {q:"Which manifest element specifies the types of intents that a component can respond to?",o:["<action>","<category>","<intent-filter>","<uses-permission>"],a:2,e:"The <intent-filter> element specifies the types of intents that an activity, service, or broadcast receiver can respond to."},
+  {q:"What does the <action> element do in a manifest file?",o:["Declares a permission needed by the app","Adds an action to an intent filter","Declares the app's package name","Specifies hardware features required"],a:1,e:"The <action> element adds an action to an intent filter, while <category> adds a category name to an intent filter."},
+  {q:"Which manifest element declares permissions the app needs to access protected parts of the system?",o:["<uses-feature>","<intent-filter>","<uses-permission>","<action>"],a:2,e:"<uses-permission> declares the permissions the app needs to access protected parts of the system or other apps. Example: android.permission.SEND_SMS"},
+  {q:"Which manifest element declares hardware and software features used or required by the app?",o:["<uses-permission>","<intent-filter>","<action>","<uses-feature>"],a:3,e:"<uses-feature> declares the hardware and software features used or required by the app. Example: android.hardware.sensor.compass"}
+];
+
+var currentModule=1;
+var currentQ=M1;
+var ans={};
+
+function switchModule(m){
+  currentModule=m;
+  currentQ=(m===1)?M1:M2;
+  document.getElementById('tab1').className='tab'+(m===1?' active':'');
+  document.getElementById('tab2').className='tab'+(m===2?' active':'');
+  document.getElementById('score-wrap').classList.remove('show');
+  ans={};
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildQuiz(){
+  var c=document.getElementById('quiz');
+  c.innerHTML='';
+  ans={};
+  updateProg();
+  var L=['A','B','C','D'];
+  var total=currentQ.length;
+  for(var i=0;i<total;i++){
+    (function(i){
+      var q=currentQ[i];
+      var card=document.createElement('div');
+      card.className='card';
+      card.id='c'+i;
+      var html='<div class="qnum">Q'+String(i+1).padStart(2,'0')+' / '+total+'</div>';
+      html+='<div class="qtext">'+q.q+'</div>';
+      html+='<div class="opts">';
+      for(var j=0;j<q.o.length;j++){
+        html+='<button class="opt" id="o'+i+'_'+j+'" data-q="'+i+'" data-j="'+j+'"><span class="letter">'+L[j]+'.</span> '+q.o[j]+'</button>';
+      }
+      html+='</div><div class="fb" id="fb'+i+'"></div>';
+      card.innerHTML=html;
+      c.appendChild(card);
+      var opts=card.querySelectorAll('.opt');
+      for(var k=0;k<opts.length;k++){
+        opts[k].addEventListener('click',function(){
+          pick(parseInt(this.getAttribute('data-q')),parseInt(this.getAttribute('data-j')));
+        });
+      }
+    })(i);
+  }
+  document.getElementById('ltotal').textContent=total;
+}
+
+function pick(i,j){
+  if(ans[i]!==undefined)return;
+  ans[i]=j;
+  updateProg();
+  var q=currentQ[i];
+  for(var k=0;k<4;k++){
+    var el=document.getElementById('o'+i+'_'+k);
+    el.classList.add('done');
+    if(k===q.a)el.classList.add('right');
+    else if(k===j)el.classList.add('wrong');
+  }
+  var fb=document.getElementById('fb'+i);
+  var card=document.getElementById('c'+i);
+  if(j===q.a){card.classList.add('ok');fb.className='fb show ok-fb';fb.innerHTML='<b>Correct!</b> '+q.e;}
+  else{card.classList.add('bad');fb.className='fb show bad-fb';fb.innerHTML='<b>Incorrect.</b> '+q.e;}
+}
+
+function updateProg(){
+  var n=Object.keys(ans).length;
+  var total=currentQ.length;
+  var p=Math.round(n/total*100);
+  document.getElementById('ptxt').textContent=n+' / '+total+' answered';
+  document.getElementById('ppct').textContent=p+'%';
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('lcount').textContent=n;
+}
+
+function submitQuiz(){
+  var score=0;
+  var total=currentQ.length;
+  for(var i=0;i<total;i++){
+    var q=currentQ[i];
+    if(ans[i]===q.a)score++;
+    if(ans[i]===undefined){
+      for(var k=0;k<4;k++){
+        var el=document.getElementById('o'+i+'_'+k);
+        el.classList.add('done');
+        if(k===q.a)el.classList.add('right');
+      }
+      var fb=document.getElementById('fb'+i);
+      var card=document.getElementById('c'+i);
+      card.classList.add('bad');
+      fb.className='fb show bad-fb';
+      fb.innerHTML='<b>Not answered.</b> '+q.e;
+    }
+  }
+  document.getElementById('fscore').textContent=score;
+  document.getElementById('fsub').textContent='out of '+total;
+  var p=Math.round(score/total*100);
+  var m=p>=90?'Outstanding! Excellent mastery.':p>=75?'Great work! Solid understanding.':p>=60?'Good effort! Review weak areas.':'Keep studying and retake!';
+  document.getElementById('fmsg').textContent=(p>=90?'🏆 ':p>=75?'✅ ':p>=60?'📘 ':'📖 ')+m;
+  var sw=document.getElementById('score-wrap');
+  sw.classList.add('show');
+  sw.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function resetQuiz(){
+  document.getElementById('score-wrap').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(buildQuiz,200);
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
