@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>IT2501 – Info Security Quiz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;padding-bottom:80px}
+header{background:linear-gradient(160deg,#161b22 0%,#0d1117 100%);border-bottom:1px solid #30363d;padding:28px 20px 22px;text-align:center}
+.tag{display:inline-block;background:rgba(0,229,255,.13);color:#00e5ff;border:1px solid rgba(0,229,255,.27);border-radius:20px;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;margin-bottom:12px}
+h1{font-size:clamp(20px,6vw,34px);font-weight:800;line-height:1.15;color:#e6edf3}
+h1 em{color:#00e5ff;font-style:normal}
+.sub{margin-top:8px;color:#8b949e;font-size:13px}
+.prog-wrap{max-width:720px;margin:20px auto 0;padding:0 16px}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;color:#8b949e;margin-bottom:6px}
+.prog-bg{background:#21262d;border-radius:99px;height:5px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#00e5ff,#b8ff57);border-radius:99px;transition:width .4s;width:0%}
+.quiz{max-width:720px;margin:20px auto 0;padding:0 16px;display:flex;flex-direction:column;gap:16px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:20px;transition:border-color .2s}
+.card.ok{border-color:#238636}
+.card.bad{border-color:#da3633}
+.qnum{font-size:11px;letter-spacing:2px;color:#00e5ff;text-transform:uppercase;margin-bottom:8px}
+.qtext{font-size:15px;font-weight:600;color:#e6edf3;margin-bottom:16px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:flex-start;gap:10px;background:#21262d;border:1px solid #30363d;border-radius:10px;padding:12px 14px;cursor:pointer;font-size:14px;line-height:1.45;color:#c9d1d9;transition:all .15s;text-align:left;width:100%;font-family:inherit;-webkit-appearance:none;appearance:none}
+.opt:active{transform:scale(.99)}
+.opt.done{cursor:default}
+.opt.right{background:rgba(35,134,54,.13);border-color:#238636;color:#7ee787}
+.opt.wrong{background:rgba(218,54,51,.13);border-color:#da3633;color:#f85149}
+.letter{font-size:11px;font-weight:700;color:#8b949e;flex-shrink:0;margin-top:2px}
+.opt.right .letter{color:#238636}
+.opt.wrong .letter{color:#da3633}
+.fb{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.5;display:none}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(35,134,54,.08);border-left:3px solid #238636;color:#7ee787}
+.fb.bad-fb{background:rgba(218,54,51,.08);border-left:3px solid #da3633;color:#f85149}
+.score-wrap{max-width:720px;margin:24px auto 0;padding:0 16px;display:none}
+.score-wrap.show{display:block}
+.score-card{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:36px 24px;text-align:center}
+.score-num{font-size:72px;font-weight:900;color:#00e5ff;line-height:1}
+.score-sub{color:#8b949e;font-size:13px;margin-top:4px}
+.score-msg{margin-top:18px;font-size:17px;font-weight:600;color:#e6edf3}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.btn{font-size:14px;font-weight:700;letter-spacing:.5px;padding:12px 28px;border-radius:10px;border:none;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn-p{background:#00e5ff;color:#000}
+.btn-s{background:transparent;border:1px solid #30363d;color:#e6edf3}
+.actions{max-width:720px;margin:20px auto 0;padding:0 16px;display:flex;gap:12px;flex-wrap:wrap}
+.sticky{position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid #21262d;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:999}
+.sticky-info{font-size:13px;color:#8b949e}
+.sticky-info b{color:#b8ff57}
+.sticky-btns{display:flex;gap:8px}
+.sbtn{font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
+.sbtn-p{background:#00e5ff;color:#000}
+.sbtn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">IT2501 &middot; Module 1</div>
+  <h1>Information Security<br><em>Fundamentals Quiz</em></h1>
+  <p class="sub">50 questions &middot; Tap the best answer</p>
+</header>
+
+<div class="prog-wrap">
+  <div class="prog-row">
+    <span id="ptxt">0 / 50 answered</span>
+    <span id="ppct">0%</span>
+  </div>
+  <div class="prog-bg"><div class="prog-fill" id="pfill"></div></div>
+</div>
+
+<div class="quiz" id="quiz"></div>
+
+<div class="actions">
+  <button class="btn btn-p" onclick="submitQuiz()">Submit &amp; See Score</button>
+  <button class="btn btn-s" onclick="resetQuiz()">&#8635; Reset Quiz</button>
+</div>
+
+<div class="score-wrap" id="score-wrap">
+  <div class="score-card">
+    <div class="score-num" id="fscore">0</div>
+    <div class="score-sub">out of 50</div>
+    <div class="score-msg" id="fmsg"></div>
+    <div class="btn-row">
+      <button class="btn btn-p" onclick="resetQuiz()">&#8635; Retake Quiz</button>
+    </div>
+  </div>
+</div>
+
+<div class="sticky">
+  <span class="sticky-info">Answered: <b id="lcount">0</b> / 50</span>
+  <div class="sticky-btns">
+    <button class="sbtn sbtn-s" onclick="resetQuiz()">&#8635; Reset</button>
+    <button class="sbtn sbtn-p" onclick="submitQuiz()">Submit</button>
+  </div>
+</div>
+
+<script>
+var Q=[
+{q:"What is information security?",o:["A firewall configuration system","The protection of information systems from unauthorized access, disclosure, alteration, and destruction","A policy that restricts internet usage","A network monitoring protocol"],a:1,e:"Information security is the protection or safeguarding of information systems that use, store, and transmit information from unauthorized access, disclosure, alteration, and destruction."},
+{q:"Which element ensures information is accessible only to authorized people?",o:["Integrity","Availability","Confidentiality","Non-repudiation"],a:2,e:"Confidentiality is the assurance that information is accessible only to authorized people."},
+{q:"A checksum is used to maintain which security element?",o:["Availability","Confidentiality","Non-repudiation","Integrity"],a:3,e:"A checksum verifies that a block of data has not been changed — a measure for maintaining Integrity."},
+{q:"Disk arrays and clustered machines maintain which security element?",o:["Confidentiality","Availability","Integrity","Authenticity"],a:1,e:"Availability measures include disk arrays for redundant systems and clustered machines."},
+{q:"Digital signatures are primarily used to ensure:",o:["Confidentiality","Integrity","Non-repudiation","Availability"],a:2,e:"Individuals and organizations use digital signatures to ensure non-repudiation."},
+{q:"Biometrics, smart cards, and digital certificates ensure which element?",o:["Non-repudiation","Integrity","Confidentiality","Authenticity"],a:3,e:"Controls such as biometrics, smart cards, and digital certificates ensure Authenticity."},
+{q:"Non-repudiation guarantees that:",o:["Data is encrypted in transit","The sender cannot deny sending a message and the recipient cannot deny receiving it","Users are authenticated before access","Data is backed up regularly"],a:1,e:"Non-repudiation guarantees the sender cannot deny sending and the recipient cannot deny receiving a message."},
+{q:"DDoS prevention systems mainly protect which security element?",o:["Confidentiality","Integrity","Non-repudiation","Availability"],a:3,e:"DDoS prevention systems are among the measures used to maintain data Availability."},
+{q:"In the Security Triangle, 'Usability' refers to:",o:["Encryption strength","The restrictions imposed on the system","The GUI components used to design the system for ease of use","Features provided by the system"],a:2,e:"Usability refers to the GUI components used to design the system for ease of use."},
+{q:"Moving the 'ball' toward Security in the triangle means:",o:["Increased functionality and usability","Decreased functionality and usability","Balanced security and functionality","Increased usability only"],a:1,e:"Moving the ball toward security means increased security and decreased functionality and usability."},
+{q:"When the ball is at the center of the Security Triangle:",o:["Security is maximized","Usability is maximized","All three components are balanced","The system is most vulnerable"],a:2,e:"If the ball is in the center, all three components (Security, Functionality, Usability) are balanced."},
+{q:"Which attack involves intercepting network traffic WITHOUT tampering with data?",o:["Active Attack","Insider Attack","Passive Attack","Distribution Attack"],a:2,e:"Passive attacks involve intercepting and monitoring network traffic without tampering with the data."},
+{q:"Sniffing and eavesdropping are examples of which attack type?",o:["Active Attacks","Close-in Attacks","Distribution Attacks","Passive Attacks"],a:3,e:"Sniffing and eavesdropping are examples of Passive Attacks."},
+{q:"A Denial-of-Service (DoS) attack is classified as:",o:["Passive Attack","Distribution Attack","Active Attack","Insider Attack"],a:2,e:"DoS attacks are examples of Active Attacks, which tamper with data or disrupt communication."},
+{q:"Man-in-the-Middle Attack is an example of:",o:["Passive Attack","Close-in Attack","Active Attack","Distribution Attack"],a:2,e:"Man-in-the-Middle Attack is listed as an Active Attack."},
+{q:"Shoulder surfing is most associated with which attack category?",o:["Passive Attack","Active Attack","Close-in Attack","Distribution Attack"],a:2,e:"Shoulder surfing is an example of a Close-in Attack — performed when the attacker is in close physical proximity."},
+{q:"Pod slurping (stealing data via USB) is an example of:",o:["Distribution Attack","Passive Attack","Close-in Attack","Insider Attack"],a:3,e:"Pod slurping is listed as an example of an Insider Attack."},
+{q:"Distribution Attacks occur when:",o:["Attackers remotely monitor network traffic","Attackers physically approach the target","Attackers tamper with hardware or software before installation","Insiders misuse access privileges"],a:2,e:"Distribution Attacks occur when attackers tamper with hardware or software before installation or while in transit."},
+{q:"Backdoors created by vendors at manufacture time are examples of:",o:["Insider Attacks","Passive Attacks","Close-in Attacks","Distribution Attacks"],a:3,e:"Distribution attack examples include backdoors created by software or hardware vendors at manufacture time."},
+{q:"Which attack most directly affects the CIA triad via misuse of privileged access?",o:["Passive Attack","Active Attack","Insider Attack","Distribution Attack"],a:2,e:"Insider attacks misuse privileged access to directly affect confidentiality, integrity, and availability (CIA triad)."},
+{q:"According to IATF, security attacks are classified into how many categories?",o:["3","4","5","6"],a:2,e:"According to IATF, security attacks are classified into five (5) categories."},
+{q:"APT attacks are generally targeted at:",o:["Home users and small businesses","Large companies and government networks","Mobile device users only","E-commerce websites only"],a:1,e:"APT attacks are generally targeted at large companies and government networks."},
+{q:"What best distinguishes a virus from a worm?",o:["A virus spreads through networks; a worm attaches to programs","A worm attaches to programs; a virus spreads across networks","A virus attaches to programs to replicate; a worm replicates and spreads across network connections","They are identical in behavior"],a:2,e:"A virus self-replicates by attaching to a program, while a worm replicates and spreads across network connections independently."},
+{q:"Ransomware demands:",o:["User credentials","An online ransom payment to remove file access restrictions","Physical access to the server","Deletion of antivirus software"],a:1,e:"Ransomware restricts access to files/folders and demands an online ransom payment to remove the restrictions."},
+{q:"Phishing attacks aim to acquire:",o:["System administrator privileges","A user's personal or account information through deceptive emails or links","Network topology data","Application source code"],a:1,e:"Phishing sends illegitimate emails to acquire a user's personal or account information."},
+{q:"SQL injection and cross-site scripting are primarily threats to:",o:["IoT devices","Mobile phones","Web applications","Botnets"],a:2,e:"SQL injection and cross-site scripting have made web applications a favorite target for attackers."},
+{q:"Why are IoT devices particularly vulnerable?",o:["They use outdated operating systems","Due to hardware constraints, they often lack complex security mechanisms","They always connect via VPN","They rely solely on biometric authentication"],a:1,e:"Due to hardware constraints like memory and battery, IoT applications do not include complex security mechanisms."},
+{q:"A botnet is best described as:",o:["A single compromised server used for DDoS","A type of antivirus software","A huge network of compromised systems used to perform DoS attacks","A firewall configuration tool"],a:2,e:"A botnet is a huge network of compromised systems used by attackers to perform Denial-of-Service attacks."},
+{q:"Cloud computing threats can arise when:",o:["Employees access data from home","A flaw in one client's cloud app allows access to another client's data","Cloud providers update their servers","Users set weak passwords"],a:1,e:"A flaw in one client's application cloud could potentially allow attackers to access another client's data."},
+{q:"The formula for an attack is:",o:["Motive + Target + Tool","Motive (Goal) + Method + Vulnerability","Vulnerability + Resource + Access","Intent + Opportunity + Capability"],a:1,e:"Attacks = Motive (Goal) + Method + Vulnerability."},
+{q:"Which is NOT listed as an attack motive in the handout?",o:["Disrupt business continuity","Demand ransom","Improve network performance","Take revenge"],a:2,e:"Improving network performance is not a listed motive. Actual motives include disrupting continuity, demanding ransom, and revenge."},
+{q:"PCI DSS applies to organizations that:",o:["Store classified government data only","Handle cardholder information for debit, credit, prepaid, ATM, and POS cards","Operate healthcare services only","Provide internet access services"],a:1,e:"PCI DSS is a standard for organizations that handle cardholder information for major debit, credit, prepaid, ATM, and POS cards."},
+{q:"Failure to meet PCI DSS requirements may result in:",o:["Criminal prosecution","Mandatory system shutdown","Fines or termination of payment-card processing privileges","Loss of government contracts"],a:2,e:"Failure to meet PCI DSS requirements may result in fines or termination of payment-card processing privileges."},
+{q:"ISO/IEC 27001:2013 was jointly developed by:",o:["NIST and DHS","ISO and IEC","EU and WIPO","PCI Council and ISACA"],a:1,e:"ISO/IEC 27001:2013 is from the International Organization for Standardization (ISO) and the International Electrotechnical Commission (IEC)."},
+{q:"ISO/IEC 27001:2013 specifies requirements for:",o:["Payment card data encryption only","Establishing, implementing, maintaining, and continually improving an information security management system","Healthcare records management","Government contract bidding"],a:1,e:"ISO/IEC 27001:2013 specifies requirements for establishing, implementing, maintaining, and continually improving an information security management system."},
+{q:"The HIPAA Privacy Rule:",o:["Automatically encrypts all healthcare data","Provides federal protections for individually identifiable health information and gives patients rights to it","Mandates biometric authentication for hospitals","Requires hospitals to use blockchain for records"],a:1,e:"The HIPAA Privacy Rule provides federal protections for individually identifiable health information and gives patients rights to that information."},
+{q:"The HIPAA Security Rule ensures which triad for electronically protected health information?",o:["Privacy, Portability, and Accountability","Encryption, Authentication, and Non-repudiation","Confidentiality, Integrity, and Availability","Authorization, Access, and Auditability"],a:2,e:"The Security Rule specifies safeguards to ensure confidentiality, integrity, and availability of electronically protected health information."},
+{q:"The National Provider Identifier (NPI) under HIPAA is:",o:["A 6-digit billing code","A 10-position, intelligence-free numeric identifier for covered health care providers","A password standard for EHR systems","A state-issued license number"],a:1,e:"The NPI is a unique 10-position, intelligence-free numeric identifier assigned to covered health care providers."},
+{q:"The Sarbanes-Oxley (SOX) Act was enacted in:",o:["1996","1999","2002","2010"],a:2,e:"Enacted in 2002, the SOX Act protects the public and investors by increasing the accuracy and reliability of corporate disclosures."},
+{q:"SOX Title III (Corporate Responsibility) mandates that:",o:["External auditors are independent","Senior executives take individual responsibility for the accuracy of corporate financial reports","CEOs sign company tax returns","The SEC performs annual studies"],a:1,e:"Title III mandates senior executives take individual responsibility for the accuracy and completeness of corporate financial reports."},
+{q:"SOX Title VIII is also known as the:",o:["White Collar Crime Penalty Enhancement Act","Corporate and Criminal Fraud Accountability Act of 2002","Public Company Accounting Oversight Board Act","Corporate Tax Returns Act"],a:1,e:"Title VIII is also known as the Corporate and Criminal Fraud Accountability Act of 2002."},
+{q:"SOX Title IX increases:",o:["The power of the SEC to approve auditors","Criminal penalties associated with white-collar crimes and corporate fraud","The required number of board members","Financial disclosure periods"],a:1,e:"Title IX (White Collar Crime Penalty Enhancement Act) increases criminal penalties for white-collar crimes and corporate fraud."},
+{q:"The DMCA implements two 1996 treaties from:",o:["The United Nations","The World Intellectual Property Organization (WIPO)","The European Union","The International Telecommunication Union"],a:1,e:"The DMCA implements two 1996 treaties from the World Intellectual Property Organization (WIPO)."},
+{q:"DMCA Title II adds which section to the Copyright Act?",o:["Section 17","Section 101","Section 512","Section 301"],a:2,e:"Title II adds a new section 512 to the Copyright Act, creating four new limitations on liability for copyright infringement by online service providers."},
+{q:"FISMA requires each federal agency to:",o:["Use only open-source software","Develop, document, and implement an agency-wide information security program","Conduct annual penetration testing","Outsource security to certified vendors"],a:1,e:"FISMA requires each federal agency to develop, document, and implement an agency-wide information security program."},
+{q:"The GDPR was drafted and passed by:",o:["The United States Congress","The United Nations","The European Union","NIST"],a:2,e:"The GDPR was drafted and passed by the European Union (EU)."},
+{q:"GDPR's 'Data Minimization' principle means:",o:["Storing data for the minimum required time","Collecting and processing only as much data as necessary for specified purposes","Using the smallest possible encryption key","Minimizing the number of data controllers"],a:1,e:"Data minimization means collecting and processing only as much data as necessary for the specified purposes."},
+{q:"Which GDPR principle requires processing with appropriate security, integrity, and confidentiality?",o:["Purpose Limitation","Data Minimization","Storage Limitation","Integrity and Confidentiality"],a:3,e:"The 'Integrity and Confidentiality' principle states that processing must ensure appropriate security, integrity, and confidentiality."},
+{q:"The Data Protection Act 2018 (DPA) replaced the:",o:["Data Protection Act 1995","Data Protection Act 1998","GDPR 2016","Computer Misuse Act 1990"],a:1,e:"The DPA 2018 updates and replaces the Data Protection Act 1998, coming into effect on 25 May 2018."},
+{q:"Violating cyberlaws results in:",o:["Automatic system shutdown","Loss of internet access permanently","Punishments ranging from fines to imprisonment","Mandatory cybersecurity training"],a:2,e:"Violating cyber laws results in punishments ranging from fines to imprisonment."},
+{q:"A security policy is defined as:",o:["A firewall rule set","A specification of how objects in a security domain are allowed to interact","An intrusion detection algorithm","A data backup procedure"],a:1,e:"A security policy is a specification of how objects in a security domain are allowed to interact."}
+];
+
+var ans={};
+
+function buildQuiz(){
+  var c=document.getElementById('quiz');
+  c.innerHTML='';
+  ans={};
+  updateProg();
+  var L=['A','B','C','D'];
+  for(var i=0;i<Q.length;i++){
+    (function(i){
+      var q=Q[i];
+      var card=document.createElement('div');
+      card.className='card';
+      card.id='c'+i;
+      var html='<div class="qnum">Q'+String(i+1).padStart(2,'0')+' / 50</div>';
+      html+='<div class="qtext">'+q.q+'</div>';
+      html+='<div class="opts">';
+      for(var j=0;j<q.o.length;j++){
+        html+='<button class="opt" id="o'+i+'_'+j+'" data-q="'+i+'" data-j="'+j+'"><span class="letter">'+L[j]+'.</span> '+q.o[j]+'</button>';
+      }
+      html+='</div>';
+      html+='<div class="fb" id="fb'+i+'"></div>';
+      card.innerHTML=html;
+      c.appendChild(card);
+      var opts=card.querySelectorAll('.opt');
+      for(var k=0;k<opts.length;k++){
+        opts[k].addEventListener('click',function(){
+          var qi=parseInt(this.getAttribute('data-q'));
+          var ji=parseInt(this.getAttribute('data-j'));
+          pick(qi,ji);
+        });
+      }
+    })(i);
+  }
+}
+
+function pick(i,j){
+  if(ans[i]!==undefined)return;
+  ans[i]=j;
+  updateProg();
+  var q=Q[i];
+  for(var k=0;k<4;k++){
+    var el=document.getElementById('o'+i+'_'+k);
+    el.classList.add('done');
+    if(k===q.a)el.classList.add('right');
+    else if(k===j)el.classList.add('wrong');
+  }
+  var fb=document.getElementById('fb'+i);
+  var card=document.getElementById('c'+i);
+  if(j===q.a){
+    card.classList.add('ok');
+    fb.className='fb show ok-fb';
+    fb.innerHTML='<b>Correct!</b> '+q.e;
+  }else{
+    card.classList.add('bad');
+    fb.className='fb show bad-fb';
+    fb.innerHTML='<b>Incorrect.</b> '+q.e;
+  }
+}
+
+function updateProg(){
+  var n=Object.keys(ans).length;
+  var p=Math.round(n/50*100);
+  document.getElementById('ptxt').textContent=n+' / 50 answered';
+  document.getElementById('ppct').textContent=p+'%';
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('lcount').textContent=n;
+}
+
+function submitQuiz(){
+  var score=0;
+  for(var i=0;i<Q.length;i++){
+    var q=Q[i];
+    if(ans[i]===q.a) score++;
+    if(ans[i]===undefined){
+      for(var k=0;k<4;k++){
+        var el=document.getElementById('o'+i+'_'+k);
+        el.classList.add('done');
+        if(k===q.a) el.classList.add('right');
+      }
+      var fb=document.getElementById('fb'+i);
+      var card=document.getElementById('c'+i);
+      card.classList.add('bad');
+      fb.className='fb show bad-fb';
+      fb.innerHTML='<b>Not answered.</b> '+q.e;
+    }
+  }
+  document.getElementById('fscore').textContent=score;
+  var p=Math.round(score/50*100);
+  var m=p>=90?'Outstanding! Excellent mastery of the material.':p>=75?'Great work! You have a solid understanding.':p>=60?'Good effort! Review the areas where you stumbled.':'Keep studying! Re-read the handout and try again.';
+  document.getElementById('fmsg').textContent=m;
+  var sw=document.getElementById('score-wrap');
+  sw.classList.add('show');
+  sw.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function resetQuiz(){
+  document.getElementById('score-wrap').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(buildQuiz,250);
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
