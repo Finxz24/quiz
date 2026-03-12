@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT2409 Programming Languages Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2234;
+    --accent: #f59e0b;
+    --accent2: #10b981;
+    --accent3: #6366f1;
+    --correct: #10b981;
+    --wrong: #ef4444;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --border: #1e2d45;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(245,158,11,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(99,102,241,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Scanlines overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .header {
+    position: relative;
+    z-index: 1;
+    padding: 44px 24px 28px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.25);
+    padding: 5px 14px;
+    border-radius: 3px;
+    margin-bottom: 18px;
+  }
+
+  .tag::before { content: '▶'; font-size: 8px; }
+
+  h1 {
+    font-size: clamp(26px, 4.5vw, 44px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  h1 span.y { color: var(--accent); }
+  h1 span.g { color: var(--accent2); }
+  h1 span.p { color: var(--accent3); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .topic-pills {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .pill {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 3px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .pill-y { color: var(--accent); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.06); }
+  .pill-g { color: var(--accent2); border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.06); }
+  .pill-p { color: var(--accent3); border-color: rgba(99,102,241,0.3); background: rgba(99,102,241,0.06); }
+
+  .controls {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 24px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 700;
+  }
+
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #fbbf24; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245,158,11,0.35); }
+
+  .btn-secondary { background: transparent; color: var(--accent2); border: 1px solid var(--accent2); }
+  .btn-secondary:hover { background: rgba(16,185,129,0.1); transform: translateY(-2px); }
+
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  .progress-wrap {
+    position: relative;
+    z-index: 1;
+    padding: 0 24px;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent3), var(--accent2), var(--accent));
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .stats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 16px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-val { color: var(--accent); font-size: 22px; display: block; font-weight: 700; letter-spacing: -1px; }
+
+  .quiz-container {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 12px 20px 100px;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 26px 28px;
+    margin-bottom: 16px;
+    animation: appear 0.35s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .card-lex::before { background: var(--accent); }
+  .card-syn::before { background: var(--accent2); }
+  .card-name::before { background: var(--accent3); }
+  .card-bind::before { background: #ec4899; }
+  .card-scope::before { background: #06b6d4; }
+
+  @keyframes appear {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #000;
+    background: var(--accent);
+    padding: 2px 9px;
+    border-radius: 2px;
+  }
+
+  .q-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .q-text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+
+  .kw {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    background: rgba(245,158,11,0.1);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(245,158,11,0.2);
+  }
+
+  .kw-g {
+    color: var(--accent2);
+    background: rgba(16,185,129,0.1);
+    border-color: rgba(16,185,129,0.2);
+  }
+
+  .kw-p {
+    color: var(--accent3);
+    background: rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.2);
+  }
+
+  .options { display: grid; gap: 9px; }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: var(--surface2);
+    text-align: left;
+    width: 100%;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .option:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(245,158,11,0.06);
+    transform: translateX(5px);
+  }
+
+  .opt-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 18px;
+    margin-top: 2px;
+  }
+
+  .option.correct { border-color: var(--correct); background: rgba(16,185,129,0.08); }
+  .option.correct .opt-lbl { color: var(--correct); }
+  .option.wrong { border-color: var(--wrong); background: rgba(239,68,68,0.08); }
+  .option.wrong .opt-lbl { color: var(--wrong); }
+  .option.disabled { cursor: not-allowed; }
+  .option.disabled:not(.correct):not(.wrong) { opacity: 0.55; transform: none; }
+
+  .feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .feedback.show { display: block; animation: fadeIn 0.25s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .feedback.cfb { background: rgba(16,185,129,0.07); border-left: 3px solid var(--correct); color: #6ee7b7; }
+  .feedback.wfb { background: rgba(239,68,68,0.07); border-left: 3px solid var(--wrong); color: #fca5a5; }
+
+  /* Result */
+  .result-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,14,26,0.98);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 32px;
+  }
+
+  .result-screen.show { display: flex; animation: fadeIn 0.4s ease; }
+
+  .result-ring {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 4px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    position: relative;
+    background: var(--surface);
+    box-shadow: 0 0 40px rgba(245,158,11,0.15);
+  }
+
+  .result-score {
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .result-pct { font-size: 14px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; }
+
+  .result-grade { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+
+  .result-msg { color: var(--muted); font-size: 13px; font-family: 'JetBrains Mono', monospace; margin-bottom: 32px; max-width: 360px; line-height: 1.6; }
+
+  .result-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(17,24,39,0.95);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    z-index: 100;
+    flex-wrap: wrap;
+  }
+
+  .live-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .live-score span { color: var(--accent2); font-weight: 700; }
+
+  @media (max-width: 600px) {
+    .question-card { padding: 18px 16px; }
+    .stats { gap: 24px; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="tag">IT2409 · Programming Languages</div>
+  <h1><span class="y">Lexical</span> & <span class="g">Syntax</span> · <span class="p">Names</span>, Bindings & Scopes</h1>
+  <p class="subtitle">03 Handout 1 &amp; 04 Handout 1 · 50-Item Quiz</p>
+  <div class="topic-pills">
+    <span class="pill pill-y">Lexical Analysis</span>
+    <span class="pill pill-g">Parsing</span>
+    <span class="pill pill-g">Derivation</span>
+    <span class="pill pill-p">Names</span>
+    <span class="pill pill-p">Bindings</span>
+    <span class="pill pill-p">Scopes</span>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-primary" onclick="shuffleQuestions()">⇄ Shuffle Questions</button>
+  <button class="btn btn-secondary" onclick="submitAll()">✓ Submit All</button>
+  <button class="btn btn-ghost" onclick="resetQuiz()">↺ Reset</button>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div class="stats">
+  <div><span class="stat-val" id="answeredCount">0</span>answered</div>
+  <div><span class="stat-val" id="correctCount">0</span>correct</div>
+  <div><span class="stat-val" id="totalCount">50</span>total</div>
+</div>
+
+<div class="quiz-container" id="quizContainer"></div>
+
+<div class="bottom-bar">
+  <div class="live-score">Score: <span id="liveScore">0 / 50</span></div>
+  <button class="btn btn-primary" onclick="submitAll()">Submit &amp; See Results</button>
+  <button class="btn btn-ghost" onclick="shuffleQuestions()">⇄ Shuffle</button>
+</div>
+
+<div class="result-screen" id="resultScreen">
+  <div class="tag">Quiz Complete</div>
+  <div class="result-ring">
+    <div class="result-score" id="finalScore">0/50</div>
+  </div>
+  <div class="result-pct" id="finalPct">0%</div>
+  <div class="result-grade" id="finalGrade">—</div>
+  <div class="result-msg" id="finalMsg"></div>
+  <div class="result-btns">
+    <button class="btn btn-primary" onclick="resetQuiz()">Try Again</button>
+    <button class="btn btn-secondary" onclick="shuffleQuestions()">Shuffle &amp; Retry</button>
+    <button class="btn btn-ghost" onclick="closeResult()">Review Answers</button>
+  </div>
+</div>
+
+<script>
+const allQ = [
+  // === LEXICAL ANALYSIS ===
+  {cat:"Lexical Analysis", cls:"lex", q:"<b>Lexical analysis</b> involves reading source code characters and organizing them into:", opts:["Parse trees","Tokens","Symbol tables","Production rules"], ans:1, exp:"Lexical analysis reads characters left to right and organizes them into tokens."},
+  {cat:"Lexical Analysis", cls:"lex", q:"What are <b>lexemes</b>?", opts:["Internal codes for token categories","The logical groupings of characters collected by a lexical analyzer","Syntax error messages","Non-terminals in a grammar"], ans:1, exp:"Lexemes are the logical character groupings collected by the analyzer."},
+  {cat:"Lexical Analysis", cls:"lex", q:"What are <b>tokens</b> in lexical analysis?", opts:["Sequences of characters matched by a pattern","The internal codes for categories of lexeme groupings","Comments in the source code","Whitespace characters"], ans:1, exp:"Tokens are the internal codes assigned to categories of lexeme groupings."},
+  {cat:"Lexical Analysis", cls:"lex", q:"A lexical analyzer uses a <b>Deterministic Finite Automaton (DFA)</b> to:", opts:["Build parse trees","Recognize tokens by identifying regular languages","Create symbol tables","Handle syntax errors"], ans:1, exp:"A DFA is used by the lexical analyzer to recognize tokens."},
+  {cat:"Lexical Analysis", cls:"lex", q:"Tokens can be described using <b>regular expressions</b>. What does each final state of the DFA correspond to?", opts:["A syntax error","A specific token type","A production rule","A non-terminal symbol"], ans:1, exp:"Each final state of the DFA corresponds to a specific token type."},
+  {cat:"Lexical Analysis", cls:"lex", q:"Which lexical analysis process involves removing comments, whitespaces, and non-essential characters?", opts:["Tokenization","Token Classification","Input Preprocessing","Output Generation"], ans:2, exp:"Input Preprocessing cleans up the input text for lexical analysis."},
+  {cat:"Lexical Analysis", cls:"lex", q:"<b>Tokenization</b> involves breaking the input text into a sequence of tokens by:", opts:["Checking grammar rules","Matching characters against patterns or regular expressions","Building a parse tree","Creating a symbol table"], ans:1, exp:"Tokenization matches characters against patterns/regular expressions to form tokens."},
+  {cat:"Lexical Analysis", cls:"lex", q:"<b>Token Classification</b> is when the analyzer determines the type of each token, such as:", opts:["Comments and whitespaces","Keywords, identifiers, operators, and punctuation symbols","Leaf nodes and interior nodes","Left and right derivations"], ans:1, exp:"Token Classification categorizes tokens as keywords, identifiers, operators, etc."},
+  {cat:"Lexical Analysis", cls:"lex", q:"The output of lexical analysis, called the <b>token stream</b>, is sent to which next stage?", opts:["The code generator","The optimizer","The parser for syntax analysis","The linker"], ans:2, exp:"The token stream is sent to the parser (syntax analyzer) after lexical analysis."},
+  {cat:"Lexical Analysis", cls:"lex", q:"Which of the following are <b>non-tokens</b>?", opts:["Keywords and identifiers","Comments, preprocessor directives, macros, blanks, tabs, newlines","Operators and punctuation","Integer literals"], ans:1, exp:"Non-tokens include comments, preprocessor directives, macros, blanks, tabs, and newlines."},
+  {cat:"Lexical Analysis", cls:"lex", q:"Everything inside double quotes in a <b>print()</b> statement is counted as:", opts:["Multiple tokens, one per word","A single token","Two tokens","Zero tokens"], ans:1, exp:"Everything inside double quotes in a print() statement is a single token."},
+  {cat:"Lexical Analysis", cls:"lex", q:"How many tokens does <code>println(\"Walking is a good exercise\");</code> have?", opts:["3","4","5","6"], ans:2, exp:"It has 5 tokens: 'println', '(', '\"Walking is a good exercise\"', ')', and ';'."},
+  {cat:"Lexical Analysis", cls:"lex", q:"What is the <b>string length</b> of |STIisthebest|?", opts:["10","11","12","13"], ans:2, exp:"There are 12 characters in |STIisthebest|."},
+
+  // === PARSING / SYNTAX ANALYSIS ===
+  {cat:"Syntax Analysis", cls:"syn", q:"<b>Syntax analysis</b>, or <b>parsing</b>, is the process of analyzing a string of symbols according to the rules of:", opts:["Regular expressions","Formal grammar","Finite automata","Token streams"], ans:1, exp:"Syntax analysis checks source code against rules of formal grammar."},
+  {cat:"Syntax Analysis", cls:"syn", q:"<b>Syntax errors</b> are identified and flagged in the parsing phase and must be corrected before:", opts:["Lexical analysis begins","The program can be successfully compiled","Token classification starts","The DFA is built"], ans:1, exp:"Syntax errors must be corrected before the program can be successfully compiled."},
+  {cat:"Syntax Analysis", cls:"syn", q:"A <b>syntax analyzer</b> or <b>parser</b> takes token streams and analyzes them against:", opts:["Regular expressions","DFA states","Production rules","Lexemes"], ans:2, exp:"The parser analyzes tokens against production rules to detect errors."},
+  {cat:"Syntax Analysis", cls:"syn", q:"The output of syntax analysis is a <b>parse tree</b> or:", opts:["Token stream","Abstract Syntax Tree (AST)","Symbol table","DFA"], ans:1, exp:"The output is a parse tree or Abstract Syntax Tree (AST) representing the program's structure."},
+  {cat:"Syntax Analysis", cls:"syn", q:"Why can't regular expressions check the syntax of a sentence?", opts:["They are too slow","They cannot check balancing tokens such as parenthesis","They do not generate tokens","They require a DFA"], ans:1, exp:"Regular expressions cannot check balancing tokens like parenthesis."},
+  {cat:"Syntax Analysis", cls:"syn", q:"Syntax analysis uses <b>context-free grammar (CFG)</b> to:", opts:["Eliminate whitespace","Define the syntax rules of a programming language","Perform token classification","Build a DFA"], ans:1, exp:"CFG is used to define the syntax rules and describe valid token streams."},
+  {cat:"Syntax Analysis", cls:"syn", q:"A <b>Symbol Table</b>, created by the syntax analyzer, stores information about:", opts:["Token streams","Identifiers used in the program such as type, scope, and location","Regular expressions","Parse tree nodes"], ans:1, exp:"The symbol table stores information about identifiers including type, scope, and location."},
+  {cat:"Derivation", cls:"syn", q:"<b>Derivation</b> is the process of applying rules of CFG to generate a sequence of tokens. It is a sequence of:", opts:["Lexemes matched to a DFA","Production rules to get the input string for the parser","Syntax errors to be flagged","Non-terminals only"], ans:1, exp:"Derivation is a sequence of production rules applied to obtain the input string."},
+  {cat:"Derivation", cls:"syn", q:"In <b>left-most derivation</b>, which non-terminal is always processed first?", opts:["The rightmost","The deepest","The leftmost","The innermost"], ans:2, exp:"In left-most derivation, the leftmost non-terminal is always processed first."},
+  {cat:"Derivation", cls:"syn", q:"The derived sentential form of right-most derivation is called the:", opts:["Left-sentential form","Parse tree","Right-sentential form","Token stream"], ans:2, exp:"The right-most derivation produces the right-sentential form."},
+  {cat:"Parse Tree", cls:"syn", q:"A <b>parse tree</b> is the graphical representation of a derivation. Its root is:", opts:["A terminal symbol","The start symbol","A leaf node","An operator"], ans:1, exp:"The start symbol becomes the root of the parse tree."},
+  {cat:"Parse Tree", cls:"syn", q:"In a parse tree, all <b>leaf nodes</b> are terminals and all <b>interior nodes</b> are:", opts:["Operators","Non-terminals","Lexemes","Token types"], ans:1, exp:"In a parse tree, leaf nodes are terminals and interior nodes are non-terminals."},
+  {cat:"Parse Tree", cls:"syn", q:"The <b>in-order traversal</b> of a parse tree gives:", opts:["The derivation steps","The original input string","The AST","The symbol table"], ans:1, exp:"In-order traversal of a parse tree gives back the original input string."},
+  {cat:"Parse Tree", cls:"syn", q:"In a parse tree, which sub-tree is traversed first, giving its operator higher precedence?", opts:["The shallowest","The deepest","The leftmost","The rightmost"], ans:1, exp:"The deepest sub-tree is traversed first, giving its operator precedence over parent operators."},
+  {cat:"Ambiguity", cls:"syn", q:"A grammar is <b>ambiguous</b> if it has:", opts:["Only one parse tree for all strings","More than one parse tree for at least one string","No production rules","Only left-most derivation"], ans:1, exp:"A grammar is ambiguous if it produces more than one parse tree for at least one string."},
+  {cat:"Ambiguity", cls:"syn", q:"The language generated by ambiguous grammar is called <b>inherently ambiguous</b>. Can ambiguity be removed automatically?", opts:["Yes, always","No, no method can detect and remove it automatically","Yes, using a DFA","Yes, using regular expressions"], ans:1, exp:"No method can detect and remove ambiguity automatically."},
+  {cat:"Associativity", cls:"syn", q:"In <b>left-associative</b> operations, the expression id op id op id is evaluated as:", opts:["id op (id op id)","(id op id) op id","(id op id op id)","id op id + id"], ans:1, exp:"Left-associative: (id op id) op id — the left operator takes the operand first."},
+  {cat:"Associativity", cls:"syn", q:"Which of the following are <b>left-associative</b> operations?", opts:["Exponentiation and modulo","Addition, Multiplication, Subtraction, and Division","Only addition and subtraction","Exponentiation only"], ans:1, exp:"Addition, Multiplication, Subtraction, and Division are left-associative."},
+  {cat:"Associativity", cls:"syn", q:"In <b>right-associative</b> operations, 2 ^ 3 ^ 4 is evaluated as:", opts:["(2 ^ 3) ^ 4","2 ^ (3 ^ 4)","(2 ^ 3 ^ 4)","2 + 3 + 4"], ans:1, exp:"Right-associative: 2 ^ (3 ^ 4)."},
+  {cat:"Precedence", cls:"syn", q:"<b>Precedence</b> of operators decides which operator takes a common operand when two operators share it. In 2 + 3 * 4, which is interpreted first?", opts:["2 + 3, then result * 4","3 * 4, then 2 + result","2 * 4, then + 3","None of the above"], ans:1, exp:"Multiplication has precedence over Addition, so 3*4 is computed first."},
+  {cat:"Precedence", cls:"syn", q:"In Python's <b>hierarchy of priorities</b>, which operator has the highest priority (1)?", opts:["* and /","Binary + and –","** (Exponentiation)","Unary + and –"], ans:2, exp:"The Exponentiation operator (**) has the highest priority (1) in Python."},
+  {cat:"Precedence", cls:"syn", q:"In Python's priority table, which has the <b>lowest priority (4)</b>?", opts:["*, /, //, %","Unary + and –","** (Exponentiation)","Binary + (Addition) and – (Subtraction)"], ans:3, exp:"Binary + and – (Addition and Subtraction) have the lowest priority (4)."},
+
+  // === NAMES ===
+  {cat:"Names", cls:"name", q:"A <b>name</b> in programming starts with a letter followed by a string of letters, digits, and:", opts:["Spaces","Semicolons","Underscore (_) characters","Parentheses"], ans:2, exp:"Names consist of letters, digits, and underscore characters."},
+  {cat:"Names", cls:"name", q:"The term <b>identifier</b> can be used interchangeably with:", opts:["Token","Name","Lexeme","Keyword"], ans:1, exp:"'Identifier' is used interchangeably with 'name' in programming languages."},
+  {cat:"Names", cls:"name", q:"In C-based languages, underscores were replaced by <b>camel notation</b>, where all words except the first are:", opts:["Lowercased","Underscored","Capitalized","Omitted"], ans:2, exp:"In camel case, all words except the first are capitalized."},
+  {cat:"Names", cls:"name", q:"In which language must all variable names begin with a dollar ($) sign?", opts:["Ruby","Python","Perl","PHP"], ans:3, exp:"In PHP, all variable names must begin with a $ sign."},
+  {cat:"Names", cls:"name", q:"In <b>Perl</b>, the special characters $, @, or % at the beginning of a variable name specify its:", opts:["Scope","Type","Lifetime","Address"], ans:1, exp:"In Perl, special characters at the start of a variable name specify its type."},
+  {cat:"Names", cls:"name", q:"In Python, <b>snake case</b> is used for which type?", opts:["Class","Constant","Package","Function and Variable"], ans:3, exp:"Snake case (words separated by underscores, all lowercase) is used for Functions, Variables, and Methods in Python."},
+  {cat:"Names", cls:"name", q:"In Python, a <b>Class</b> name follows which naming convention?", opts:["snake_case","ALL_CAPS","Pascal case (each word capitalized)","camelCase"], ans:2, exp:"Python classes use Pascal case — each word starts with a capital letter."},
+  {cat:"Names", cls:"name", q:"A <b>reserved word</b> is a special word that:", opts:["Can be redefined by programmers","Cannot be used as a name in a programming language","Has no meaning in the language","Is only used in comments"], ans:1, exp:"A reserved word cannot be used as a name in a programming language."},
+  {cat:"Names", cls:"name", q:"In programming languages like Fortran, special words are only <b>keywords</b>, meaning they:", opts:["Cannot be redefined","Can be redefined by programmers","Are always reserved","Must start with uppercase"], ans:1, exp:"In Fortran, keywords (unlike reserved words) can be redefined by programmers."},
+  {cat:"Names", cls:"name", q:"C-based languages are <b>case-sensitive</b>. In C++, which of the following are all distinct?", opts:["int, Int, INT","kind, Kind, KIND","print, Print, PRINT","main, Main, MAIN"], ans:1, exp:"In C++, kind, Kind, and KIND are all distinct — case-sensitivity applies."},
+
+  // === VARIABLES ===
+  {cat:"Variables", cls:"bind", q:"A <b>variable</b> in programming is an abstraction of a computer memory cell. It is characterized as a sextuple of attributes including:", opts:["name, address, type, value, lifetime, and scope","name, class, method, scope, token, and lexeme","type, value, grammar, DFA, token, and lexeme","name, keyword, reserved word, scope, binding, and type"], ans:0, exp:"The six attributes of a variable are: name, address, type, value, lifetime, and scope."},
+  {cat:"Variables", cls:"bind", q:"A variable's value can also be called its <b>r-value</b> because:", opts:["It is always a real number","It is required when the variable name appears on the right side of an assignment","It refers to the right-most derivation","It is stored in read-only memory"], ans:1, exp:"r-value is the variable's value — needed when the name appears on the right side of an assignment."},
+  {cat:"Variables", cls:"bind", q:"<b>Variable Type</b> determines the range of values the variable can store and the set of operations. Examples include:", opts:["snake_case, PascalCase, camelCase","int, float, and Boolean","global, local, enclosing","left-most, right-most, none"], ans:1, exp:"Variable Type examples include int, float, and Boolean."},
+
+  // === BINDINGS ===
+  {cat:"Bindings", cls:"bind", q:"<b>Binding</b> is an association between an attribute and an entity. <b>Binding time</b> is:", opts:["The duration a variable holds its value","The time a binding takes place (e.g., compile time, run time)","The time it takes to tokenize source code","The scope of a variable"], ans:1, exp:"Binding time is the time at which a binding takes place."},
+  {cat:"Bindings", cls:"bind", q:"The asterisk (*) symbol is bound to the multiplication operation at which binding time?", opts:["Compile time","Run time","Language design time","Load time"], ans:2, exp:"The asterisk is bound to multiplication at language design time."},
+  {cat:"Bindings", cls:"bind", q:"A variable in a Java program is bound to a particular data type at:", opts:["Run time","Language design time","Language implementation time","Compile time"], ans:3, exp:"In Java, a variable is bound to its data type at compile time."},
+  {cat:"Bindings", cls:"bind", q:"In <code>count = count – 3</code>, the <b>value of count</b> is bound at:", opts:["Compile time","Language design time","Execution time","Link time"], ans:2, exp:"The value of count is bound at execution time when the statement runs."},
+  {cat:"Bindings", cls:"bind", q:"An <b>explicit declaration</b> is a statement that lists variable names and:", opts:["Assigns them values at runtime","Specifies their particular type directly","Determines their scope automatically","Removes the need for a binding"], ans:1, exp:"An explicit declaration directly specifies the data type of the variable when declaring it."},
+  {cat:"Bindings", cls:"bind", q:"An <b>implicit declaration</b> associates variables with types through:", opts:["Explicit type keywords","Default conventions rather than declaration statements","The DFA at compile time","Reserved words only"], ans:1, exp:"Implicit declaration assigns types through default conventions, not explicit statements."},
+  {cat:"Bindings", cls:"bind", q:"<b>Dynamic type binding</b> happens when the variable type:", opts:["Is declared explicitly before use","Is not specified by a declaration and is bound when assigned a value","Is bound at compile time","Is always an integer"], ans:1, exp:"In dynamic type binding, the type is determined when a value is assigned, not by a declaration."},
+  {cat:"Bindings", cls:"bind", q:"Python is <b>dynamically typed</b>, meaning:", opts:["You must always declare types explicitly","It is unnecessary to declare the type of a variable when first assigning it","Types never change","Only integers are allowed"], ans:1, exp:"Python is dynamically typed — type declaration is not required, and types can change."},
+
+  // === SCOPES ===
+  {cat:"Scopes", cls:"scope", q:"The <b>scope</b> of a variable is the range of statements wherein the variable is:", opts:["Declared","Visible (can be referenced or assigned)","Bound to a type","Allocated in memory"], ans:1, exp:"Scope is the range of statements where the variable is visible."},
+  {cat:"Scopes", cls:"scope", q:"Variables declared in the <b>global scope</b> are accessible:", opts:["Only inside the function where they are declared","From anywhere in the program","Only inside classes","Only at compile time"], ans:1, exp:"Global scope variables are accessible from anywhere in the program."},
+  {cat:"Scopes", cls:"scope", q:"<b>Local variables</b> are declared inside a function or block and:", opts:["Are accessible anywhere in the program","Can only be accessed within that specific function or block","Are always global","Override global variables everywhere"], ans:1, exp:"Local variables are only accessible within the function or block where they are declared."},
+  {cat:"Scopes", cls:"scope", q:"In <b>enclosing scope</b>, when there is a nested function, the outer function's variables are available to:", opts:["The global scope","The inner function, but not the other way around","All functions in the program","Only built-in functions"], ans:1, exp:"In enclosing scope, outer function variables are available to the inner function but not vice versa."},
+  {cat:"Scopes", cls:"scope", q:"The <b>built-in scope</b> in Python contains:", opts:["Only user-defined functions","All functions and variables built into Python like print(), len(), and int()","Only global variables","Only local variables"], ans:1, exp:"Built-in scope contains Python's built-in functions and objects like print(), len(), int()."},
+  {cat:"Scopes", cls:"scope", q:"Python's <b>LEGB rule</b> stands for:", opts:["Lexical, Explicit, Global, Boolean","Local, Enclosing, Global, Built-in","Literal, Expression, Grammar, Block","Language, Execution, Grammar, Binding"], ans:1, exp:"LEGB stands for Local, Enclosing, Global, Built-in — the order Python uses to look up variables."},
+  {cat:"Scopes", cls:"scope", q:"<b>Shadowing</b> occurs when a local variable has the same name as a variable in an outer scope, and the:", opts:["Outer variable takes precedence","Local variable takes precedence","Both are combined","A syntax error is raised"], ans:1, exp:"In shadowing, the local variable takes precedence over the outer variable."},
+  {cat:"Scopes", cls:"scope", q:"To modify a <b>global variable</b> inside a function in Python, it must be declared with the:", opts:["local keyword","enclosing keyword","global keyword","static keyword"], ans:2, exp:"The 'global' keyword is used inside a function to modify a global variable."},
+];
+
+let questions = [...allQ];
+let answered = {};
+let score = 0;
+
+const catCls = {
+  "Lexical Analysis": "lex",
+  "Syntax Analysis": "syn",
+  "Derivation": "syn",
+  "Parse Tree": "syn",
+  "Ambiguity": "syn",
+  "Associativity": "syn",
+  "Precedence": "syn",
+  "Names": "name",
+  "Variables": "bind",
+  "Bindings": "bind",
+  "Scopes": "scope"
+};
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shuffleOpts(q) {
+  const paired = q.opts.map((o, i) => ({ text: o, correct: i === q.ans }));
+  shuffle(paired);
+  return { opts: paired.map(p => p.text), ans: paired.findIndex(p => p.correct) };
+}
+
+function renderQuiz() {
+  answered = {}; score = 0;
+  updateStats();
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  questions.forEach((q, idx) => {
+    const s = shuffleOpts(q);
+    const card = document.createElement('div');
+    const cls = catCls[q.cat] || 'lex';
+    card.className = `question-card card-${cls}`;
+    card.id = `card-${idx}`;
+    card.style.animationDelay = `${idx * 0.025}s`;
+
+    const lbls = ['A', 'B', 'C', 'D'];
+    const opts = s.opts.map((o, i) => `
+      <button class="option" onclick="selectAnswer(${idx}, ${i}, ${s.ans})" id="opt-${idx}-${i}">
+        <span class="opt-lbl">${lbls[i]}</span>
+        <span>${o}</span>
+      </button>`).join('');
+
+    card.innerHTML = `
+      <div class="q-meta">
+        <span class="q-num">Q${idx + 1}</span>
+        <span class="q-cat">${q.cat}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${idx}">${opts}</div>
+      <div class="feedback" id="fb-${idx}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function selectAnswer(qi, sel, correct) {
+  if (answered[qi] !== undefined) return;
+  answered[qi] = sel;
+
+  document.querySelectorAll(`#opts-${qi} .option`).forEach((o, i) => {
+    o.disabled = true;
+    o.classList.add('disabled');
+    if (i === correct) o.classList.add('correct');
+    if (i === sel && sel !== correct) o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById(`fb-${qi}`);
+  if (sel === correct) {
+    score++;
+    fb.className = 'feedback show cfb';
+    fb.textContent = '✓ Correct! ' + questions[qi].exp;
+  } else {
+    fb.className = 'feedback show wfb';
+    fb.textContent = '✗ Incorrect. ' + questions[qi].exp;
+  }
+  updateStats();
+}
+
+function updateStats() {
+  const a = Object.keys(answered).length;
+  document.getElementById('answeredCount').textContent = a;
+  document.getElementById('correctCount').textContent = score;
+  document.getElementById('liveScore').textContent = `${score} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = (a / questions.length * 100) + '%';
+}
+
+function submitAll() {
+  const total = questions.length;
+  const pct = Math.round(score / total * 100);
+  let grade, msg;
+  if (pct >= 95) { grade = '🏆 Outstanding!'; msg = 'Perfect command of PL concepts!'; }
+  else if (pct >= 85) { grade = '⭐ Excellent'; msg = 'Strong understanding — well done!'; }
+  else if (pct >= 75) { grade = '✅ Passing'; msg = 'You passed! Review missed concepts.'; }
+  else if (pct >= 60) { grade = '⚠️ Needs Work'; msg = 'Review lexical analysis, bindings, and scope rules.'; }
+  else { grade = '❌ Try Again'; msg = 'Re-read the handouts carefully, then retry.'; }
+
+  document.getElementById('finalScore').textContent = `${score}/${total}`;
+  document.getElementById('finalPct').textContent = `${pct}% Score`;
+  document.getElementById('finalGrade').textContent = grade;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('resultScreen').classList.add('show');
+}
+
+function closeResult() {
+  document.getElementById('resultScreen').classList.remove('show');
+}
+
+function resetQuiz() {
+  closeResult();
+  answered = {}; score = 0;
+  renderQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shuffleQuestions() {
+  closeResult();
+  questions = shuffle([...allQ]);
+  answered = {}; score = 0;
+  renderQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('totalCount').textContent = allQ.length;
+renderQuiz();
+</script>
+</body>
+</html>
