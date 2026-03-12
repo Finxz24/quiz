@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT1915 MIS Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c96d;
+    --gold-dim: rgba(201,168,76,0.15);
+    --bg: #0f0f1a;
+    --card: #16162a;
+    --border: #2a2a45;
+    --text: #e8e0d0;
+    --muted: #888;
+    --green: #6dc87a;
+    --red: #e06060;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(100,80,200,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .container { max-width: 720px; margin: 0 auto; position: relative; }
+
+  /* Header */
+  .header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.8rem; flex-wrap: wrap; gap: 0.8rem;
+  }
+  .header-title h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold); font-size: 1.4rem; letter-spacing: 0.04em;
+  }
+  .header-title p { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+
+  .btn {
+    background: var(--gold-dim); border: 2px solid var(--gold);
+    color: var(--gold); padding: 0.5rem 1.2rem; border-radius: 8px;
+    cursor: pointer; font-family: 'Source Serif 4', serif; font-size: 0.9rem;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn:hover { background: rgba(201,168,76,0.25); }
+  .btn-primary {
+    background: var(--gold); color: #0f0f1a; border-color: var(--gold);
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+
+  /* Progress */
+  .progress-bar-wrap {
+    margin-bottom: 1.5rem;
+  }
+  .progress-meta {
+    display: flex; justify-content: space-between;
+    font-size: 0.82rem; color: var(--muted); margin-bottom: 0.4rem;
+  }
+  .progress-meta span.score { color: var(--green); }
+  .progress-track {
+    background: #1e1e30; border-radius: 100px; height: 6px; overflow: hidden;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    height: 6px; border-radius: 100px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem; margin-bottom: 1.2rem;
+    animation: fadeUp 0.35s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-badge {
+    display: inline-block; background: var(--gold-dim); color: var(--gold);
+    font-size: 0.72rem; padding: 0.28rem 0.8rem; border-radius: 20px;
+    margin-bottom: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .question-text {
+    font-size: 1.08rem; line-height: 1.75; color: var(--text);
+  }
+
+  /* Choices */
+  .choices { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.4rem; }
+  .choice-btn {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: 12px; padding: 0.85rem 1.1rem;
+    cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 0.8rem;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+    font-family: 'Source Serif 4', serif; color: var(--text); font-size: 0.93rem;
+    width: 100%;
+  }
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--gold); background: var(--gold-dim);
+  }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct { border-color: var(--green); background: rgba(109,200,122,0.1); color: var(--green); }
+  .choice-btn.wrong   { border-color: var(--red);   background: rgba(224,96,96,0.1);  color: var(--red); }
+  .choice-btn.dimmed  { opacity: 0.4; }
+
+  .label {
+    background: #2a2a45; color: var(--muted); width: 28px; height: 28px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.78rem; flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+  .correct .label { background: var(--green); color: #0f0f1a; }
+  .wrong   .label { background: var(--red);   color: #fff; }
+
+  .icon { margin-left: auto; font-size: 1.1rem; }
+
+  /* Next */
+  .next-wrap { text-align: right; animation: fadeUp 0.3s ease; }
+
+  /* Results */
+  #results {
+    display: none; text-align: center;
+    animation: fadeUp 0.5s ease;
+  }
+  .trophy { font-size: 4.5rem; margin-bottom: 1rem; }
+  .grade-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold); font-size: 2.2rem; margin-bottom: 1.5rem;
+  }
+  .score-box {
+    background: var(--gold-dim); border: 2px solid var(--gold);
+    border-radius: 20px; padding: 2rem; margin-bottom: 2rem; display: inline-block; min-width: 260px;
+  }
+  .score-big { font-family: 'Playfair Display', serif; font-size: 4rem; color: var(--gold); }
+  .score-pct { font-size: 1.4rem; color: var(--text); margin-top: 0.3rem; }
+  .result-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* Review */
+  #review { display: none; animation: fadeUp 0.4s ease; }
+  .review-header {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.8rem;
+  }
+  .review-item {
+    border-radius: 12px; padding: 1.2rem; margin-bottom: 0.9rem;
+    border: 1px solid;
+  }
+  .review-item.correct-item { background: rgba(109,200,122,0.07); border-color: rgba(109,200,122,0.25); }
+  .review-item.wrong-item   { background: rgba(224,96,96,0.07);   border-color: rgba(224,96,96,0.25); }
+  .review-q { font-weight: 500; font-size: 0.93rem; margin-bottom: 0.7rem; line-height: 1.6; }
+  .review-ans { font-size: 0.88rem; margin: 0.2rem 0; }
+  .review-ans.yours { color: var(--red); }
+  .review-ans.right { color: var(--green); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Quiz Screen -->
+  <div id="quiz-screen">
+    <div class="header">
+      <div class="header-title">
+        <h1>MIS Quiz — IT1915</h1>
+        <p>End-User Computing &amp; Electronic Communication Systems</p>
+      </div>
+      <button class="btn" onclick="shuffleAndRestart()">🔀 Shuffle</button>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-meta">
+        <span id="q-counter">Question 1 of 65</span>
+        <span class="score" id="score-display">Score: 0/0</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:1.5%"></div></div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="q-badge" id="q-badge">Question 1</div>
+      <p class="question-text" id="question-text"></p>
+    </div>
+
+    <div class="choices" id="choices"></div>
+    <div class="next-wrap" id="next-wrap" style="display:none">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div id="results">
+    <div class="trophy" id="trophy">🏆</div>
+    <h2 class="grade-title" id="grade-title">Excellent!</h2>
+    <div class="score-box">
+      <div class="score-big" id="score-big">0/65</div>
+      <div class="score-pct" id="score-pct">0%</div>
+    </div>
+    <div class="result-btns">
+      <button class="btn" onclick="showReview()">📖 Review Answers</button>
+      <button class="btn btn-primary" onclick="shuffleAndRestart()">🔀 New Quiz</button>
+    </div>
+  </div>
+
+  <!-- Review Screen -->
+  <div id="review">
+    <div class="review-header">
+      <button class="btn" onclick="showResults()">← Back</button>
+      <h2 style="font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem;">Review Answers</h2>
+    </div>
+    <div id="review-list"></div>
+  </div>
+
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // Electronic Communication Systems
+  { q: "What type of information system provides fast and inexpensive communication channels using telephony, computing hardware, networks, and the Internet?", choices: ["Office Information System", "Electronic communication system", "End-User Computing", "Electronic Meeting System"], a: 1 },
+  { q: "Which type of electronic communication system requires all members to be available at the same time?", choices: ["Asynchronous", "Multipoint", "Synchronous", "Point-to-Point"], a: 2 },
+  { q: "Which type of electronic communication system does NOT require members to be online at the same time?", choices: ["Synchronous", "Push Technology", "Asynchronous", "Point-to-Point"], a: 2 },
+  { q: "Chat rooms, instant messaging, and audio/video teleconferencing are examples of which type?", choices: ["Asynchronous", "Synchronous", "Multipoint", "Electronic Discussion"], a: 1 },
+  { q: "Forums, email, and online bulletin boards are examples of which type?", choices: ["Synchronous", "Point-to-Point", "Asynchronous", "Electronic Publishing"], a: 2 },
+  { q: "Electronic conferencing is described as mostly which type of communication?", choices: ["Asynchronous", "Synchronous", "Push-based", "Multipoint"], a: 1 },
+  { q: "What does electronic conferencing use to eliminate the need for a physical location and facilitate broader member coverage?", choices: ["Portable Electronic Media", "Virtual Desktops", "Internet-based technologies", "Push Technologies"], a: 2 },
+  { q: "Which type of electronic conferencing involves only two members, similar to a telephone call?", choices: ["Multipoint", "Synchronous", "Point-to-Point", "Asynchronous"], a: 2 },
+  { q: "Which type of electronic conferencing involves multiple members and usually uses a central network hub?", choices: ["Point-to-Point", "Asynchronous", "Push Technology", "Multipoint"], a: 3 },
+  { q: "What system assists in creation, organization, and facilitation of meetings and can be either synchronous or asynchronous?", choices: ["Office Information System", "Electronic Meeting System", "End-User Computing", "Electronic Discussion"], a: 1 },
+  { q: "Electronic conferencing, scheduling systems, file sharing, and cross-portability features are tools of which system?", choices: ["Electronic Discussion", "Electronic Meeting System", "End-User Development", "Office Automation"], a: 1 },
+
+  // Electronic Discussion
+  { q: "What information system facilitates textual or non-textual discussion between members using an electronic medium?", choices: ["Electronic Publishing", "Electronic Discussion", "Electronic Conference", "Office Information System"], a: 1 },
+  { q: "Which type of electronic discussion technology requires a user to perform an action to access the discussion?", choices: ["Push Technologies", "Pull Technologies", "Synchronous", "Asynchronous"], a: 1 },
+  { q: "In which type of electronic discussion does the information come to the user automatically without any user action?", choices: ["Pull Technologies", "Push Technologies", "Asynchronous", "Multipoint"], a: 1 },
+  { q: "An online forum login feature is an example of which discussion technology type?", choices: ["Push Technologies", "Pull Technologies", "Synchronous", "Point-to-Point"], a: 1 },
+
+  // Electronic Publishing
+  { q: "What aspect of an electronic communication system facilitates the digital publication of textual and readable materials?", choices: ["Electronic Discussion", "Electronic Publishing", "Office Automation", "End-User Computing"], a: 1 },
+  { q: "CDs, DVDs, Flash Drives, and External Hard Drives are examples of which type of electronic publishing?", choices: ["New Media", "Online Collaboration and Sharing", "Portable Electronic Media", "Electronic Versions of Traditional Media"], a: 2 },
+  { q: "PDF documents, E-Books, Online Magazines, and Online Newspapers are examples of which electronic publishing type?", choices: ["New Media", "Portable Electronic Media", "Online Collaboration and Sharing", "Electronic Versions of Traditional Media"], a: 3 },
+  { q: "Blogs, Vlogs, and Digital Publication Platforms are examples of which electronic publishing type?", choices: ["Portable Electronic Media", "Online Collaboration and Sharing", "Electronic Versions of Traditional Media", "New Media"], a: 3 },
+  { q: "Podcasts, Collaborative Software, and Cloud Sharing fall under which electronic publishing category?", choices: ["New Media", "Electronic Versions of Traditional Media", "Online Collaboration and Sharing", "Portable Electronic Media"], a: 2 },
+  { q: "Which benefit of electronic publishing involves eliminating the need for paper?", choices: ["Digital Distribution", "Portability and Storage", "Paperless, Environment-Friendly Medium", "Potential Vector for Business Models"], a: 2 },
+  { q: "Which benefit of electronic publishing refers to easily storing content in a flash drive and delivering it quickly?", choices: ["Paperless, Environment-Friendly Medium", "Portability and Storage", "Digital Distribution", "Security Issues"], a: 1 },
+  { q: "Which benefit of electronic publishing refers to quickly reaching recipients through the Internet?", choices: ["Portability and Storage", "Digital Distribution", "Paperless Medium", "Online Collaboration"], a: 1 },
+  { q: "Subscriptions, pay-per-view, and online advertising are examples of which electronic publishing benefit?", choices: ["Digital Distribution", "Portability and Storage", "Potential Vector for Business Models", "New Media"], a: 2 },
+  { q: "Data piracy and encryption issues relate to which risk of electronic publishing?", choices: ["Plagiarism", "Public Opinion on Business Models", "Security Issues", "Lack of Documentation"], a: 2 },
+  { q: "Digital watermarks are used to mitigate which risk of electronic publishing?", choices: ["Security Issues", "Plagiarism", "Public Opinion on Business Models", "Data Piracy"], a: 1 },
+  { q: "Negative reactions to online subscriptions represent which risk of electronic publishing?", choices: ["Security Issues", "Plagiarism", "Public Opinion on Business Models", "Digital Distribution"], a: 2 },
+
+  // EUC
+  { q: "What term refers to computer systems and platforms meant to allow non-programmers to create working applications?", choices: ["Office Automation", "End-User Computing (EUC)", "Electronic Discussion", "Office Information System"], a: 1 },
+  { q: "What is the abbreviation for End-User Computing?", choices: ["EUD", "OIS", "EUC", "DSS"], a: 2 },
+  { q: "Which type of EUC involves customizable desktop and laptop hardware?", choices: ["Smartphones and Wearables", "Desktop and Laptop Computers", "Virtual Desktops", "Mobile Applications"], a: 1 },
+  { q: "Microsoft Office and Adobe Master Collection are examples of which EUC type?", choices: ["Mobile, Web, and Cloud Applications", "Desktop Operating Systems and Applications", "Virtual Desktops and Application", "Smartphones and Wearables"], a: 1 },
+  { q: "Smartphones, tablets, and smartwatches fall under which EUC type?", choices: ["Desktop and Laptop Computers", "Smartphones and Wearables", "Virtual Desktops", "Mobile, Web and Cloud Applications"], a: 1 },
+  { q: "E-mail, instant messaging, and cloud storage are examples of which EUC type?", choices: ["Desktop Operating Systems", "Smartphones and Wearables", "Mobile, Web, and Cloud Applications", "Virtual Desktops"], a: 2 },
+  { q: "Microsoft Office 365 is an example of which EUC type that popularized the BYOD trend?", choices: ["Mobile, Web, and Cloud Applications", "Desktop Operating Systems", "Virtual Desktops and Application", "Smartphones and Wearables"], a: 2 },
+  { q: "What does BYOD stand for?", choices: ["Build Your Own Desktop", "Bring Your Own Device", "Buy Your Own Domain", "Build Your Own Database"], a: 1 },
+  { q: "What practice in EUC allows end-users to develop their own information systems with IT support?", choices: ["End-User Computing", "Office Automation", "End-User Development (EUD)", "Electronic Publishing"], a: 2 },
+  { q: "What is the abbreviation for End-User Development?", choices: ["EUC", "OIS", "DSS", "EUD"], a: 3 },
+  { q: "Poorly trained end-users producing questionable quality software relates to which EUC risk?", choices: ["Lack of documentation", "Faulty Model", "Errors in analysis", "Security/Piracy Issue"], a: 2 },
+  { q: "Inadequate or non-existent documentation making maintenance expensive is which EUC risk?", choices: ["Errors in analysis", "Faulty Model", "Lack of documentation", "Security/Piracy Issue"], a: 2 },
+  { q: "Research indicating that 38% of DSS spreadsheets may contain errors relates to which EUC risk?", choices: ["Lack of documentation", "Errors in analysis", "Possible Security/Piracy Issue", "Faulty Model"], a: 3 },
+  { q: "DSS stands for what in the context of End-User Computing?", choices: ["Desktop Support Software", "Decision Support Systems", "Data Storage System", "Digital Sharing Service"], a: 1 },
+  { q: "Organization data being stolen due to lack of security measures is which EUC risk?", choices: ["Lack of documentation", "Faulty Model", "Errors in analysis", "Possible Security/Piracy Issue"], a: 3 },
+  { q: "Which EUC benefit refers to reducing or eliminating unnecessary steps in business processes?", choices: ["Enhanced productivity", "Empowerment of end-users", "Reduction/Elimination of unnecessary steps", "Overcoming shortage of DP professionals"], a: 2 },
+  { q: "Which EUC benefit involves equipping end-users with software training tools to lessen DP professional involvement?", choices: ["Enhanced productivity", "Empowerment of end-users", "Reduction of unnecessary steps", "Overcoming the shortage of DP professionals"], a: 3 },
+
+  // EUC Tools
+  { q: "What are the two classes of EUC tools?", choices: ["Software Packages and Process Software", "Application Packages and Fourth-Generation Programming Languages", "Word Processing and Spreadsheets", "Desktop Publishing and Graphics Design"], a: 1 },
+  { q: "Pre-written commercially marketed software that supports standard business functions are called what?", choices: ["Fourth-Generation Programming Languages", "Application Packages", "Process Software", "Software Packages"], a: 1 },
+  { q: "The Microsoft Office Suite is a typical example of which EUC tool class?", choices: ["Fourth-Generation Programming Languages", "Application Packages", "Virtual Desktops", "Process Software"], a: 1 },
+  { q: "SQL query language is an example of which class of EUC tools?", choices: ["Application Packages", "Process Software", "Fourth-Generation Programming Languages", "Communication Tools"], a: 2 },
+  { q: "Teleconferencing and virtual workspaces fall under which End-User Systems Tool category?", choices: ["Communication Tools", "Office Automation Tools", "Group Systems / Computer Supported Collaborative Work", "Data Handling Tools"], a: 2 },
+  { q: "Expert systems, data mining, and information retrieval fall under which EUC systems tool category?", choices: ["Data Handling Tools", "Office Automation Tools", "Knowledge Management", "Communication Tools"], a: 2 },
+  { q: "E-mail, VoIP, fax, and pagers fall under which End-User Systems Tool category?", choices: ["Office Automation Tools", "Knowledge Management", "Communication Tools", "Group Systems"], a: 2 },
+  { q: "Spreadsheets, statistical packages, and decision support systems fall under which End-User Systems Tool category?", choices: ["Communication Tools", "Data Handling Tools", "Office Automation Tools", "Knowledge Management"], a: 1 },
+  { q: "Word processing, desktop publishing, and presentation software fall under which End-User Systems Tool category?", choices: ["Data Handling Tools", "Text and Multimedia Handling Tools", "Communication Tools", "Office Automation Tools"], a: 1 },
+  { q: "Graphic software and computer-aided design fall under which End-User Systems Tool category?", choices: ["Knowledge Management", "Data Handling Tools", "Graphic Design", "Office Automation Tools"], a: 2 },
+
+  // Office Automation & OIS
+  { q: "What refers to the complete integration of basic office requirements including word processing, electronic data filing, diary management, and communications?", choices: ["End-User Computing", "Office Automation", "Electronic Publishing", "Electronic Meeting System"], a: 1 },
+  { q: "What type of information system uses software, hardware, and networking to improve workflow and communication of office workers?", choices: ["Electronic Meeting System", "Office Information System (OIS)", "End-User Computing", "Electronic Discussion"], a: 1 },
+  { q: "What is the abbreviation for Office Information System?", choices: ["EUC", "EUD", "OIS", "DSS"], a: 2 },
+  { q: "Operations like Cut, Copy, Delete, Move, Search, and Print activated by function keys are called what in Office Automation?", choices: ["Software Packages", "Process Software", "Functions", "Word Processing"], a: 2 },
+  { q: "Microsoft Office Suite and Google Docs are examples of which Office Automation application type?", choices: ["Process Software", "Word Processing", "Functions", "Software Packages"], a: 3 },
+  { q: "AutoCAD by Autodesk is an example of which Office Automation software type?", choices: ["Software Packages", "Word Processing", "Functions", "Process Software"], a: 3 },
+  { q: "Software that permits users to create, format, modify, and print documents electronically is called what?", choices: ["Electronic Spreadsheet", "Desktop Publishing", "Word Processing", "Database Management"], a: 2 },
+  { q: "Microsoft Word and Notepad are examples of which Office Automation application?", choices: ["Electronic Spreadsheet", "Database Management", "Word Processing", "Desktop Publishing"], a: 2 },
+  { q: "Software designed for maintaining, manipulating, and calculating numerical data in a matrix of rows and columns is called what?", choices: ["Database Management", "Desktop Publishing", "Electronic Spreadsheet", "Word Processing"], a: 2 },
+  { q: "Microsoft Excel is a popular example of which Office Automation application?", choices: ["Word Processing", "Desktop Publishing", "Database Management", "Electronic Spreadsheet"], a: 3 },
+  { q: "Software that provides organized electronic storage in general categories or files, allowing search and display of specific information, is called what?", choices: ["Electronic Spreadsheet", "Desktop Publishing", "Database Management", "Word Processing"], a: 2 },
+  { q: "Microsoft Access and MySQL are examples of which Office Automation software?", choices: ["Word Processing", "Electronic Spreadsheet", "Desktop Publishing", "Database Management"], a: 3 },
+  { q: "Software used to lay out text, graphics, and pictures on a page is called what?", choices: ["Word Processing", "Graphics Design", "Electronic Spreadsheet", "Desktop Publishing"], a: 3 },
+  { q: "Software that allows creation of charts and graphs based on data, and enables switching between chart types, is called what?", choices: ["Desktop Publishing", "Project Management", "Calendar", "Graphics Design"], a: 3 },
+  { q: "Microsoft PowerPoint and Adobe Photoshop are examples of which Office Automation software?", choices: ["Desktop Publishing", "Electronic Spreadsheet", "Graphics Design", "Process Software"], a: 2 },
+  { q: "Software that identifies tasks, resources, time requirements, and tracks work progress against plans is called what?", choices: ["Calendar", "Database Management", "Graphics Design", "Project Management"], a: 3 },
+  { q: "Software that schedules events, manages to-do lists, and records time spent on projects is called what?", choices: ["Project Management", "Electronic Communication", "Calendar", "Word Processing"], a: 2 },
+  { q: "Microsoft Outlook is an example of which Office Automation software type?", choices: ["Calendar", "Project Management", "Word Processing", "Electronic Communication"], a: 3 },
+];
+
+const LABELS = ['A','B','C','D'];
+let questions = [];
+let current = 0;
+let score = 0;
+let answered = 0;
+let history = [];
+let selected = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function prepareQuestions() {
+  return shuffle(ALL_QUESTIONS).map(q => {
+    const indexed = q.choices.map((c, i) => ({ text: c, correct: i === q.a }));
+    const shuffled = shuffle(indexed);
+    return { q: q.q, choices: shuffled.map(c => c.text), a: shuffled.findIndex(c => c.correct) };
+  });
+}
+
+function shuffleAndRestart() {
+  questions = prepareQuestions();
+  current = 0; score = 0; answered = 0; history = []; selected = false;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('review').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const total = questions.length;
+  document.getElementById('q-counter').textContent = `Question ${current+1} of ${total}`;
+  document.getElementById('score-display').textContent = `Score: ${score}/${answered}`;
+  document.getElementById('progress-fill').style.width = `${((current+1)/total)*100}%`;
+  document.getElementById('q-badge').textContent = `Question ${current+1}`;
+  document.getElementById('question-text').textContent = q.q;
+
+  // Rebuild question card animation
+  const card = document.getElementById('question-card');
+  card.style.animation = 'none'; card.offsetHeight;
+  card.style.animation = '';
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="label">${LABELS[i]}</span><span>${c}</span>`;
+    btn.onclick = () => handleAnswer(i);
+    choicesEl.appendChild(btn);
+  });
+
+  document.getElementById('next-wrap').style.display = 'none';
+  selected = false;
+}
+
+function handleAnswer(idx) {
+  if (selected) return;
+  selected = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  const isCorrect = idx === q.a;
+  answered++;
+  if (isCorrect) score++;
+  document.getElementById('score-display').textContent = `Score: ${score}/${answered}`;
+
+  history.push({ question: q.q, selected: q.choices[idx], correct: q.choices[q.a], isCorrect });
+
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.a) {
+      btn.classList.add('correct');
+      btn.querySelector('.label').textContent = '✓';
+    } else if (i === idx && !isCorrect) {
+      btn.classList.add('wrong');
+      btn.querySelector('.label').textContent = '✗';
+    } else {
+      btn.classList.add('dimmed');
+    }
+    const icon = document.createElement('span');
+    icon.className = 'icon';
+    if (i === q.a) icon.textContent = '✓';
+    else if (i === idx && !isCorrect) icon.textContent = '✗';
+    if (icon.textContent) btn.appendChild(icon);
+  });
+
+  const nextWrap = document.getElementById('next-wrap');
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.textContent = (current + 1 >= questions.length) ? 'See Results →' : 'Next Question →';
+  nextWrap.style.display = 'block';
+}
+
+function nextQuestion() {
+  if (current + 1 >= questions.length) {
+    showResults();
+  } else {
+    current++;
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('review').style.display = 'none';
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+  const grade = pct >= 90 ? 'Excellent!' : pct >= 75 ? 'Great Job!' : pct >= 60 ? 'Good Effort!' : 'Keep Studying!';
+  const trophy = pct >= 90 ? '🏆' : pct >= 75 ? '🎓' : pct >= 60 ? '📚' : '💡';
+  document.getElementById('trophy').textContent = trophy;
+  document.getElementById('grade-title').textContent = grade;
+  document.getElementById('score-big').textContent = `${score}/${total}`;
+  document.getElementById('score-pct').textContent = `${pct}% Score`;
+  document.getElementById('results').style.display = 'block';
+}
+
+function showReview() {
+  document.getElementById('results').style.display = 'none';
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  history.forEach((h, i) => {
+    const div = document.createElement('div');
+    div.className = `review-item ${h.isCorrect ? 'correct-item' : 'wrong-item'}`;
+    div.innerHTML = `
+      <p class="review-q">${i+1}. ${h.question}</p>
+      <p class="review-ans ${h.isCorrect ? 'right' : 'yours'}">Your answer: ${h.selected} ${h.isCorrect ? '✓' : '✗'}</p>
+      ${!h.isCorrect ? `<p class="review-ans right">Correct answer: ${h.correct} ✓</p>` : ''}
+    `;
+    list.appendChild(div);
+  });
+  document.getElementById('review').style.display = 'block';
+}
+
+// Init
+shuffleAndRestart();
+</script>
+</body>
+</html>
