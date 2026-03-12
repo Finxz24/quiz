@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT1918 Android Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a23;
+    --surface2: #1e2330;
+    --accent: #00e5ff;
+    --accent2: #7c4dff;
+    --correct: #00e676;
+    --wrong: #ff1744;
+    --text: #e8eaf6;
+    --muted: #7986cb;
+    --border: #2a3050;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .header {
+    position: relative;
+    z-index: 1;
+    padding: 40px 24px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,229,255,0.05) 0%, transparent 100%);
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .controls {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 24px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 700;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+  .btn-primary:hover { background: #4df0ff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,229,255,0.3); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+  }
+  .btn-secondary:hover { background: rgba(124,77,255,0.1); transform: translateY(-2px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  .progress-bar {
+    position: relative;
+    z-index: 1;
+    height: 3px;
+    background: var(--border);
+    margin: 0 24px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .stats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .stat-value { color: var(--accent); font-weight: 700; font-size: 18px; display: block; }
+
+  .quiz-container {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 16px 24px 80px;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    transition: opacity 0.3s, transform 0.3s;
+    animation: slideIn 0.4s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .q-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(124,77,255,0.1);
+    border: 1px solid rgba(124,77,255,0.3);
+    padding: 3px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .q-category {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .question-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .keyword {
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    background: rgba(0,229,255,0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,229,255,0.2);
+  }
+
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+    text-align: left;
+    width: 100%;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .option:hover:not(:disabled) {
+    border-color: var(--accent2);
+    background: rgba(124,77,255,0.08);
+    transform: translateX(4px);
+  }
+
+  .option-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent2);
+    min-width: 20px;
+    margin-top: 1px;
+  }
+
+  .option.correct {
+    border-color: var(--correct);
+    background: rgba(0,230,118,0.08);
+  }
+  .option.correct .option-label { color: var(--correct); }
+
+  .option.wrong {
+    border-color: var(--wrong);
+    background: rgba(255,23,68,0.08);
+  }
+  .option.wrong .option-label { color: var(--wrong); }
+
+  .option.disabled { cursor: not-allowed; opacity: 0.6; }
+  .option.disabled:not(.correct):not(.wrong) { transform: none; }
+
+  .feedback {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Space Mono', monospace;
+    line-height: 1.5;
+    display: none;
+  }
+
+  .feedback.show { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+
+  .feedback.correct-fb {
+    background: rgba(0,230,118,0.08);
+    border-left: 3px solid var(--correct);
+    color: #a5d6a7;
+  }
+
+  .feedback.wrong-fb {
+    background: rgba(255,23,68,0.08);
+    border-left: 3px solid var(--wrong);
+    color: #ef9a9a;
+  }
+
+  /* Result screen */
+  .result-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,15,20,0.97);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 32px;
+  }
+
+  .result-screen.show { display: flex; animation: fadeIn 0.5s ease; }
+
+  .result-score {
+    font-size: 96px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .result-label {
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+
+  .result-grade {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  /* Floating submit all */
+  .submit-all-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: rgba(22,26,35,0.95);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    z-index: 50;
+  }
+
+  .score-preview {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .score-preview span { color: var(--accent); font-weight: 700; }
+
+  @media (max-width: 600px) {
+    .question-card { padding: 20px 18px; }
+    .stats { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="tag">IT1918 · Mobile Systems</div>
+  <h1>Android Development Quiz</h1>
+  <p class="subtitle">Activities &amp; Intents · User Interface · UI Components</p>
+</div>
+
+<div class="controls">
+  <button class="btn btn-primary" onclick="shuffleQuestions()">⇄ Shuffle Questions</button>
+  <button class="btn btn-secondary" onclick="submitAll()">✓ Submit All</button>
+  <button class="btn btn-ghost" onclick="resetQuiz()">↺ Reset</button>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<div class="stats">
+  <div><span class="stat-value" id="answeredCount">0</span>answered</div>
+  <div><span class="stat-value" id="correctCount">0</span>correct</div>
+  <div><span class="stat-value" id="totalCount">50</span>total</div>
+</div>
+
+<div class="quiz-container" id="quizContainer"></div>
+
+<div class="submit-all-bar">
+  <div class="score-preview">Score: <span id="liveScore">0 / 50</span></div>
+  <button class="btn btn-primary" onclick="submitAll()">Submit &amp; See Results</button>
+  <button class="btn btn-ghost" onclick="shuffleQuestions()">⇄ Shuffle</button>
+</div>
+
+<div class="result-screen" id="resultScreen">
+  <div class="tag">Quiz Complete</div>
+  <div class="result-score" id="finalScore">0/50</div>
+  <div class="result-label" id="finalPct">0%</div>
+  <div class="result-grade" id="finalGrade">—</div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:32px;font-family:'Space Mono',monospace;" id="finalMsg"></p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <button class="btn btn-primary" onclick="resetQuiz()">Try Again</button>
+    <button class="btn btn-secondary" onclick="shuffleQuestions()">Shuffle &amp; Retry</button>
+    <button class="btn btn-ghost" onclick="closeResult()">Review Answers</button>
+  </div>
+</div>
+
+<script>
+const allQuestions = [
+  // === ACTIVITIES ===
+  {cat:"Activities", q:"What does an <span class='keyword'>activity</span> represent in an Android app?", opts:["A database table","A single screen where the user can perform one focused task","A background service","A layout file"], ans:1, exp:"An activity represents a single screen in the app."},
+  {cat:"Activities", q:"Which file must every new <span class='keyword'>Activity</span> be declared in?", opts:["MainActivity.java","activity_main.xml","AndroidManifest.xml","build.gradle"], ans:2, exp:"Every Activity must be declared in AndroidManifest.xml."},
+  {cat:"Activity Lifecycle", q:"Which callback method is invoked when an app is <span class='keyword'>launched for the first time</span>?", opts:["onStart()","onResume()","onCreate()","onRestart()"], ans:2, exp:"onCreate() is called only once, when the app first launches."},
+  {cat:"Activity Lifecycle", q:"What callback is invoked <span class='keyword'>before the activity becomes visible</span> to the user?", opts:["onCreate()","onStart()","onPause()","onStop()"], ans:1, exp:"onStart() is called just before the activity becomes visible."},
+  {cat:"Activity Lifecycle", q:"Which method is invoked <span class='keyword'>before the activity starts interacting</span> with the user?", opts:["onStart()","onCreate()","onResume()","onRestart()"], ans:2, exp:"onResume() is called right before user interaction begins."},
+  {cat:"Activity Lifecycle", q:"<span class='keyword'>onPause()</span> is invoked when the system is about to start resuming which?", opts:["A service","Another activity","A fragment","A broadcast receiver"], ans:1, exp:"onPause() fires when another activity is about to resume."},
+  {cat:"Activity Lifecycle", q:"Which callback is called when the activity is <span class='keyword'>no longer visible</span> to the user?", opts:["onPause()","onStop()","onDestroy()","onHide()"], ans:1, exp:"onStop() is called when the activity is no longer visible."},
+  {cat:"Activity Lifecycle", q:"<span class='keyword'>onDestroy()</span> is invoked when a user completely dismisses the activity or when which method is called?", opts:["onStop()","finish()","onPause()","close()"], ans:1, exp:"onDestroy() fires when the user dismisses the activity or finish() is called."},
+  {cat:"Activity Lifecycle", q:"What is the <span class='keyword'>activity life cycle</span>?", opts:["The time it takes to build an app","The set of states an activity can be in during its entire lifetime","A list of UI components","The navigation flow of the app"], ans:1, exp:"The activity life cycle is the set of states an activity can be in during its entire lifetime."},
+  {cat:"Activity Lifecycle", q:"Which callback is always followed by <span class='keyword'>onStart()</span>?", opts:["onPause()","onRestart()","onResume()","onCreate()"], ans:1, exp:"onRestart() is always followed by onStart()."},
+  {cat:"Activities", q:"Where is a previous activity stored when a <span class='keyword'>new activity starts</span>?", opts:["Heap memory","The back stack","SharedPreferences","A database"], ans:1, exp:"The system preserves previous activities in the back stack."},
+  {cat:"Activities", q:"Which activity is presented to the user when the app is launched?", opts:["SecondActivity","MainActivity","LauncherActivity","RootActivity"], ans:1, exp:"The main activity (MainActivity.java) is presented at launch."},
+
+  // === INTENTS ===
+  {cat:"Intents", q:"What is an <span class='keyword'>Intent</span> in Android?", opts:["A UI layout component","An asynchronous message used to request an action from another component","A lifecycle method","A data storage mechanism"], ans:1, exp:"An Intent is an asynchronous message used to request an action from another activity or app component."},
+  {cat:"Intents", q:"An activity is started or activated with a(n) <span class='keyword'>intent</span>. What else can intents do?", opts:["Only start activities","Pass data between activities and start activities","Only display notifications","Manage the back stack"], ans:1, exp:"Intents start activities and pass data between them."},
+  {cat:"Intents", q:"Which part of an intent specifies the <span class='keyword'>activity that will receive the intent</span>?", opts:["Intent extras","Intent flags","Target activity","Intent data"], ans:2, exp:"The target activity is the activity that will receive the intent."},
+  {cat:"Intents", q:"<span class='keyword'>Intent extras</span> carry information that the receiving activity requires. Are they required?", opts:["Yes, always required","No, they are optional","Only for explicit intents","Only for implicit intents"], ans:1, exp:"Intent extras are optional parts of an intent."},
+  {cat:"Intents", q:"<span class='keyword'>Intent flags</span> may instruct the Android system how to:", opts:["Display a notification","Launch or treat an activity","Store data","Create a layout"], ans:1, exp:"Intent flags instruct the system how to launch or treat an activity."},
+  {cat:"Intents", q:"In an <span class='keyword'>explicit intent</span>, what is already identified?", opts:["The action to perform","The data type","The target activity's class name","The intent flag"], ans:2, exp:"In an explicit intent, the target class name is already known."},
+  {cat:"Intents", q:"An <span class='keyword'>implicit intent</span> does NOT specify a target class but includes:", opts:["A layout file reference","An action, category, and data type","Only an activity name","A back stack reference"], ans:1, exp:"Implicit intents include an action, category, and data type."},
+  {cat:"Intents", q:"What does the <span class='keyword'>parentActivityName</span> attribute enable in the action bar?", opts:["A settings menu","A left-facing back arrow for navigation","A search bar","A notification badge"], ans:1, exp:"parentActivityName enables a left-facing arrow for navigating to the parent activity."},
+  {cat:"Intents", q:"Which attribute is added to a Button to <span class='keyword'>start another activity</span> on click?", opts:["android:id","android:onClick","android:text","android:layout_width"], ans:1, exp:"android:onClick specifies the method called when the button is tapped."},
+  {cat:"Intents", q:"In the code `new Intent(this, Main2Activity.class)`, what does <span class='keyword'>this</span> represent?", opts:["The destination activity","The current activity (context)","The intent data","The intent flag"], ans:1, exp:"The 'this' keyword represents the current activity as context."},
+
+  // === UI FUNDAMENTALS ===
+  {cat:"UI Fundamentals", q:"The <span class='keyword'>layout</span> defines the structure for an app's what?", opts:["Database","User Interface","Manifest","Service"], ans:1, exp:"The layout defines the structure for an app's user interface."},
+  {cat:"UI Fundamentals", q:"A <span class='keyword'>View</span> (widget) draws something the user can:", opts:["Only see","See and interact with","Only touch","Only hear"], ans:1, exp:"A View (widget) draws something the user can see and interact with."},
+  {cat:"UI Fundamentals", q:"A <span class='keyword'>ViewGroup</span> is an invisible container that defines:", opts:["The app's color theme","The layout structure for View and other ViewGroup objects","The activity lifecycle","The app's permissions"], ans:1, exp:"A ViewGroup is an invisible container that defines the layout structure."},
+  {cat:"UI Fundamentals", q:"Which method is typically used to capture a view instance from the layout?", opts:["setContentView()","getView()","findViewByTag()","findViewById()"], ans:3, exp:"findViewById() is used to capture a view instance, typically in onCreate()."},
+  {cat:"UI Fundamentals", q:"What does <span class='keyword'>wrap_content</span> do to a view?", opts:["Makes the view fill the screen","Sets the view size to fit its content","Makes the view invisible","Matches the parent's size"], ans:1, exp:"wrap_content sets the view to the dimensions required by its content."},
+  {cat:"UI Fundamentals", q:"What does <span class='keyword'>match_parent</span> do to a view?", opts:["Wraps the view tightly around content","Sets the view as big as its parent view group allows","Makes the view a square","Centers the view"], ans:1, exp:"match_parent sets the view to be as big as its parent view group will allow."},
+  {cat:"UI Fundamentals", q:"<span class='keyword'>Context</span> is an interface to global information about what?", opts:["The activity lifecycle","An application environment","The layout structure","The manifest file"], ans:1, exp:"Context is an interface to global information about an application environment."},
+  {cat:"UI Fundamentals", q:"Which method is called to get the context from within an activity?", opts:["getContext()","getActivity()","getApplicationContext()","getSystemContext()"], ans:2, exp:"getApplicationContext() is used to get the context."},
+  {cat:"Layout Types", q:"Which layout creates large and complex layouts with a <span class='keyword'>flat view hierarchy</span>?", opts:["Linear Layout","Relative Layout","Constraint Layout","Frame Layout"], ans:2, exp:"Constraint Layout creates complex layouts with a flat view hierarchy (no nested view groups)."},
+  {cat:"Layout Types", q:"<span class='keyword'>Linear Layout</span> organizes child views into:", opts:["A grid","A single horizontal or vertical row","A relative position","A web view"], ans:1, exp:"Linear Layout organizes its child views into a single horizontal or vertical row."},
+  {cat:"Layout Types", q:"<span class='keyword'>Relative Layout</span> positions child objects relative to:", opts:["The screen center only","Each other or to the parent","A fixed grid","A constraint anchor"], ans:1, exp:"Relative Layout specifies location relative to each other or to the parent."},
+  {cat:"Layout Types", q:"Which layout is used for <span class='keyword'>displaying web pages</span>?", opts:["Frame Layout","Table Layout","Web View","Grid Layout"], ans:2, exp:"Web View is used for displaying web pages."},
+  {cat:"Layout Types", q:"<span class='keyword'>Frame Layout</span> is designed to display:", opts:["Multiple items in a grid","A scrollable list","A single item in a blocked area","A web page"], ans:2, exp:"Frame Layout is designed to block out an area on the screen to display a single item."},
+  {cat:"Layout Types", q:"<span class='keyword'>Table Layout</span> arranges its child objects into:", opts:["A flat hierarchy","Rows and columns","A vertical list","A scrollable grid"], ans:1, exp:"Table Layout arranges its child objects into rows and columns."},
+  {cat:"Layout Types", q:"<span class='keyword'>Grid Layout</span> arranges child objects in a rectangular grid that can be:", opts:["Animated","Scrolled","Hidden","Rotated"], ans:1, exp:"Grid Layout arranges objects in a rectangular grid that can be scrolled."},
+
+  // === UI COMPONENTS ===
+  {cat:"UI Components", q:"A <span class='keyword'>notification</span> is a message that Android displays:", opts:["Inside the app's main screen","Outside the app's UI","Inside a dialog box","In the settings menu"], ans:1, exp:"A notification is displayed outside the app's UI."},
+  {cat:"UI Components", q:"The <span class='keyword'>notification drawer</span> allows users to:", opts:["Edit the app's code","View more details and take actions with the notification","Change app permissions","Access the back stack"], ans:1, exp:"The notification drawer allows viewing details and taking actions on notifications."},
+  {cat:"UI Components", q:"Which class is used to build a notification in Android?", opts:["NotificationManager","Toast.Builder","NotificationCompat.Builder","AlertDialog.Builder"], ans:2, exp:"NotificationCompat.Builder is used to build a notification."},
+  {cat:"UI Components", q:"The <span class='keyword'>app bar/action bar</span> provides a dedicated space for giving the app an identity and indicating:", opts:["The user's location in the app","The device battery level","The network status","The app version"], ans:0, exp:"The app bar gives the app an identity and indicates the user's location."},
+  {cat:"UI Components", q:"Which method is used to set up the toolbar as the <span class='keyword'>action bar</span>?", opts:["setActionBar()","setSupportActionBar()","initToolbar()","attachToolbar()"], ans:1, exp:"setSupportActionBar(myToolbar) is used to set up the toolbar as the action bar."},
+  {cat:"UI Components", q:"A <span class='keyword'>toast</span> provides simple feedback about an operation in:", opts:["A full-screen dialog","A small popup","The notification drawer","The action bar"], ans:1, exp:"A Toast provides simple feedback in a small popup."},
+  {cat:"UI Components", q:"Which method creates and shows a Toast message?", opts:["Toast.show()","Toast.display()","Toast.makeText().show()","Toast.create()"], ans:2, exp:"Toast.makeText(context, text, duration).show() creates and shows a toast."},
+  {cat:"UI Components", q:"A <span class='keyword'>Snackbar</span> provides:", opts:["A long-form notification","A quick pop-up message to the user","A full-screen dialog","An alert sound"], ans:1, exp:"A Snackbar provides a quick pop-up message to the user."},
+  {cat:"UI Components", q:"A <span class='keyword'>dialog</span> is a small window that prompts the user to make a decision. It is NOT designed to:", opts:["Show buttons","Fill the screen","Contain a message","Have a title"], ans:1, exp:"A dialog is not designed to fill the screen."},
+  {cat:"UI Components", q:"Which builder class is used to create an <span class='keyword'>AlertDialog</span>?", opts:["DialogCompat.Builder","AlertDialog.Builder","Dialog.Factory","NotificationCompat.Builder"], ans:1, exp:"AlertDialog.Builder is used to create an AlertDialog."},
+  {cat:"UI Components", q:"A <span class='keyword'>menu</span> in Android is used to present user actions and other options in the app's:", opts:["Manifest","Activities","Layouts only","Services"], ans:1, exp:"A menu presents user actions in the app's activities."},
+  {cat:"UI Components", q:"In a menu XML, which attribute sets the <span class='keyword'>icon</span> for a menu item?", opts:["android:title","android:id","android:icon","android:showAsAction"], ans:2, exp:"android:icon sets the icon for a menu item."},
+  {cat:"UI Components", q:"The <span class='keyword'>showAsAction</span> attribute value 'ifRoom' means:", opts:["Always show in the action bar","Show only if there is room in the action bar","Never show","Show only on tablets"], ans:1, exp:"'ifRoom' shows the action only if there is room in the action bar."},
+  {cat:"UI Components", q:"What does the <span class='keyword'>setSmallIcon()</span> method do in a notification builder?", opts:["Sets the app's main icon","Sets the small icon displayed with the notification","Sets the notification sound","Sets the notification text"], ans:1, exp:"setSmallIcon() sets the small icon shown with the notification."},
+  {cat:"UI Components", q:"Which constant sets a Toast to display for a <span class='keyword'>short duration</span>?", opts:["Toast.LENGTH_LONG","Toast.DURATION_SHORT","Toast.LENGTH_SHORT","Toast.SHORT"], ans:2, exp:"Toast.LENGTH_SHORT is used for a short display duration."},
+];
+
+let questions = [...allQuestions];
+let answered = {};
+let score = 0;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function shuffleOptions(q) {
+  const paired = q.opts.map((o, i) => ({text: o, correct: i === q.ans}));
+  shuffle(paired);
+  return {
+    opts: paired.map(p => p.text),
+    ans: paired.findIndex(p => p.correct)
+  };
+}
+
+function renderQuiz() {
+  answered = {};
+  score = 0;
+  updateStats();
+
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  questions.forEach((q, idx) => {
+    const shuffled = shuffleOptions(q);
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${idx}`;
+
+    const labels = ['A', 'B', 'C', 'D'];
+    const opts = shuffled.opts.map((opt, i) => `
+      <button class="option" onclick="selectAnswer(${idx}, ${i}, ${shuffled.ans})" id="opt-${idx}-${i}">
+        <span class="option-label">${labels[i]}</span>
+        <span>${opt}</span>
+      </button>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="question-header">
+        <span class="q-number">Q${idx + 1}</span>
+        <span class="q-category">${q.cat}</span>
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options" id="opts-${idx}">${opts}</div>
+      <div class="feedback" id="fb-${idx}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selectAnswer(qIdx, selected, correct) {
+  if (answered[qIdx] !== undefined) return;
+
+  answered[qIdx] = selected;
+  const allOpts = document.querySelectorAll(`#opts-${qIdx} .option`);
+  allOpts.forEach((o, i) => {
+    o.disabled = true;
+    o.classList.add('disabled');
+    if (i === correct) o.classList.add('correct');
+    if (i === selected && selected !== correct) o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById(`fb-${qIdx}`);
+  if (selected === correct) {
+    score++;
+    fb.className = 'feedback show correct-fb';
+    fb.textContent = '✓ Correct! ' + questions[qIdx].exp;
+  } else {
+    fb.className = 'feedback show wrong-fb';
+    fb.textContent = '✗ Incorrect. ' + questions[qIdx].exp;
+  }
+
+  updateStats();
+}
+
+function updateStats() {
+  const a = Object.keys(answered).length;
+  document.getElementById('answeredCount').textContent = a;
+  document.getElementById('correctCount').textContent = score;
+  document.getElementById('liveScore').textContent = `${score} / ${questions.length}`;
+
+  const pct = questions.length > 0 ? (a / questions.length) * 100 : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function submitAll() {
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+  let grade, msg;
+
+  if (pct >= 95) { grade = '🏆 Excellent!'; msg = 'Outstanding performance!'; }
+  else if (pct >= 85) { grade = '⭐ Very Good'; msg = 'Great job, keep it up!'; }
+  else if (pct >= 75) { grade = '✅ Passing'; msg = 'You passed! Review the missed items.'; }
+  else if (pct >= 60) { grade = '⚠️ Needs Work'; msg = 'Study the highlighted concepts more.'; }
+  else { grade = '❌ Try Again'; msg = 'Review the handouts and try again.'; }
+
+  document.getElementById('finalScore').textContent = `${score}/${total}`;
+  document.getElementById('finalPct').textContent = `${pct}% Score`;
+  document.getElementById('finalGrade').textContent = grade;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('resultScreen').classList.add('show');
+}
+
+function closeResult() {
+  document.getElementById('resultScreen').classList.remove('show');
+}
+
+function resetQuiz() {
+  closeResult();
+  answered = {};
+  score = 0;
+  renderQuiz();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function shuffleQuestions() {
+  closeResult();
+  questions = shuffle([...allQuestions]);
+  answered = {};
+  score = 0;
+  renderQuiz();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Init
+document.getElementById('totalCount').textContent = allQuestions.length;
+renderQuiz();
+</script>
+</body>
+</html>
