@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT2301 Web Dev Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #21262d;
+    --accent: #58a6ff;
+    --accent-dim: rgba(88,166,255,0.12);
+    --green: #3fb950;
+    --green-dim: rgba(63,185,80,0.12);
+    --red: #f85149;
+    --red-dim: rgba(248,81,73,0.12);
+    --yellow: #e3b341;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --code: #f0883e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 10% 0%, rgba(88,166,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 100%, rgba(63,185,80,0.04) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+  .container { max-width: 740px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* Header */
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 1.8rem; flex-wrap: wrap; gap: 0.8rem;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .logo-icon {
+    width: 36px; height: 36px; background: var(--accent-dim);
+    border: 1px solid var(--accent); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--accent);
+  }
+  .title-text h1 {
+    font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
+  }
+  .title-text p { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+
+  .btn {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--muted); padding: 0.45rem 1rem; border-radius: 6px;
+    cursor: pointer; font-family: 'Sora', sans-serif; font-size: 0.82rem;
+    transition: all 0.18s; display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    background: var(--accent); color: #0d1117; border-color: var(--accent);
+    font-weight: 600; color: #000;
+  }
+  .btn-primary:hover { background: #79c0ff; border-color: #79c0ff; color: #000; }
+
+  /* Topic tabs */
+  .topic-bar {
+    display: flex; gap: 0.4rem; margin-bottom: 1.4rem; flex-wrap: wrap;
+  }
+  .topic-tag {
+    font-size: 0.72rem; padding: 0.25rem 0.7rem; border-radius: 20px;
+    border: 1px solid var(--border); color: var(--muted);
+    font-family: 'Fira Code', monospace;
+  }
+  .topic-tag.css { border-color: rgba(88,166,255,0.4); color: var(--accent); background: var(--accent-dim); }
+  .topic-tag.js  { border-color: rgba(227,179,65,0.4); color: var(--yellow); background: rgba(227,179,65,0.08); }
+
+  /* Progress */
+  .progress-wrap { margin-bottom: 1.4rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; }
+  .progress-meta .live-score { color: var(--green); font-weight: 600; }
+  .progress-track { background: #21262d; border-radius: 100px; height: 4px; }
+  .progress-fill {
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    height: 4px; border-radius: 100px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Question card */
+  .q-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.6rem; margin-bottom: 1rem;
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-meta {
+    display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
+  }
+  .q-num {
+    font-family: 'Fira Code', monospace; font-size: 0.72rem;
+    color: var(--muted); background: #21262d;
+    padding: 0.2rem 0.6rem; border-radius: 4px;
+  }
+  .q-topic { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 4px; }
+  .q-topic.css { background: var(--accent-dim); color: var(--accent); }
+  .q-topic.js  { background: rgba(227,179,65,0.1); color: var(--yellow); }
+  .q-text { font-size: 1rem; line-height: 1.7; color: var(--text); font-weight: 400; }
+  .q-text code {
+    font-family: 'Fira Code', monospace; background: #21262d;
+    padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.88em; color: var(--code);
+  }
+
+  /* Choices */
+  .choices { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.2rem; }
+  .choice {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.75rem 1rem;
+    cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 0.75rem;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: 'Sora', sans-serif; color: var(--text); font-size: 0.88rem;
+    width: 100%;
+  }
+  .choice:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-dim); }
+  .choice:disabled { cursor: default; }
+  .choice.correct { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+  .choice.wrong   { border-color: var(--red);   background: var(--red-dim);   color: var(--red); }
+  .choice.dimmed  { opacity: 0.35; }
+  .choice code {
+    font-family: 'Fira Code', monospace; font-size: 0.85em;
+    background: rgba(255,255,255,0.05); padding: 0.1em 0.35em; border-radius: 3px;
+  }
+  .lbl {
+    font-family: 'Fira Code', monospace; font-size: 0.75rem;
+    background: #21262d; color: var(--muted);
+    width: 26px; height: 26px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.15s, color 0.15s; font-weight: 500;
+  }
+  .correct .lbl { background: var(--green); color: #0d1117; }
+  .wrong   .lbl { background: var(--red);   color: #fff; }
+  .tick { margin-left: auto; font-size: 1rem; }
+
+  /* Next */
+  .next-wrap { text-align: right; animation: slideIn 0.25s ease; }
+
+  /* Results */
+  #results { display: none; text-align: center; animation: slideIn 0.4s ease; }
+  .res-icon { font-size: 4rem; margin-bottom: 0.8rem; }
+  .res-grade {
+    font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--green));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .res-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 2rem; display: inline-block;
+    min-width: 280px; margin-bottom: 2rem;
+  }
+  .res-score { font-family: 'Fira Code', monospace; font-size: 3.5rem; color: var(--accent); font-weight: 500; }
+  .res-pct { font-size: 1.2rem; color: var(--muted); margin-top: 0.3rem; }
+  .res-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+  /* Review */
+  #review { display: none; animation: slideIn 0.35s ease; }
+  .rev-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; }
+  .rev-header h2 { font-size: 1.1rem; font-weight: 600; color: var(--text); }
+  .rev-item {
+    background: var(--card); border: 1px solid; border-radius: 10px;
+    padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+  }
+  .rev-item.ok  { border-color: rgba(63,185,80,0.3); }
+  .rev-item.bad { border-color: rgba(248,81,73,0.3); }
+  .rev-q { font-size: 0.88rem; line-height: 1.6; margin-bottom: 0.6rem; color: var(--text); }
+  .rev-q code { font-family: 'Fira Code', monospace; background: #21262d; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.85em; color: var(--code); }
+  .rev-a { font-size: 0.82rem; margin: 0.18rem 0; font-family: 'Fira Code', monospace; }
+  .rev-a.yours { color: var(--red); }
+  .rev-a.right { color: var(--green); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="quiz-screen">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">&lt;/&gt;</div>
+        <div class="title-text">
+          <h1>IT2301 Web Dev Quiz</h1>
+          <p>Responsive Web Design &amp; JavaScript Basics</p>
+        </div>
+      </div>
+      <button class="btn" onclick="shuffleAndRestart()">⇄ Shuffle</button>
+    </div>
+
+    <div class="topic-bar">
+      <span class="topic-tag css">CSS Grid</span>
+      <span class="topic-tag css">Viewport</span>
+      <span class="topic-tag css">Media Query</span>
+      <span class="topic-tag css">Responsive Design</span>
+      <span class="topic-tag js">JavaScript Basics</span>
+      <span class="topic-tag js">Variables</span>
+      <span class="topic-tag js">Operators</span>
+      <span class="topic-tag js">Control Flow</span>
+      <span class="topic-tag js">Loops</span>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="q-counter">Question 1 of 60</span>
+        <span class="live-score" id="score-display">Score: 0/0</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:1.6%"></div></div>
+    </div>
+
+    <div class="q-card" id="q-card">
+      <div class="q-meta">
+        <span class="q-num" id="q-num">Q1</span>
+        <span class="q-topic" id="q-topic">CSS</span>
+      </div>
+      <p class="q-text" id="q-text"></p>
+    </div>
+
+    <div class="choices" id="choices"></div>
+    <div class="next-wrap" id="next-wrap" style="display:none">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="res-icon" id="res-icon">🏆</div>
+    <div class="res-grade" id="res-grade">Excellent!</div>
+    <div class="res-box">
+      <div class="res-score" id="res-score">0/60</div>
+      <div class="res-pct" id="res-pct">0% Score</div>
+    </div>
+    <div class="res-btns">
+      <button class="btn" onclick="showReview()">📋 Review Answers</button>
+      <button class="btn btn-primary" onclick="shuffleAndRestart()">⇄ New Quiz</button>
+    </div>
+  </div>
+
+  <div id="review">
+    <div class="rev-header">
+      <button class="btn" onclick="showResults()">← Back</button>
+      <h2>Answer Review</h2>
+    </div>
+    <div id="rev-list"></div>
+  </div>
+
+</div>
+<script>
+const Q = [
+  // ---- CSS GRID ----
+  { t:"css", q:"What is CSS Grid used for?", c:["Styling text and fonts","Creating flexible layouts that work on different screen sizes","Animating webpage elements","Managing browser cookies"], a:1 },
+  { t:"css", q:"How many dimensions does CSS Grid organize content into?", c:["One (rows only)","Three (rows, columns, layers)","Two (rows and columns)","Four (rows, columns, gaps, margins)"], a:2 },
+  { t:"css", q:"Which CSS property is used together with <code>display: grid</code> to define columns?", c:["grid-column-count","grid-template-columns","column-layout","grid-columns"], a:1 },
+  { t:"css", q:"What does this code create? <code>grid-template-columns: 30% 30% 30%;</code>", c:["Three rows of equal height","Two columns with a sidebar","Three equal-width columns","A single centered column"], a:2 },
+  { t:"css", q:"What HTML tag specifies the main content in an HTML document and should not contain repeated content?", c:["&lt;section&gt;","&lt;article&gt;","&lt;aside&gt;","&lt;main&gt;"], a:3 },
+  { t:"css", q:"What tag specifies independent, self-contained content such as headers and paragraphs?", c:["&lt;main&gt;","&lt;article&gt;","&lt;aside&gt;","&lt;section&gt;"], a:1 },
+  { t:"css", q:"What tag is usually presented as a sidebar with content beside the main content?", c:["&lt;nav&gt;","&lt;article&gt;","&lt;aside&gt;","&lt;footer&gt;"], a:2 },
+  { t:"css", q:"Which CSS properties are used to add spacing between grid rows and columns?", c:["padding-row and padding-column","margin-row and margin-column","row-gap and column-gap","grid-spacing-row and grid-spacing-column"], a:2 },
+  { t:"css", q:"In a two-column grid layout, <code>grid-template-columns: 68% 28%</code> is used. What does the remaining ~4% represent?", c:["The border width","The gap between columns","Reserved for scrollbars","Padding of the main element"], a:1 },
+
+  // ---- VIEWPORT ----
+  { t:"css", q:"What is the 'viewport' in web design?", c:["The HTML document structure","The exact area of the screen rendering the website","The browser's cache storage","The CSS file linked to a webpage"], a:1 },
+  { t:"css", q:"Where should the <code>&lt;meta&gt;</code> viewport element always be placed?", c:["Inside the &lt;body&gt; tag","Inside the &lt;footer&gt; tag","Inside the &lt;head&gt; tag","Before the &lt;html&gt; tag"], a:2 },
+  { t:"css", q:"What does <code>width=device-width</code> do in the viewport meta tag?", c:["Locks the page width to 1024px","Sets the page width to follow the screen width of the device","Prevents zooming on mobile","Sets a fixed pixel width for all devices"], a:1 },
+  { t:"css", q:"What does <code>initial-scale=1.0</code> set when a webpage is loaded?", c:["The font size","The grid column count","The initial zoom level","The default background color"], a:2 },
+
+  // ---- MEDIA QUERY ----
+  { t:"css", q:"What are Media Queries described as in the handout?", c:["Simple CSS properties","Containers for other rulesets implemented based on media query results","JavaScript functions for screen detection","HTML attributes for responsive images"], a:1 },
+  { t:"css", q:"How is the media attribute declared in HTML?", c:["Using @media inside a style tag","Using the media attribute inside a &lt;link&gt; tag","Using a JavaScript event listener","Using a &lt;meta&gt; tag"], a:1 },
+  { t:"css", q:"How is a media query declared in CSS?", c:["Using the media= attribute","Using @media","Using #media","Using .media{}"], a:1 },
+  { t:"css", q:"What does the <code>and</code> logic keyword do in a media query?", c:["Negates the media query","Returns false if output is true","Combines media types or features","Applies only when one condition is true"], a:2 },
+  { t:"css", q:"Which media query logic keyword is used when BOTH conditions must be true?", c:["and","not","only","or"], a:2 },
+  { t:"css", q:"Which media query logic keyword is used to revert the media query (returns false if output is true)?", c:["and","only","not","else"], a:2 },
+  { t:"css", q:"What media type is used for printing a webpage?", c:["screen","speech","all","print"], a:3 },
+  { t:"css", q:"What media type is used for screen readers?", c:["screen","all","print","speech"], a:3 },
+  { t:"css", q:"What does this CSS code do? <code>@media screen and (min-width: 600px) { main { display: flex; } }</code>", c:["Applies flex only on screens smaller than 600px","Applies flex on screens at least 600px wide","Hides the main element on mobile","Sets a grid layout for all screen sizes"], a:1 },
+
+  // ---- BREAKPOINT & RESPONSIVE ----
+  { t:"css", q:"What is a breakpoint in responsive web design?", c:["A JavaScript error in the code","When the layout changes to adjust to the viewport","The maximum width of a container","A CSS property for font scaling"], a:1 },
+  { t:"css", q:"Which CSS property is used to set a breakpoint in a media query?", c:["max-width","viewport-width","screen-size","min-width"], a:3 },
+  { t:"css", q:"What CSS is used to make an image responsive (scalable up and down)?", c:["width: auto; height: 100%","width: 100%; height: auto","max-width: 100%; height: fixed","display: flex; width: responsive"], a:1 },
+  { t:"css", q:"To prevent an image from scaling UP beyond its original size, which CSS property is used?", c:["width: 100%","height: auto","max-width: 100%","min-width: 0"], a:2 },
+  { t:"css", q:"A responsive video uses the same syntax and placement as which other responsive element?", c:["Responsive text","Responsive image","Responsive grid","Responsive table"], a:1 },
+  { t:"css", q:"When <code>width: 100%</code> is applied to a video, what happens?", c:["Video is hidden on mobile","Video scales down only, never up","Video is responsive and can scale up larger than its original size","Video becomes a fixed 600px width"], a:2 },
+
+  // ---- JAVASCRIPT BASICS ----
+  { t:"js", q:"What is the primary role of JavaScript in web development?", c:["Defines the structure of the webpage","Styles the visual appearance","Makes the website interactive and complex","Manages the server-side database"], a:2 },
+  { t:"js", q:"JavaScript is considered the __ standard for web technologies.", c:["First","Second","Third","Fourth"], a:2 },
+  { t:"js", q:"What file extension is used for JavaScript files?", c:[".html",".css",".js",".json"], a:2 },
+  { t:"js", q:"What is the concept of separating HTML, CSS, and JavaScript into distinct files called?", c:["Modular programming","Separation of concerns","Object-oriented design","File partitioning"], a:1 },
+  { t:"js", q:"In internal JavaScript, where is the JS code placed?", c:["In a separate .js file","Only inside the &lt;footer&gt;","Inside &lt;script&gt; tags within &lt;head&gt; or &lt;body&gt;","Inside CSS &lt;style&gt; tags"], a:2 },
+  { t:"js", q:"In external JavaScript, how is the .js file linked to an HTML document?", c:["Using &lt;link rel='script'&gt;","Using &lt;script src='filename.js'&gt;","Using &lt;import src='filename.js'&gt;","Using &lt;js href='filename.js'&gt;"], a:1 },
+  { t:"js", q:"What is a JavaScript comment used for?", c:["To execute multiple statements","To add notes that browsers ignore","To declare variables","To define CSS styles inside JS"], a:1 },
+  { t:"js", q:"How is a line comment written in JavaScript?", c:["/* comment */","<!-- comment -->","// comment","# comment"], a:2 },
+  { t:"js", q:"How are block comments written in JavaScript?", c:["// comment //","<!-- comment -->","/* comment */","## comment ##"], a:2 },
+
+  // ---- JS STATEMENT, OBJECT, OUTPUT ----
+  { t:"js", q:"What is a JavaScript statement?", c:["A CSS rule inside JS","A function definition","An individual line of code enclosed within &lt;script&gt; tags","A variable declaration only"], a:2 },
+  { t:"js", q:"What character must end each JavaScript statement?", c:["Colon (:)","Period (.)","Semicolon (;)","Comma (,)"], a:2 },
+  { t:"js", q:"What is a JavaScript Object?", c:["A variable that holds only numbers","Programming code that can be treated as an individual unit or component","A type of CSS selector","A reserved keyword"], a:1 },
+  { t:"js", q:"What are procedures associated with an object called?", c:["Arguments","Parameters","Methods","Identifiers"], a:2 },
+  { t:"js", q:"What are values placed inside parentheses to provide more specific information about a method called?", c:["Methods","Parameters","Arguments","Variables"], a:2 },
+  { t:"js", q:"Which JavaScript output method is used to write custom information to a webpage?", c:["console.log()","alert()","document.write()","prompt()"], a:2 },
+  { t:"js", q:"What is a text string in JavaScript?", c:["A number stored in a variable","Text contained within double or single quotation marks","A Boolean value","An array of numbers"], a:1 },
+  { t:"js", q:"What does <code>console.log()</code> do?", c:["Displays an alert box to the user","Writes text to the webpage","Writes text to the console, invisible to regular users","Declares a new variable"], a:2 },
+  { t:"js", q:"What does the <code>alert()</code> method display?", c:["A dialog box with input field","An alert box with a message and OK button","A tooltip over an element","A notification in the console"], a:1 },
+  { t:"js", q:"What are the variables used within a function called?", c:["Arguments","Methods","Parameters","Identifiers"], a:2 },
+
+  // ---- JS OPERATORS ----
+  { t:"js", q:"Which operator category allows assigning values to variables using the equal sign?", c:["Arithmetic","Comparison","Logical","Assignment"], a:3 },
+  { t:"js", q:"Which arithmetic operator is used for remainder/modulo?", c:["**","//","%","^^"], a:2 },
+  { t:"js", q:"What does the increment operator <code>++</code> do?", c:["Subtracts 1 from the operand","Multiplies by 2","Adds 1 to the operand","Divides the operand by 2"], a:2 },
+  { t:"js", q:"Logical operators work with which type of values?", c:["String values","Numerical values","Boolean-type values (true or false)","Array values"], a:2 },
+  { t:"js", q:"Which logical operator performs logical AND?", c:["||","!","&&","=="], a:2 },
+  { t:"js", q:"Which logical operator performs logical OR?", c:["&&","!","||","!="], a:2 },
+  { t:"js", q:"Which comparison operator checks for equal value AND equal type?", c:["==","!=","===",">="], a:2 },
+
+  // ---- JS VARIABLES ----
+  { t:"js", q:"What is the assigned name of a variable in JavaScript called?", c:["Keyword","Method","Identifier","Argument"], a:2 },
+  { t:"js", q:"Which of the following is a VALID way to start a variable name in JavaScript?", c:["3variable","let 3name","$myVar","if_value"], a:2 },
+  { t:"js", q:"Which of the following is NOT allowed as a JavaScript identifier?", c:["_myVar","$price","let","totalCost"], a:2 },
+  { t:"js", q:"Which keywords are used to declare and initialize variables in JavaScript?", c:["dim and set","define and assign","var and let","int and string"], a:2 },
+  { t:"js", q:"Which primitive data type represents textual data in JavaScript?", c:["Boolean","Number","Null","String"], a:3 },
+  { t:"js", q:"Which primitive data type returns TRUE or FALSE?", c:["String","Number","Boolean","Undefined"], a:2 },
+  { t:"js", q:"Which primitive data type refers to a variable with no value?", c:["Null","Boolean","String","Undefined"], a:3 },
+  { t:"js", q:"What is an array in JavaScript?", c:["A single numerical value","A set of data represented by a single variable name","A type of loop","A method of the Document object"], a:1 },
+
+  // ---- CONTROL FLOW ----
+  { t:"js", q:"What are control flow statements also called?", c:["Iterations","Loops","Conditional execution","Object methods"], a:2 },
+  { t:"js", q:"What is the simplest control flow instruction in JavaScript?", c:["for loop","while loop","if statement","switch statement"], a:2 },
+  { t:"js", q:"In an if statement, what must the code block be separated with?", c:["Square brackets [ ]","Parentheses ( )","Curly brackets { }","Quotation marks ' '"], a:2 },
+  { t:"js", q:"What does the <code>else</code> keyword allow in an if...else statement?", c:["It repeats the if block","It adds a second block executed when the initial condition is NOT met","It ends the program","It creates a nested loop"], a:1 },
+  { t:"js", q:"What does the <code>else if</code> statement do?", c:["Repeats code a fixed number of times","Branches the code flow until data meets a specific condition","Creates an infinite loop","Declares a new variable"], a:1 },
+
+  // ---- LOOPS ----
+  { t:"js", q:"What are loops in JavaScript?", c:["A type of variable","Statements that assign values","A way to repeat code until a stopping condition is met","Output methods for the browser"], a:2 },
+  { t:"js", q:"When a code block is repeated in a loop, what is each repetition called?", c:["Method","Iteration","Parameter","Condition"], a:1 },
+  { t:"js", q:"What is an infinite loop and how is it avoided?", c:["A loop with no variables; avoided by using arrays","A loop that never stops; avoided by including a statement that eventually makes the condition false","A loop that runs once; avoided with break","A loop with no counter; avoided with continue"], a:1 },
+  { t:"js", q:"In a while loop, when does the loop stop executing?", c:["When the counter reaches 100","When the condition becomes false","After exactly 10 iterations","When the user closes the browser"], a:1 },
+  { t:"js", q:"What variables are commonly used as loop counters by convention?", c:["a, b, c","x, y, z","i, j, k","n, m, p"], a:2 },
+  { t:"js", q:"In a do...while loop, when is the condition evaluated?", c:["Before executing the code block","After executing the code block at least once","Only on the first iteration","Never; it runs infinitely"], a:1 },
+  { t:"js", q:"What are the three fields in a for loop separated by semicolons?", c:["start, end, step","value, method, argument","initialization, condition, increment","declare, execute, return"], a:2 },
+  { t:"js", q:"In a for loop, what does the 'initialization' field represent?", c:["The stopping condition","The number of loops","The loop counter","The code block to execute"], a:2 },
+];
+
+const LABS = ['A','B','C','D'];
+let questions=[], current=0, score=0, answered=0, history=[], picked=false;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function prepQ(){return shuffle(Q).map(q=>{const idx=q.c.map((c,i)=>({c,ok:i===q.a}));const s=shuffle(idx);return{t:q.t,q:q.q,c:s.map(x=>x.c),a:s.findIndex(x=>x.ok)};});}
+
+function shuffleAndRestart(){
+  questions=prepQ();current=0;score=0;answered=0;history=[];picked=false;
+  document.getElementById('results').style.display='none';
+  document.getElementById('review').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  render();
+}
+
+function render(){
+  const q=questions[current],total=questions.length;
+  document.getElementById('q-counter').textContent=`Question ${current+1} of ${total}`;
+  document.getElementById('score-display').textContent=`Score: ${score}/${answered}`;
+  document.getElementById('prog-fill').style.width=`${((current+1)/total)*100}%`;
+  document.getElementById('q-num').textContent=`Q${current+1}`;
+  const topicEl=document.getElementById('q-topic');
+  topicEl.textContent=q.t==='css'?'CSS':'JavaScript';
+  topicEl.className='q-topic '+(q.t==='css'?'css':'js');
+  document.getElementById('q-text').innerHTML=q.q;
+
+  const card=document.getElementById('q-card');
+  card.style.animation='none';card.offsetHeight;card.style.animation='';
+
+  const box=document.getElementById('choices');
+  box.innerHTML='';
+  q.c.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice';
+    btn.innerHTML=`<span class="lbl">${LABS[i]}</span><span>${c}</span>`;
+    btn.onclick=()=>pick(i);
+    box.appendChild(btn);
+  });
+  document.getElementById('next-wrap').style.display='none';
+  picked=false;
+}
+
+function pick(idx){
+  if(picked)return;picked=true;
+  const q=questions[current];
+  const btns=document.querySelectorAll('.choice');
+  const ok=idx===q.a;
+  answered++;if(ok)score++;
+  document.getElementById('score-display').textContent=`Score: ${score}/${answered}`;
+  history.push({q:q.q,sel:q.c[idx],ans:q.c[q.a],ok});
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.a){b.classList.add('correct');b.querySelector('.lbl').textContent='✓';const t=document.createElement('span');t.className='tick';t.textContent='✓';b.appendChild(t);}
+    else if(i===idx&&!ok){b.classList.add('wrong');b.querySelector('.lbl').textContent='✗';const t=document.createElement('span');t.className='tick';t.textContent='✗';b.appendChild(t);}
+    else b.classList.add('dimmed');
+  });
+  const nw=document.getElementById('next-wrap');
+  document.getElementById('next-btn').textContent=(current+1>=questions.length)?'See Results →':'Next →';
+  nw.style.display='block';
+}
+
+function nextQuestion(){
+  if(current+1>=questions.length){showResults();}
+  else{current++;render();}
+}
+
+function showResults(){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('review').style.display='none';
+  const t=questions.length,pct=Math.round(score/t*100);
+  const g=pct>=90?'Excellent!':pct>=75?'Great Job!':pct>=60?'Good Effort!':'Keep Studying!';
+  const ic=pct>=90?'🏆':pct>=75?'🎓':pct>=60?'📚':'💡';
+  document.getElementById('res-icon').textContent=ic;
+  document.getElementById('res-grade').textContent=g;
+  document.getElementById('res-score').textContent=`${score}/${t}`;
+  document.getElementById('res-pct').textContent=`${pct}% Score`;
+  document.getElementById('results').style.display='block';
+}
+
+function showReview(){
+  document.getElementById('results').style.display='none';
+  const list=document.getElementById('rev-list');
+  list.innerHTML='';
+  history.forEach((h,i)=>{
+    const d=document.createElement('div');
+    d.className='rev-item '+(h.ok?'ok':'bad');
+    d.innerHTML=`<p class="rev-q">${i+1}. ${h.q}</p>
+      <p class="rev-a ${h.ok?'right':'yours'}">Your answer: ${h.sel} ${h.ok?'✓':'✗'}</p>
+      ${!h.ok?`<p class="rev-a right">Correct: ${h.ans} ✓</p>`:''}`;
+    list.appendChild(d);
+  });
+  document.getElementById('review').style.display='block';
+}
+
+function showResults2(){showResults();}
+
+shuffleAndRestart();
+</script>
+</body>
+</html>
