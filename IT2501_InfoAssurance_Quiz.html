@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT2501 Info Assurance Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --card: #0d1117;
+    --border: #1a2332;
+    --accent: #00d4ff;
+    --accent2: #ff4757;
+    --accent3: #2ed573;
+    --yellow: #ffa502;
+    --text: #cdd9e5;
+    --muted: #6a737d;
+    --glow: rgba(0,212,255,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(0,212,255,0.05) 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 90%, rgba(255,71,87,0.04) 0%, transparent 45%);
+  }
+  .container { max-width: 750px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.6rem; flex-wrap: wrap; gap: 0.8rem; }
+  .logo { display: flex; align-items: center; gap: 0.8rem; }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,212,255,0.05));
+    border: 1px solid var(--accent); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Share Tech Mono', monospace; font-size: 1rem; color: var(--accent);
+  }
+  .title-wrap h1 { font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: 0.03em; }
+  .title-wrap p { font-size: 0.73rem; color: var(--muted); margin-top: 2px; font-family: 'Share Tech Mono', monospace; }
+
+  .btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 0.45rem 1rem; border-radius: 6px;
+    cursor: pointer; font-family: 'Exo 2', sans-serif; font-size: 0.82rem;
+    transition: all 0.18s; display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px rgba(0,212,255,0.15); }
+  .btn-primary { background: var(--accent); color: #080c10; border-color: var(--accent); font-weight: 700; }
+  .btn-primary:hover { background: #26e0ff; box-shadow: 0 0 20px rgba(0,212,255,0.4); color: #080c10; }
+
+  /* Topic tags */
+  .topic-bar { display: flex; gap: 0.35rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
+  .tag {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.68rem;
+    padding: 0.22rem 0.65rem; border-radius: 3px; border: 1px solid;
+  }
+  .tag.t1 { border-color: rgba(0,212,255,0.35); color: var(--accent); background: rgba(0,212,255,0.06); }
+  .tag.t2 { border-color: rgba(255,71,87,0.35); color: var(--accent2); background: rgba(255,71,87,0.06); }
+  .tag.t3 { border-color: rgba(46,213,115,0.35); color: var(--accent3); background: rgba(46,213,115,0.06); }
+  .tag.t4 { border-color: rgba(255,165,2,0.35); color: var(--yellow); background: rgba(255,165,2,0.06); }
+
+  /* Progress */
+  .prog-wrap { margin-bottom: 1.4rem; }
+  .prog-meta { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; font-family: 'Share Tech Mono', monospace; }
+  .prog-meta .live { color: var(--accent3); }
+  .prog-track { background: #1a2332; border-radius: 2px; height: 3px; }
+  .prog-fill { background: linear-gradient(90deg, var(--accent), var(--accent3)); height: 3px; border-radius: 2px; transition: width 0.4s ease; box-shadow: 0 0 8px rgba(0,212,255,0.5); }
+
+  /* Q card */
+  .q-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.6rem; margin-bottom: 1rem;
+    animation: fadeUp 0.3s ease;
+    border-left: 3px solid var(--accent);
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .q-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.9rem; }
+  .q-num { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); background: #1a2332; padding: 0.18rem 0.55rem; border-radius: 3px; }
+  .q-cat { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; padding: 0.18rem 0.55rem; border-radius: 3px; border: 1px solid; }
+  .q-cat.t1 { border-color: rgba(0,212,255,0.3); color: var(--accent); }
+  .q-cat.t2 { border-color: rgba(255,71,87,0.3); color: var(--accent2); }
+  .q-cat.t3 { border-color: rgba(46,213,115,0.3); color: var(--accent3); }
+  .q-cat.t4 { border-color: rgba(255,165,2,0.3); color: var(--yellow); }
+  .q-text { font-size: 1rem; line-height: 1.7; color: var(--text); font-weight: 400; }
+
+  /* Choices */
+  .choices { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.2rem; }
+  .choice {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.75rem 1rem;
+    cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 0.75rem;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: 'Exo 2', sans-serif; color: var(--text); font-size: 0.88rem; width: 100%;
+  }
+  .choice:hover:not(:disabled) { border-color: var(--accent); background: var(--glow); }
+  .choice:disabled { cursor: default; }
+  .choice.correct { border-color: var(--accent3); background: rgba(46,213,115,0.08); color: var(--accent3); }
+  .choice.wrong   { border-color: var(--accent2); background: rgba(255,71,87,0.08);  color: var(--accent2); }
+  .choice.dimmed  { opacity: 0.3; }
+  .lbl {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.72rem;
+    background: #1a2332; color: var(--muted);
+    width: 26px; height: 26px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s; font-weight: 500;
+  }
+  .correct .lbl { background: var(--accent3); color: #080c10; }
+  .wrong   .lbl { background: var(--accent2); color: #fff; }
+  .tick { margin-left: auto; font-size: 1rem; }
+
+  .next-wrap { text-align: right; animation: fadeUp 0.25s ease; }
+
+  /* Results */
+  #results { display: none; text-align: center; animation: fadeUp 0.4s ease; }
+  .res-icon { font-size: 4rem; margin-bottom: 0.8rem; }
+  .res-grade { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent); text-shadow: 0 0 30px rgba(0,212,255,0.5); font-family: 'Share Tech Mono', monospace; }
+  .res-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    border-radius: 10px; padding: 2rem; display: inline-block; min-width: 280px; margin-bottom: 2rem;
+  }
+  .res-score { font-family: 'Share Tech Mono', monospace; font-size: 3.5rem; color: var(--accent); }
+  .res-pct { font-size: 1.2rem; color: var(--muted); margin-top: 0.3rem; }
+  .res-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+  /* Review */
+  #review { display: none; animation: fadeUp 0.35s ease; }
+  .rev-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; }
+  .rev-header h2 { font-size: 1rem; font-weight: 600; color: var(--text); font-family: 'Share Tech Mono', monospace; }
+  .rev-item { background: var(--card); border: 1px solid; border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
+  .rev-item.ok  { border-color: rgba(46,213,115,0.3); }
+  .rev-item.bad { border-color: rgba(255,71,87,0.3); }
+  .rev-q { font-size: 0.87rem; line-height: 1.6; margin-bottom: 0.55rem; color: var(--text); }
+  .rev-a { font-size: 0.81rem; margin: 0.15rem 0; font-family: 'Share Tech Mono', monospace; }
+  .rev-a.yours { color: var(--accent2); }
+  .rev-a.right { color: var(--accent3); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="quiz-screen">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">⚔</div>
+        <div class="title-wrap">
+          <h1>IT2501 — Info Assurance Quiz</h1>
+          <p>Ethical Hacking · Threats · Vulnerability · Password Cracking</p>
+        </div>
+      </div>
+      <button class="btn" onclick="shuffleAndRestart()">⇄ Shuffle</button>
+    </div>
+
+    <div class="topic-bar">
+      <span class="tag t1">Cyber Kill Chain</span>
+      <span class="tag t1">TTPs & IoCs</span>
+      <span class="tag t1">Hacker Classes</span>
+      <span class="tag t1">Hacking Phases</span>
+      <span class="tag t1">Ethical Hacking</span>
+      <span class="tag t2">Threats & Sources</span>
+      <span class="tag t2">Malware Types</span>
+      <span class="tag t3">Vulnerability</span>
+      <span class="tag t3">Vuln Assessment</span>
+      <span class="tag t4">Password Attacks</span>
+      <span class="tag t4">Cracking Tools</span>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-meta">
+        <span id="q-counter">Q 1 / 80</span>
+        <span class="live" id="score-display">SCORE: 0/0</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:1.25%"></div></div>
+    </div>
+
+    <div class="q-card" id="q-card">
+      <div class="q-meta">
+        <span class="q-num" id="q-num">Q1</span>
+        <span class="q-cat t1" id="q-cat">Ethical Hacking</span>
+      </div>
+      <p class="q-text" id="q-text"></p>
+    </div>
+
+    <div class="choices" id="choices"></div>
+    <div class="next-wrap" id="next-wrap" style="display:none">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="res-icon" id="res-icon">🏆</div>
+    <div class="res-grade" id="res-grade">MISSION COMPLETE</div>
+    <div class="res-box">
+      <div class="res-score" id="res-score">0/80</div>
+      <div class="res-pct" id="res-pct">0% Score</div>
+    </div>
+    <div class="res-btns">
+      <button class="btn" onclick="showReview()">📋 Review Answers</button>
+      <button class="btn btn-primary" onclick="shuffleAndRestart()">⇄ New Quiz</button>
+    </div>
+  </div>
+
+  <div id="review">
+    <div class="rev-header">
+      <button class="btn" onclick="showResults()">← Back</button>
+      <h2>// ANSWER REVIEW</h2>
+    </div>
+    <div id="rev-list"></div>
+  </div>
+</div>
+
+<script>
+// t1=Ethical Hacking, t2=Threats/Malware, t3=Vulnerability, t4=Password
+const Q=[
+  // --- CYBER KILL CHAIN ---
+  {t:"t1",l:"Cyber Kill Chain",q:"What is the Cyber Kill Chain methodology primarily used for?",c:["Creating firewall rules","Illustrating how an adversary can attack a target organization","Designing network topologies","Managing employee access controls"],a:1},
+  {t:"t1",l:"Cyber Kill Chain",q:"How many phases does the Cyber Kill Chain protection mechanism consist of?",c:["Five","Six","Seven","Eight"],a:2},
+  {t:"t1",l:"Cyber Kill Chain",q:"Which company developed the Cyber Kill Chain framework?",c:["Microsoft","EC-Council","Lockheed Martin","Cisco"],a:2},
+  {t:"t1",l:"Cyber Kill Chain",q:"In which Cyber Kill Chain phase does the adversary gather information about the target through Internet searches and social engineering?",c:["Weaponization","Delivery","Exploitation","Reconnaissance"],a:3},
+  {t:"t1",l:"Cyber Kill Chain",q:"In which phase does the adversary create or select a malicious payload (remote-access malware weapon) using an exploit and backdoor?",c:["Reconnaissance","Weaponization","Delivery","Installation"],a:1},
+  {t:"t1",l:"Cyber Kill Chain",q:"Which Cyber Kill Chain phase measures the effectiveness of an organization's defense strategies based on whether intrusion is blocked?",c:["Exploitation","Delivery","Installation","Command and Control"],a:1},
+  {t:"t1",l:"Cyber Kill Chain",q:"In which phase does exploitation trigger the adversary's malicious code to exploit a vulnerability in the OS or application?",c:["Delivery","Weaponization","Exploitation","Installation"],a:2},
+  {t:"t1",l:"Cyber Kill Chain",q:"In which phase does the adversary download and install malicious software to maintain extended access to the target network?",c:["Exploitation","Command and Control","Installation","Actions on Objectives"],a:2},
+  {t:"t1",l:"Cyber Kill Chain",q:"What does the adversary use encryption for during the Command and Control phase?",c:["To speed up data transfer","To hide the presence of communication channels","To authenticate users","To compress malware payloads"],a:1},
+  {t:"t1",l:"Cyber Kill Chain",q:"In the 'Actions on Objectives' phase, the adversary accomplishes their goals. Which of the following is NOT a typical objective?",c:["Gaining access to confidential data","Disrupting services","Installing system updates","Destroying operational capability"],a:2},
+
+  // --- TTPs ---
+  {t:"t1",l:"TTPs",q:"What does TTP stand for in cybersecurity?",c:["Tools, Technologies, and Practices","Tactics, Techniques, and Procedures","Threats, Tactics, and Protocols","Tracking, Tracing, and Profiling"],a:1},
+  {t:"t1",l:"TTPs",q:"In TTPs, 'tactics' is defined as:",c:["The technical methods used to achieve intermediate results","The organizational approach to launch an attack","A guideline describing the way an attacker performs their attack from beginning to end","A sequence of actions to execute different steps of an attack"],a:2},
+  {t:"t1",l:"TTPs",q:"In TTPs, 'techniques' refers to:",c:["The overall attack plan","The technical methods used by an attacker to achieve intermediate results during their attack","The organizational approach followed by threat actors","The sequence of steps to execute an attack life cycle"],a:1},
+  {t:"t1",l:"TTPs",q:"In TTPs, 'procedures' refers to:",c:["The technical methods for achieving intermediate results","The way an attacker operates from beginning to end","The organizational approach followed by threat actors to launch their attack","The tools used in reconnaissance"],a:2},
+  {t:"t1",l:"TTPs",q:"What are Indicators of Compromise (IoCs)?",c:["Antivirus signatures used to block threats","Clues, artifacts, and forensic data that indicate a potential intrusion or malicious activity","Firewall rules that block suspicious traffic","Vulnerability assessment reports"],a:1},
+  {t:"t1",l:"TTPs",q:"Which category of IoC includes IP addresses and e-mail addresses, which cannot be broken into smaller parts?",c:["Computed Indicators","Behavioral Indicators","Atomic Indicators","Network Indicators"],a:2},
+  {t:"t1",l:"TTPs",q:"Hash values and regular expressions are examples of which type of IoC?",c:["Atomic Indicators","Behavioral Indicators","Computed Indicators","Host-Based Indicators"],a:2},
+  {t:"t1",l:"TTPs",q:"Which category of IoC includes URLs, domain names, and IP addresses and is useful for command and control and malware delivery?",c:["E-mail Indicators","Host-Based Indicators","Behavioral Indicators","Network Indicators"],a:3},
+  {t:"t1",l:"TTPs",q:"Filenames, file hashes, registry keys, DLLs, and mutex are examples of which IoC category?",c:["Network Indicators","Host-Based Indicators","E-mail Indicators","Behavioral Indicators"],a:1},
+  {t:"t1",l:"TTPs",q:"Executing a PowerShell script and remote command execution are examples of which IoC category?",c:["Network Indicators","Atomic Indicators","Host-Based Indicators","Behavioral Indicators"],a:3},
+
+  // --- HACKER CLASSES ---
+  {t:"t1",l:"Hacker Classes",q:"Which hacker class uses extraordinary computing skills for illegal or malicious purposes and is also known as 'crackers'?",c:["White Hats","Gray Hats","Black Hats","Hacktivists"],a:2},
+  {t:"t1",l:"Hacker Classes",q:"White Hat hackers are also known as:",c:["Crackers","Script Kiddies","Penetration testers","Botmasters"],a:2},
+  {t:"t1",l:"Hacker Classes",q:"Which hacker class works both offensively and defensively at various times?",c:["Black Hats","White Hats","Gray Hats","Script Kiddies"],a:2},
+  {t:"t1",l:"Hacker Classes",q:"Which hacker class aims to bring down critical infrastructure for a 'cause' and is unconcerned about legal consequences?",c:["Cyber Terrorists","Suicide Hackers","Hacktivists","State-Sponsored Hackers"],a:1},
+  {t:"t1",l:"Hacker Classes",q:"Script Kiddies are best described as:",c:["Highly skilled hackers targeting government systems","Hackers motivated by political beliefs","Unskilled hackers who use scripts and tools developed by real hackers","Employees who misuse privileged access"],a:2},
+  {t:"t1",l:"Hacker Classes",q:"Which hacker class is motivated by religious or political beliefs and aims to create fear of large-scale network disruption?",c:["State-Sponsored Hackers","Hacktivists","Script Kiddies","Cyber Terrorists"],a:3},
+  {t:"t1",l:"Hacker Classes",q:"Which hacker class is employed by the government to penetrate and damage the information systems of other government or military organizations?",c:["Industrial Spies","State-Sponsored Hackers","Hacker Teams","Organized Hackers"],a:1},
+  {t:"t1",l:"Hacker Classes",q:"Hacktivism is best described as:",c:["Corporate espionage performed by competitors","A form of activism where hackers break into systems as an act of protest","Hacking motivated by financial gain","Government-sponsored cyber espionage"],a:1},
+  {t:"t1",l:"Hacker Classes",q:"Industrial Spies focus on stealing:",c:["Government military secrets","Blueprints, formulas, product designs, and trade secrets","Usernames and passwords","Network infrastructure maps"],a:1},
+  {t:"t1",l:"Hacker Classes",q:"Insider threats typically arise from:",c:["External hackers exploiting open ports","Disgruntled employees, terminated employees, and undertrained staff","Script kiddies running automated tools","State-sponsored hackers"],a:1},
+
+  // --- HACKING PHASES ---
+  {t:"t1",l:"Hacking Phases",q:"What are the five phases of hacking in order?",c:["Scan, Recon, Access, Maintain, Clear","Recon, Scan, Gain Access, Maintain Access, Clear Tracks","Recon, Weaponize, Deliver, Exploit, Install","Scan, Exploit, Install, Command, Execute"],a:1},
+  {t:"t1",l:"Hacking Phases",q:"What is 'dumpster diving' in the context of reconnaissance?",c:["Scanning a target's network ports","Looking through an organization's trash for discarded sensitive information","Using social engineering to trick employees","Performing Whois lookups"],a:1},
+  {t:"t1",l:"Hacking Phases",q:"Which type of reconnaissance involves direct interactions with the target system using tools to detect open ports and accessible hosts?",c:["Passive Reconnaissance","Social Engineering","Active Reconnaissance","Dumpster Diving"],a:2},
+  {t:"t1",l:"Hacking Phases",q:"Passive reconnaissance is characterized by:",c:["Directly interacting with the target system","Sending probes to identify open ports","Relying on publicly available information without directly interacting with the target","Using tools to detect router locations"],a:2},
+  {t:"t1",l:"Hacking Phases",q:"The Scanning phase is described as a logical extension of:",c:["Passive Reconnaissance","Active Reconnaissance","Social Engineering","Gaining Access"],a:1},
+  {t:"t1",l:"Hacking Phases",q:"Port scanners detect listening ports. What is the primary defense against them?",c:["Encrypting all network traffic","Using longer passwords","Shutting down unnecessary services and implementing port filtering","Installing antivirus software"],a:2},
+  {t:"t1",l:"Hacking Phases",q:"Which technique involves pretending to be a legitimate user or different system to send a data packet containing a bug?",c:["Packet Flooding","Spoofing","Smurf Attack","Session Hijacking"],a:1},
+  {t:"t1",l:"Hacking Phases",q:"Rootkits gain access at which level?",c:["Application level","Network level","Operating system level","Database level"],a:2},
+  {t:"t1",l:"Hacking Phases",q:"Trojans gain access at which level?",c:["Operating system level","Network level","Kernel level","Application level"],a:3},
+  {t:"t1",l:"Hacking Phases",q:"Steganography, used in the Clearing Tracks phase, is defined as:",c:["Tunneling one protocol over another","The process of hiding data in other data such as image and sound files","Encrypting log files to hide evidence","Using fake IP addresses to mask identity"],a:1},
+
+  // --- ETHICAL HACKING ---
+  {t:"t1",l:"Ethical Hacking",q:"The key distinction between ethical hackers and crackers is:",c:["Skill level","The tools they use","Consent and authorization","Their technical knowledge"],a:2},
+  {t:"t1",l:"Ethical Hacking",q:"A 'Tiger Team' in ethical hacking refers to:",c:["A group of Black Hat hackers","A team that performs full-scale tests covering all aspects of the network including physical intrusion","A government-sponsored hacking unit","A team that only focuses on network vulnerability scanning"],a:1},
+  {t:"t1",l:"Ethical Hacking",q:"What document must an ethical hacker receive before beginning any network penetration test?",c:["A vulnerability report","A signed legal document giving express permission to perform hacking activities","An NDA from the client's employees","A certificate from EC-Council"],a:1},
+  {t:"t1",l:"Ethical Hacking",q:"Which Google hacking operator restricts results to pages containing specified words in the URL?",c:["intitle:","site:","allinurl:","cache:"],a:2},
+  {t:"t1",l:"Ethical Hacking",q:"Which Google hacking operator displays Google's cached version of a web page?",c:["related:","info:","link:","cache:"],a:3},
+  {t:"t1",l:"Ethical Hacking",q:"Nmap (Network Mapper) is primarily used for:",c:["Password cracking","Discovering hosts, ports, and services to create a network map","Monitoring employee Internet usage","Encrypting network traffic"],a:1},
+  {t:"t1",l:"Ethical Hacking",q:"Which enumeration tool helps troubleshoot NetBIOS name resolution problems in Windows?",c:["Nmap","MegaPing","Nbtstat Utility","Unicornscan"],a:2},
+  {t:"t1",l:"Ethical Hacking",q:"In Unicornscan, the OS can be identified by observing which values in the scan result?",c:["Port numbers","TTL values","MAC addresses","IP addresses"],a:1},
+
+  // --- THREATS & MALWARE ---
+  {t:"t2",l:"Threats",q:"A threat is defined as:",c:["A software vulnerability in an operating system","The potential occurrence of an undesirable event that can damage and disrupt operational activities","A patch that fixes a security loophole","A type of firewall rule"],a:1},
+  {t:"t2",l:"Threats",q:"Which threat source category includes fires, floods, power failures, and earthquakes?",c:["Unintentional Threats","Intentional Threats","Natural Threats","External Threats"],a:2},
+  {t:"t2",l:"Threats",q:"Why are insider attacks considered more dangerous than external attacks?",c:["Insiders have better hacking tools","Insiders are familiar with network architecture, security policies, and regulations","External attacks require more resources","Insiders can only perform unintentional damage"],a:1},
+  {t:"t2",l:"Threats",q:"Structured External Threats are implemented by:",c:["Unskilled attackers primarily driven by curiosity","Disgruntled employees inside the organization","Technically skilled attackers using various tools to gain access and disrupt services","Script kiddies using freely available online tools"],a:2},
+  {t:"t2",l:"Threats",q:"A Trojan is best described as:",c:["A self-replicating program that spreads through networks independently","Malicious code hidden inside a harmless program or data","Software that records keystrokes invisibly","A collection of compromised computers performing distributed tasks"],a:1},
+  {t:"t2",l:"Threats",q:"What is the key difference between a Computer Worm and a Virus?",c:["Worms encrypt files while viruses steal data","A worm replicates independently without requiring a host, while a virus needs a host to spread","Viruses are more dangerous than worms","Worms only target Windows systems"],a:1},
+  {t:"t2",l:"Threats",q:"Ransomware is a type of:",c:["Adware that displays unwanted ads","Crypto-malware that encrypts files or locks the system and demands ransom payment","Spyware that records keystrokes","Rootkit that gains admin access"],a:1},
+  {t:"t2",l:"Threats",q:"Examples of ransomware include:",c:["Nmap, Nessus, and Metasploit","Dharma, SamSam, Ryuk, GandCrab, and WannaCry","L0phtCrack, ophcrack, and RainbowCrack","Trojan, Worm, and Botnet"],a:1},
+  {t:"t2",l:"Threats",q:"The goal of a rootkit is to:",c:["Record keystrokes for data theft","Gain root privileges on a system without being detected","Encrypt files and demand ransom","Replicate and spread across a network"],a:1},
+  {t:"t2",l:"Threats",q:"Spyware delivers logs to the remote attacker that include:",c:["Only website URLs visited","Emails sent, websites visited, every keystroke, file operations, and chat conversations","Only login credentials","Only screenshots of the desktop"],a:1},
+  {t:"t2",l:"Threats",q:"Fileless Malware is also called:",c:["Grayware","Non-malware","Ransomware","Adware"],a:1},
+  {t:"t2",l:"Threats",q:"What makes Fileless Malware particularly dangerous?",c:["It encrypts all files on the system","It does not depend on files and leaves no traces, making it resistant to traditional anti-malware","It spreads independently like a worm","It demands ransom payment from the victim"],a:1},
+  {t:"t2",l:"Threats",q:"Cyber-criminals who control bots (botnets) are called:",c:["Script Kiddies","Botmasters","Industrial Spies","Organized Hackers"],a:1},
+  {t:"t2",l:"Threats",q:"A Keylogger also known as:",c:["Packet sniffing","Keystroke logging","Wire sniffing","Data exfiltration"],a:1},
+  {t:"t2",l:"Threats",q:"Types of PUAs (Potentially Unwanted Applications) include:",c:["Trojan, Worm, Virus, Rootkit","Remote Access Trojans, Backdoor Trojans, Botnet Trojans","Adware, Torrent, Marketing, Cryptomining, and Dialer","Ransomware, Spyware, Keylogger, Botnet"],a:2},
+
+  // --- VULNERABILITY ---
+  {t:"t3",l:"Vulnerability",q:"A vulnerability is defined as:",c:["A malicious program that encrypts files","A weakness in the design or implementation of a system that can be exploited","An unauthorized user accessing a network","A type of social engineering attack"],a:1},
+  {t:"t3",l:"Vulnerability",q:"Which vulnerability classification is described as the MOST COMMON and mainly caused by human error?",c:["Buffer Overflows","Default Passwords","Misconfiguration","Zero-Day Vulnerabilities"],a:2},
+  {t:"t3",l:"Vulnerability",q:"Buffer Overflow vulnerabilities occur because of:",c:["Weak passwords","Coding errors that allow writing content beyond the allocated size of the buffer","Unpatched operating systems","Default installation settings"],a:1},
+  {t:"t3",l:"Vulnerability",q:"Zero-Day Vulnerabilities are:",c:["Known vulnerabilities with available patches","Old vulnerabilities in legacy systems","Unknown vulnerabilities that are exposed but not yet patched","Vulnerabilities caused by default passwords"],a:2},
+  {t:"t3",l:"Vulnerability",q:"In Active Scanning for vulnerabilities, the attacker:",c:["Observes normal communications without interaction","Directly interacts with the target network by sending probes and crafted requests","Sniffs network traffic passively","Analyzes log files offline"],a:1},
+  {t:"t3",l:"Vulnerability",q:"In Passive Scanning, the attacker finds vulnerabilities by:",c:["Sending specially crafted packets to the target","Directly interacting with the target network","Identifying vulnerabilities via information exposed during normal communications","Using brute-force tools against the target"],a:2},
+  {t:"t3",l:"Vulnerability",q:"Which type of vulnerability assessment examines the network from a hacker's point of view to identify exploits accessible from outside?",c:["Internal Assessment","Host-based Assessment","External Assessment","Credentialed Assessment"],a:2},
+  {t:"t3",l:"Vulnerability",q:"A Credentialed Assessment is also known as:",c:["Passive Assessment","Non-credentialed Assessment","Authenticated Assessment","External Assessment"],a:2},
+  {t:"t3",l:"Vulnerability",q:"Which vulnerability assessment type uses tools like Nessus, Qualys, or GFI LanGuard without manual footprinting?",c:["Manual Assessment","Passive Assessment","Credentialed Assessment","Automated Assessment"],a:3},
+  {t:"t3",l:"Vulnerability",q:"CVSS stands for:",c:["Common Vulnerability Scanning System","Critical Vulnerability Scoring Standard","Common Vulnerability Scoring System","Cyber Vulnerability Security Score"],a:2},
+  {t:"t3",l:"Vulnerability",q:"CVE stands for:",c:["Cyber Vulnerability Enumeration","Common Vulnerabilities and Exposures","Critical Vulnerability Exploit","Cyber Vulnerability Exposure"],a:1},
+  {t:"t3",l:"Vulnerability",q:"What is the first phase of the Vulnerability Management Cycle?",c:["Vulnerability Scan","Risk Assessment","Remediation","Identify Assets and Create a Baseline"],a:3},
+  {t:"t3",l:"Vulnerability",q:"In the Vulnerability Management Cycle, Remediation is:",c:["Identifying critical assets and prioritizing them","Performing a re-scan to verify fixes","The process of applying fixes to vulnerable systems to reduce the impact of vulnerabilities","Continuously monitoring systems using IDS/IPS"],a:2},
+  {t:"t3",l:"Vulnerability",q:"The Verification phase in the Vulnerability Management Cycle involves:",c:["Identifying all critical assets","Performing a risk assessment","Re-scanning systems to assess if required remediation is complete","Monitoring for new vulnerabilities continuously"],a:2},
+
+  // --- PASSWORD CRACKING ---
+  {t:"t4",l:"Password Cracking",q:"Password Cracking is defined as:",c:["Generating new passwords for users","The process of recovering passwords from data transmitted by or stored in a computer system","Encrypting passwords before storage","Creating complex password policies"],a:1},
+  {t:"t4",l:"Password Cracking",q:"Alphanumeric characters used in passwords consist of:",c:["Only uppercase and lowercase letters","Only numbers and symbols","Letters, numbers, punctuation marks, and mathematical and other conventional symbols","Only ASCII letters and numbers"],a:2},
+  {t:"t4",l:"Password Cracking",q:"Non-Electronic Password Attacks include techniques such as:",c:["Brute-force and dictionary attacks","Shoulder surfing, social engineering, and dumpster diving","Wire sniffing and replay attacks","Hash injection and LLMNR poisoning"],a:1},
+  {t:"t4",l:"Password Cracking",q:"In Active Online Attacks, the attacker:",c:["Does not interact with the system directly","Monitors or records data passing over the communication channel","Communicates with the target machine to gain password access","Tries to recover cleartext passwords from a password hash dump"],a:2},
+  {t:"t4",l:"Password Cracking",q:"In Passive Online Attacks, the attacker:",c:["Communicates with the target machine","Passively monitors or records data passing over the communication channel","Tries every combination of characters","Uses social engineering"],a:1},
+  {t:"t4",l:"Password Cracking",q:"A Dictionary Attack works by:",c:["Trying every possible combination of characters","Loading a dictionary file of common passwords into a cracking application","Monitoring network traffic for password hashes","Using social engineering to obtain passwords"],a:1},
+  {t:"t4",l:"Password Cracking",q:"A Brute Force Attack is defined as:",c:["Using a dictionary of known words","Trying every possible combination of characters until the password is broken","Monitoring network traffic passively","Guessing based on personal information"],a:1},
+  {t:"t4",l:"Password Cracking",q:"Cryptanalysis is described as:",c:["A passive network monitoring technique","A social engineering approach","A brute-force attack on encryption that employs a search of the keyspace","A technique for hiding data in image files"],a:2},
+  {t:"t4",l:"Password Cracking",q:"A Hybrid Attack combines which two techniques?",c:["Brute force and social engineering","Dictionary attack with numbers and symbols added to words","Wire sniffing and replay attacks","Shoulder surfing and dumpster diving"],a:1},
+  {t:"t4",l:"Password Cracking",q:"A Rule-based Attack is described as more powerful than dictionary and brute-force attacks because:",c:["It uses larger dictionaries","The attacker already knows some information about the password type","It runs faster on modern hardware","It requires no technical knowledge"],a:1},
+  {t:"t4",l:"Password Cracking",q:"Packet Sniffing (Wire Sniffing) allows an attacker to gain passwords to applications such as:",c:["Only web browsers","Email, websites, SMB, FTP, rlogin sessions, or SQL","Only FTP and SSH","Only e-mail accounts"],a:1},
+  {t:"t4",l:"Password Cracking",q:"L0phtCrack is a password-cracking tool used to:",c:["Enumerate NetBIOS names","Recover lost Microsoft Windows passwords using dictionary, hybrid, rainbow table, and brute-force attacks","Sniff network packets for credentials","Perform Google hacking"],a:1},
+  {t:"t4",l:"Password Cracking",q:"RainbowCrack cracks hashes using:",c:["A dictionary file of common words","A time-memory trade-off algorithm with pre-computed rainbow tables","Active online brute-force attacks","Passive wire sniffing"],a:1},
+  {t:"t4",l:"Password Cracking",q:"What is the recommended password change policy interval according to best practices?",c:["7 days","14 days","30 days","90 days"],a:2},
+  {t:"t4",l:"Password Cracking",q:"Using a random string (salt) as a password prefix or suffix before encryption:",c:["Makes passwords shorter and easier to remember","Speeds up the encryption process","Nullifies pre-computation and memorization attacks","Replaces the need for complex passwords"],a:2},
+];
+
+const LABS=['A','B','C','D'];
+let questions=[],current=0,score=0,answered=0,history=[],picked=false;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function prepQ(){return shuffle(Q).map(q=>{const idx=q.c.map((c,i)=>({c,ok:i===q.a}));const s=shuffle(idx);return{t:q.t,l:q.l,q:q.q,c:s.map(x=>x.c),a:s.findIndex(x=>x.ok)};});}
+
+function shuffleAndRestart(){
+  questions=prepQ();current=0;score=0;answered=0;history=[];picked=false;
+  document.getElementById('results').style.display='none';
+  document.getElementById('review').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  render();
+}
+
+function render(){
+  const q=questions[current],total=questions.length;
+  document.getElementById('q-counter').textContent=`Q ${current+1} / ${total}`;
+  document.getElementById('score-display').textContent=`SCORE: ${score}/${answered}`;
+  document.getElementById('prog-fill').style.width=`${((current+1)/total)*100}%`;
+  document.getElementById('q-num').textContent=`Q${current+1}`;
+  const cat=document.getElementById('q-cat');
+  cat.textContent=q.l; cat.className='q-cat '+q.t;
+
+  const card=document.getElementById('q-card');
+  card.style.borderLeftColor = q.t==='t1'?'var(--accent)':q.t==='t2'?'var(--accent2)':q.t==='t3'?'var(--accent3)':'var(--yellow)';
+  card.style.animation='none';card.offsetHeight;card.style.animation='';
+  document.getElementById('q-text').textContent=q.q;
+
+  const box=document.getElementById('choices');
+  box.innerHTML='';
+  q.c.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice';
+    btn.innerHTML=`<span class="lbl">${LABS[i]}</span><span>${c}</span>`;
+    btn.onclick=()=>pick(i);
+    box.appendChild(btn);
+  });
+  document.getElementById('next-wrap').style.display='none';
+  picked=false;
+}
+
+function pick(idx){
+  if(picked)return;picked=true;
+  const q=questions[current];
+  const btns=document.querySelectorAll('.choice');
+  const ok=idx===q.a;
+  answered++;if(ok)score++;
+  document.getElementById('score-display').textContent=`SCORE: ${score}/${answered}`;
+  history.push({q:q.q,sel:q.c[idx],ans:q.c[q.a],ok});
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.a){b.classList.add('correct');b.querySelector('.lbl').textContent='✓';const t=document.createElement('span');t.className='tick';t.textContent='✓';b.appendChild(t);}
+    else if(i===idx&&!ok){b.classList.add('wrong');b.querySelector('.lbl').textContent='✗';const t=document.createElement('span');t.className='tick';t.textContent='✗';b.appendChild(t);}
+    else b.classList.add('dimmed');
+  });
+  const nw=document.getElementById('next-wrap');
+  document.getElementById('next-btn').textContent=(current+1>=questions.length)?'See Results →':'Next →';
+  nw.style.display='block';
+}
+
+function nextQuestion(){if(current+1>=questions.length){showResults();}else{current++;render();}}
+
+function showResults(){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('review').style.display='none';
+  const t=questions.length,pct=Math.round(score/t*100);
+  const g=pct>=90?'MISSION COMPLETE':pct>=75?'TARGET SECURED':pct>=60?'PARTIAL SUCCESS':'BREACH DETECTED';
+  const ic=pct>=90?'🏆':pct>=75?'🎯':pct>=60?'📡':'⚠️';
+  document.getElementById('res-icon').textContent=ic;
+  document.getElementById('res-grade').textContent=g;
+  document.getElementById('res-score').textContent=`${score}/${t}`;
+  document.getElementById('res-pct').textContent=`${pct}% Score`;
+  document.getElementById('results').style.display='block';
+}
+
+function showReview(){
+  document.getElementById('results').style.display='none';
+  const list=document.getElementById('rev-list');
+  list.innerHTML='';
+  history.forEach((h,i)=>{
+    const d=document.createElement('div');
+    d.className='rev-item '+(h.ok?'ok':'bad');
+    d.innerHTML=`<p class="rev-q">${i+1}. ${h.q}</p>
+      <p class="rev-a ${h.ok?'right':'yours'}">→ Your answer: ${h.sel} ${h.ok?'✓':'✗'}</p>
+      ${!h.ok?`<p class="rev-a right">✓ Correct: ${h.ans}</p>`:''}`;
+    list.appendChild(d);
+  });
+  document.getElementById('review').style.display='block';
+}
+
+function showResults2(){showResults();}
+shuffleAndRestart();
+</script>
+</body>
+</html>
