@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Classical to Renaissance Literature Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --parchment: #f5ead6;
+    --deep-brown: #2c1a0e;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --crimson: #8b1a1a;
+    --crimson-light: #b22222;
+    --ink: #1a0f07;
+    --muted: #7a5c3a;
+    --card-bg: #fdf6e3;
+    --correct: #2d6a2d;
+    --wrong: #8b1a1a;
+    --border: #c9a84c55;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Crimson Text', Georgia, serif;
+    background: var(--deep-brown);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, #3d2010 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, #1a0a04 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,168,76,0.03) 60px, rgba(201,168,76,0.03) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201,168,76,0.03) 60px, rgba(201,168,76,0.03) 61px);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 16px 60px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    animation: fadeDown 0.8s ease;
+  }
+  .header .ornament { color: var(--gold); font-size: 1.4rem; letter-spacing: 8px; opacity: 0.8; }
+  .header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.5rem, 4vw, 2.6rem);
+    font-weight: 900;
+    color: var(--gold-light);
+    text-shadow: 0 2px 20px rgba(201,168,76,0.4), 0 0 60px rgba(201,168,76,0.1);
+    letter-spacing: 2px;
+    line-height: 1.2;
+    margin: 6px 0;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+  .divider {
+    width: 100%;
+    max-width: 500px;
+    height: 2px;
+    margin: 10px auto;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    opacity: 0.6;
+  }
+
+  /* SCOREBOARD */
+  .scoreboard {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    animation: fadeDown 0.9s ease;
+  }
+  .score-card {
+    background: linear-gradient(135deg, #2c1a0e, #3d2814);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 10px 22px;
+    text-align: center;
+    min-width: 110px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(201,168,76,0.2);
+  }
+  .score-card .label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .score-card .value {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    text-shadow: 0 0 12px rgba(201,168,76,0.5);
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    animation: fadeDown 1s ease;
+  }
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #a07820);
+    color: var(--ink);
+    box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+  }
+  .btn-gold:hover { background: linear-gradient(135deg, var(--gold-light), var(--gold)); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,0.4); }
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+  }
+  .btn-outline:hover { background: rgba(201,168,76,0.1); transform: translateY(-2px); }
+  .btn-crimson {
+    background: linear-gradient(135deg, var(--crimson-light), var(--crimson));
+    color: var(--parchment);
+    box-shadow: 0 4px 16px rgba(139,26,26,0.4);
+  }
+  .btn-crimson:hover { background: linear-gradient(135deg, #cc3333, var(--crimson-light)); transform: translateY(-2px); }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    width: 100%;
+    max-width: 760px;
+    margin-bottom: 20px;
+    animation: fadeDown 1s ease;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    opacity: 0.8;
+  }
+  .progress-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px rgba(201,168,76,0.5);
+  }
+
+  /* QUESTION CARD */
+  .card {
+    background: var(--card-bg);
+    background-image:
+      radial-gradient(ellipse at top left, #fff9ed, transparent 70%),
+      url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    border: 1.5px solid var(--gold);
+    border-radius: 16px;
+    padding: 32px 36px;
+    max-width: 760px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.6);
+    animation: slideUp 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .category-badge {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--crimson);
+    border: 1px solid var(--crimson);
+    border-radius: 4px;
+    padding: 3px 10px;
+    margin-bottom: 14px;
+    opacity: 0.85;
+  }
+  .question-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .question-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.55;
+    margin-bottom: 26px;
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 11px; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border-radius: 10px;
+    border: 1.5px solid #d4c5a0;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-size: 1.05rem;
+    color: var(--deep-brown);
+  }
+  .option:hover:not(.disabled) {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    transform: translateX(4px);
+    box-shadow: 0 2px 12px rgba(201,168,76,0.15);
+  }
+  .option.correct { border-color: var(--correct); background: rgba(45,106,45,0.1); color: var(--correct); font-weight: 600; }
+  .option.wrong   { border-color: var(--wrong);   background: rgba(139,26,26,0.08); color: var(--wrong);   font-weight: 600; }
+  .option.disabled { cursor: default; }
+  .option-letter {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.15);
+    border: 1.5px solid rgba(201,168,76,0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    transition: all 0.18s;
+  }
+  .option.correct .option-letter { background: var(--correct); border-color: var(--correct); color: white; }
+  .option.wrong   .option-letter { background: var(--wrong);   border-color: var(--wrong);   color: white; }
+  .option:hover:not(.disabled) .option-letter { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+
+  /* FEEDBACK */
+  .feedback {
+    margin-top: 18px;
+    padding: 13px 18px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-style: italic;
+    display: none;
+  }
+  .feedback.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback.correct-fb { background: rgba(45,106,45,0.1); color: var(--correct); border: 1px solid rgba(45,106,45,0.3); }
+  .feedback.wrong-fb   { background: rgba(139,26,26,0.08); color: var(--wrong);   border: 1px solid rgba(139,26,26,0.2); }
+
+  /* NEXT BUTTON */
+  .next-wrap { margin-top: 22px; text-align: right; }
+
+  /* RESULTS SCREEN */
+  .results {
+    background: var(--card-bg);
+    border: 1.5px solid var(--gold);
+    border-radius: 20px;
+    padding: 44px 40px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    animation: slideUp 0.5s ease;
+    display: none;
+  }
+  .results.show { display: block; }
+  .results .trophy { font-size: 3.5rem; margin-bottom: 12px; }
+  .results h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .results .final-score {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--crimson);
+    text-shadow: 0 0 20px rgba(178,34,34,0.3);
+    line-height: 1;
+    margin: 12px 0;
+  }
+  .results .score-label {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .results .grade {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    padding: 8px 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .grade-s { background: rgba(201,168,76,0.15); color: var(--gold); border: 1.5px solid var(--gold); }
+  .grade-a { background: rgba(45,106,45,0.12); color: var(--correct); border: 1.5px solid var(--correct); }
+  .grade-b { background: rgba(30,80,150,0.1); color: #1e4d96; border: 1.5px solid #1e4d96; }
+  .grade-c { background: rgba(139,26,26,0.1); color: var(--crimson); border: 1.5px solid var(--crimson); }
+  .results-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+
+  /* CATEGORY FILTER */
+  .category-filter {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    animation: fadeDown 1s ease;
+  }
+  .filter-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(201,168,76,0.4);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes slideUp  { from { opacity:0; transform:translateY(20px);  } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+
+  @media(max-width:560px) {
+    .card { padding: 22px 18px; }
+    .question-text { font-size: 1.1rem; }
+    .results { padding: 30px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="ornament">✦ ✦ ✦</div>
+  <h1>Classical to Renaissance<br>Literature Quiz</h1>
+  <div class="divider"></div>
+  <p>Test your knowledge of the Great Books</p>
+</div>
+
+<div class="scoreboard">
+  <div class="score-card"><div class="label">Score</div><div class="value" id="score-val">0</div></div>
+  <div class="score-card"><div class="label">Question</div><div class="value" id="qnum-val">—</div></div>
+  <div class="score-card"><div class="label">Correct</div><div class="value" id="correct-val">0</div></div>
+  <div class="score-card"><div class="label">Wrong</div><div class="value" id="wrong-val">0</div></div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-gold" onclick="startQuiz()">▶ Start Quiz</button>
+  <button class="btn btn-outline" onclick="shuffleAndStart()">⇄ Shuffle & Start</button>
+  <button class="btn btn-crimson" onclick="resetQuiz()">↺ Reset</button>
+</div>
+
+<div class="category-filter">
+  <button class="filter-btn active" onclick="setFilter('all', this)">All Topics</button>
+  <button class="filter-btn" onclick="setFilter('classical', this)">Classical</button>
+  <button class="filter-btn" onclick="setFilter('medieval', this)">Medieval</button>
+  <button class="filter-btn" onclick="setFilter('renaissance', this)">Renaissance</button>
+  <button class="filter-btn" onclick="setFilter('mahabharata', this)">Mahabharata</button>
+  <button class="filter-btn" onclick="setFilter('hamlet', this)">Hamlet</button>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="prog-label">Progress</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="prog-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- QUESTION CARD -->
+<div class="card" id="quiz-card" style="display:none;">
+  <div class="category-badge" id="cat-badge">Category</div>
+  <div class="question-num" id="q-num">Question 1 of 55</div>
+  <div class="question-text" id="q-text">Loading...</div>
+  <div class="options" id="options-container"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="next-wrap">
+    <button class="btn btn-gold" id="next-btn" style="display:none;" onclick="nextQuestion()">Next Question →</button>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div class="results" id="results-screen">
+  <div class="trophy" id="result-trophy">🏆</div>
+  <h2 id="result-heading">Quiz Complete!</h2>
+  <div class="final-score" id="final-score">0/0</div>
+  <div class="score-label" id="score-label">Loading...</div>
+  <div class="grade" id="grade-badge">Grade</div>
+  <div class="results-btns">
+    <button class="btn btn-gold" onclick="shuffleAndStart()">⇄ Try Again (Shuffled)</button>
+    <button class="btn btn-outline" onclick="resetQuiz()">↺ Back to Start</button>
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ── CLASSICAL LITERATURE ──────────────────────────────────────
+  { cat:"classical", q:"Classical literature refers to the enduring works of ancient Greece and Rome spanning which period?", opts:["100 BCE – 400 CE","500 BCE – 500 CE","300 BCE – 700 CE","1000 BCE – 200 CE"], ans:1 },
+  { cat:"classical", q:"Which ancient Greek playwright wrote Antigone?", opts:["Plato","Sappho","Sophocles","Aristotle"], ans:2 },
+  { cat:"classical", q:"Antigone tells the story of a young woman who disobeys the king to do what?", opts:["Marry a soldier","Bury her brother","Rule the kingdom","Free prisoners"], ans:1 },
+  { cat:"classical", q:"Which philosopher founded The Academy (Platonic Academy) in Athens?", opts:["Aristotle","Socrates","Homer","Plato"], ans:3 },
+  { cat:"classical", q:"Plato was a student of which philosopher?", opts:["Aristotle","Homer","Socrates","Sophocles"], ans:2 },
+  { cat:"classical", q:"Plato's The Republic explores justice, the ideal state, and the journey from what to knowledge?", opts:["Chaos","Ignorance","Darkness","War"], ans:1 },
+  { cat:"classical", q:"Sappho was an ancient Greek poet from which island?", opts:["Crete","Rhodes","Lesbos (Lesvos)","Corfu"], ans:2 },
+  { cat:"classical", q:"What main literary form features short, personal poems that convey deep emotions?", opts:["Drama","Allegory","Lyric Poetry","Philosophy"], ans:2 },
+  { cat:"classical", q:"Drama in classical literature reflects on the consequences of what through tragic or comedic elements?", opts:["Fate","Choices","Divine will","War"], ans:1 },
+  { cat:"classical", q:"Which of the following is NOT a main form of Classical Literature?", opts:["Drama","Chivalry","Philosophy","Lyric Poetry"], ans:1 },
+  { cat:"classical", q:"Sophocles is described as one of the three great tragedians of which city?", opts:["Sparta","Corinth","Classical Athens","Thebes"], ans:2 },
+  { cat:"classical", q:"Antigone highlights the clash between personal beliefs and what?", opts:["The gods","The law","Family loyalty","Fate"], ans:1 },
+  { cat:"classical", q:"Classical literature shaped Western art, politics, education, and which other field?", opts:["Science","Ethics","Mathematics","Architecture"], ans:1 },
+
+  // ── MEDIEVAL LITERATURE ───────────────────────────────────────
+  { cat:"medieval", q:"Medieval literature spans approximately which period?", opts:["200 – 1200 CE","500 – 1500 CE","300 – 1300 CE","700 – 1700 CE"], ans:1 },
+  { cat:"medieval", q:"Medieval literature is characterized by strong religious influence, feudal structures, and a focus on chivalry, morality, and what?", opts:["Individualism","Spirituality","Science","Humanism"], ans:1 },
+  { cat:"medieval", q:"Medieval works were written in Latin, Old English, Middle English, and which other type of language?", opts:["Classical Greek","Vernacular languages","Sanskrit","Arabic"], ans:1 },
+  { cat:"medieval", q:"The Divine Comedy was written by which author?", opts:["Chaucer","Dante Alighieri","Pearl Poet","Boccaccio"], ans:1 },
+  { cat:"medieval", q:"In The Divine Comedy, Dante travels through Inferno, Purgatorio, and which third realm?", opts:["Nirvana","Elysium","Paradiso","Valhalla"], ans:2 },
+  { cat:"medieval", q:"Allegory in medieval literature uses stories where characters, events, and objects symbolize deeper what?", opts:["Historical events","Moral, spiritual, or political meanings","Personal experiences","Scientific truths"], ans:1 },
+  { cat:"medieval", q:"Everyman is a medieval morality play written by whom?", opts:["Dante Alighieri","Pearl Poet","Unknown author","Chaucer"], ans:2 },
+  { cat:"medieval", q:"In Everyman, the main character faces death and must account for his what?", opts:["Kingdom","Wealth","Life","Sins"], ans:2 },
+  { cat:"medieval", q:"Sir Gawain and the Green Knight is attributed to which anonymous writer?", opts:["Pearl Poet or Gawain Poet","Dante Alighieri","Geoffrey Chaucer","John Milton"], ans:0 },
+  { cat:"medieval", q:"Sir Gawain is a knight of which king's court?", opts:["King Lear","King Arthur","King Claudius","King Richard"], ans:1 },
+  { cat:"medieval", q:"Chivalry in medieval literature focuses on knights, honor, and what type of love?", opts:["Brotherly love","Courtly love","Spiritual love","Parental love"], ans:1 },
+  { cat:"medieval", q:"Which of the following is NOT a reason for studying Medieval Literature?", opts:["Expression of Faith and Spirituality","Preservation of Storytelling","Shaping of Modern Scientific Thought","Voices of Tradition and Community"], ans:2 },
+  { cat:"medieval", q:"Medieval literature bridges the fall of which empire and the beginning of the Renaissance?", opts:["Greek Empire","Ottoman Empire","Roman Empire","Byzantine Empire"], ans:2 },
+
+  // ── RENAISSANCE LITERATURE ────────────────────────────────────
+  { cat:"renaissance", q:"Renaissance literature was produced roughly between which years?", opts:["1000 CE – 1400 CE","1300 CE – 1600 CE","1500 CE – 1800 CE","1200 CE – 1500 CE"], ans:1 },
+  { cat:"renaissance", q:"Renaissance literature revived classical learning and humanist ideals, emphasizing reason, creativity, and what?", opts:["Religious devotion","Exploration of human potential","Feudal loyalty","Spiritual allegory"], ans:1 },
+  { cat:"renaissance", q:"Oration on the Dignity of Man was written by which Renaissance author?", opts:["Baldassare Castiglione","William Shakespeare","Giovanni Pico della Mirandola","Dante Alighieri"], ans:2 },
+  { cat:"renaissance", q:"The Book of the Courtier, presenting the ideal Renaissance individual, was written by whom?", opts:["Pico della Mirandola","Baldassare Castiglione","William Shakespeare","Dante Alighieri"], ans:1 },
+  { cat:"renaissance", q:"Romeo and Juliet was written by which playwright?", opts:["Christopher Marlowe","William Shakespeare","Ben Jonson","John Webster"], ans:1 },
+  { cat:"renaissance", q:"Individualism in Renaissance literature focuses on personal experience, self-expression, and the uniqueness of what?", opts:["Nature","Human character","Divine order","Political structures"], ans:1 },
+  { cat:"renaissance", q:"Humanism in Renaissance literature emphasizes the study of classical texts, moral philosophy, and the potential of humans to do what?", opts:["Worship and serve God","Reason, create, and shape their world","Govern kingdoms justly","Fight for honor"], ans:1 },
+  { cat:"renaissance", q:"William Shakespeare wrote around how many plays for the theatre?", opts:["25","50","37","42"], ans:2 },
+  { cat:"renaissance", q:"Shakespeare also wrote how many sonnets?", opts:["100","154","200","78"], ans:1 },
+  { cat:"renaissance", q:"Unlike the Middle Ages, Renaissance literature focuses on individual experience, worldly concerns, and what?", opts:["Spiritual allegory","Religious doctrine","Intellectual curiosity","Feudal duty"], ans:2 },
+
+  // ── MAHABHARATA ───────────────────────────────────────────────
+  { cat:"mahabharata", q:"The Mahabharata is an ancient Indian epic attributed to which author?", opts:["Krishna","Arjuna","Vyasa","Shakuni"], ans:2 },
+  { cat:"mahabharata", q:"Who is the eldest of the Pandava brothers?", opts:["Bhima","Arjuna","Nakula","Yudhishthira"], ans:3 },
+  { cat:"mahabharata", q:"Arjuna is described as the Third Pandava and a skilled what?", opts:["Swordsman","Archer","Horseman","General"], ans:1 },
+  { cat:"mahabharata", q:"Draupadi's humiliation in the Kaurava court sparks what in the epic?", opts:["A peace treaty","The exile of the Kauravas","Conflict driving the story toward war","A marriage alliance"], ans:2 },
+  { cat:"mahabharata", q:"Duryodhana is described as the leader of which faction?", opts:["Pandavas","Kauravas","Krishna's army","Vyasa's disciples"], ans:1 },
+  { cat:"mahabharata", q:"Shakuni cheats the Pandavas in which game?", opts:["Chess","Dice game","Archery contest","Chariot race"], ans:1 },
+  { cat:"mahabharata", q:"The Mahabharata is set around Hastinapur and which other ancient city?", opts:["Varanasi","Ayodhya","Indraprastha","Mathura"], ans:2 },
+  { cat:"mahabharata", q:"The climax of the Mahabharata occurs in which great war?", opts:["Battle of Lanka","Kurukshetra war","Battle of Indraprastha","War of the Ganges"], ans:1 },
+  { cat:"mahabharata", q:"Krishna's role in the Mahabharata is described as a what?", opts:["Warrior king","Villain","Divine guide","Narrator"], ans:2 },
+  { cat:"mahabharata", q:"Which young Pandava warrior dies in the Kurukshetra war?", opts:["Karna","Nakula","Abhimanyu","Sahadeva"], ans:2 },
+  { cat:"mahabharata", q:"The Mahabharata is told from which point of view?", opts:["First-person limited","Second-person","Third-person omniscient","Dramatic point of view"], ans:2 },
+  { cat:"mahabharata", q:"Which theme of the Mahabharata describes Arjuna's dilemma about fighting his own family?", opts:["Pride and Ambition","Duty and Righteousness (Dharma)","Justice and Consequences","Fate and Human Choice"], ans:1 },
+  { cat:"mahabharata", q:"In the resolution of the Mahabharata, who reclaims the kingdom of Hastinapur?", opts:["Krishna","Arjuna","Yudhishthira and his brothers","Karna"], ans:2 },
+  { cat:"mahabharata", q:"Karna is a warrior allied with the Kauravas who meets what kind of end?", opts:["Triumphant victory","Exile","Tragic end in battle","Peaceful retirement"], ans:2 },
+  { cat:"mahabharata", q:"The Mahabharata uses epic similes to dramatize battles and symbolism to represent what two concepts?", opts:["Love and War","Dharma and Karma","Heaven and Hell","Victory and Defeat"], ans:1 },
+
+  // ── HAMLET ────────────────────────────────────────────────────
+  { cat:"hamlet", q:"Hamlet is a tragic play by which playwright?", opts:["Christopher Marlowe","Ben Jonson","William Shakespeare","John Webster"], ans:2 },
+  { cat:"hamlet", q:"At the start of Hamlet, the Ghost reveals that King Hamlet was murdered by whom?", opts:["Laertes","Polonius","Fortinbras","Claudius"], ans:3 },
+  { cat:"hamlet", q:"Where is the play Hamlet set?", opts:["Windsor Castle, England","Elsinore Castle, Denmark","Edinburgh Castle, Scotland","Versailles, France"], ans:1 },
+  { cat:"hamlet", q:"What literary device in Hamlet involves characters speaking their thoughts aloud to reveal inner feelings?", opts:["Aside","Allegory","Soliloquy","Foreshadowing"], ans:2 },
+  { cat:"hamlet", q:"Ophelia is described as Hamlet's love interest who eventually descends into what?", opts:["Exile","Madness","Rage","Ambition"], ans:1 },
+  { cat:"hamlet", q:"Who is Ophelia's father in Hamlet?", opts:["Laertes","Horatio","Polonius","Claudius"], ans:2 },
+  { cat:"hamlet", q:"Hamlet stages a play-within-a-play in order to expose whose guilt?", opts:["Polonius","Gertrude","Laertes","Claudius"], ans:3 },
+  { cat:"hamlet", q:"What is Hamlet's famous soliloquy opening line from Act 3, Scene 1?", opts:["'All the world's a stage'","'To be, or not to be: that is the question'","'What a piece of work is man'","'Friends, Romans, countrymen'"], ans:1 },
+  { cat:"hamlet", q:"In the climax, Hamlet and Laertes engage in what kind of confrontation?", opts:["A chariot race","A battle at sea","A duel","A trial"], ans:2 },
+  { cat:"hamlet", q:"Which character survives at the end of Hamlet to tell the story?", opts:["Gertrude","Fortinbras","Ophelia","Horatio"], ans:3 },
+  { cat:"hamlet", q:"After all deaths in Hamlet, who becomes king?", opts:["Horatio","Hamlet","Fortinbras, Prince of Norway","Laertes"], ans:2 },
+  { cat:"hamlet", q:"Hamlet follows which type of point of view since it is a play?", opts:["Third-person omniscient","First-person","Dramatic point of view","Second-person"], ans:2 },
+  { cat:"hamlet", q:"Which theme of Hamlet is illustrated by Gertrude's quick remarriage and Claudius's deception?", opts:["Madness and Grief","Mortality and Death","Loyalty and Betrayal","Revenge and Justice"], ans:2 },
+  { cat:"hamlet", q:"Hamlet teaches that indecision, revenge, and unchecked ambition can lead to what?", opts:["Glory","Wisdom","Tragedy","Redemption"], ans:2 },
+  { cat:"hamlet", q:"Hamlet's conflict of struggling with grief and whether it is morally right to kill Claudius is an example of which type of conflict?", opts:["Character vs. Character","Character vs. Society","Character vs. Fate","Character vs. Self"], ans:3 },
+];
+
+const CAT_LABELS = {
+  classical:"Classical Literature",
+  medieval:"Medieval Literature",
+  renaissance:"Renaissance Literature",
+  mahabharata:"Mahabharata",
+  hamlet:"Hamlet"
+};
+
+let questions = [];
+let current = 0;
+let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let answered = false;
+let activeFilter = 'all';
+
+function setFilter(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function getFilteredQuestions() {
+  if (activeFilter === 'all') return [...ALL_QUESTIONS];
+  return ALL_QUESTIONS.filter(q => q.cat === activeFilter);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  questions = getFilteredQuestions();
+  current = 0; score = 0; correctCount = 0; wrongCount = 0;
+  updateScoreboard();
+  document.getElementById('results-screen').classList.remove('show');
+  document.getElementById('quiz-card').style.display = 'block';
+  renderQuestion();
+}
+
+function shuffleAndStart() {
+  questions = shuffle(getFilteredQuestions());
+  current = 0; score = 0; correctCount = 0; wrongCount = 0;
+  updateScoreboard();
+  document.getElementById('results-screen').classList.remove('show');
+  document.getElementById('quiz-card').style.display = 'block';
+  renderQuestion();
+}
+
+function resetQuiz() {
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('results-screen').classList.remove('show');
+  document.getElementById('score-val').textContent = '0';
+  document.getElementById('qnum-val').textContent = '—';
+  document.getElementById('correct-val').textContent = '0';
+  document.getElementById('wrong-val').textContent = '0';
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('prog-pct').textContent = '0%';
+  document.getElementById('prog-label').textContent = 'Progress';
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  document.getElementById('cat-badge').textContent = CAT_LABELS[q.cat] || q.cat;
+  document.getElementById('q-num').textContent = `Question ${current + 1} of ${total}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  const letters = ['A','B','C','D'];
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    div.onclick = () => selectAnswer(i, q.ans, div);
+    container.appendChild(div);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const pct = Math.round((current / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-label').textContent = `${current} of ${total} answered`;
+  document.getElementById('qnum-val').textContent = `${current + 1}/${total}`;
+
+  // Restart card animation
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'slideUp 0.35s ease';
+}
+
+function selectAnswer(chosen, correct, el) {
+  if (answered) return;
+  answered = true;
+  const opts = document.querySelectorAll('.option');
+  opts.forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === correct) o.classList.add('correct');
+    else if (i === chosen && chosen !== correct) o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (chosen === correct) {
+    correctCount++;
+    score += 10;
+    fb.textContent = '✓ Correct! Well done, scholar.';
+    fb.className = 'feedback correct-fb show';
+  } else {
+    wrongCount++;
+    fb.textContent = `✗ Incorrect. The correct answer was: "${questions[current].opts[correct]}"`;
+    fb.className = 'feedback wrong-fb show';
+  }
+  updateScoreboard();
+  document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function updateScoreboard() {
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('correct-val').textContent = correctCount;
+  document.getElementById('wrong-val').textContent = wrongCount;
+}
+
+function showResults() {
+  document.getElementById('quiz-card').style.display = 'none';
+  const total = questions.length;
+  const pct = Math.round((correctCount / total) * 100);
+
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
+  document.getElementById('prog-label').textContent = `${total} of ${total} answered`;
+
+  document.getElementById('final-score').textContent = `${correctCount}/${total}`;
+  document.getElementById('score-label').textContent = `You scored ${pct}% — Total Points: ${score}`;
+
+  let trophy = '🏆', heading = 'Outstanding!', gradeClass = 'grade-s', gradeText = '✦ S Rank – Master Scholar';
+  if (pct < 50)      { trophy='📜'; heading='Keep Studying!';  gradeClass='grade-c'; gradeText='C Rank – Apprentice'; }
+  else if (pct < 70) { trophy='📖'; heading='Good Effort!';    gradeClass='grade-b'; gradeText='B Rank – Scholar'; }
+  else if (pct < 90) { trophy='🎓'; heading='Well Done!';      gradeClass='grade-a'; gradeText='A Rank – Learned One'; }
+
+  document.getElementById('result-trophy').textContent = trophy;
+  document.getElementById('result-heading').textContent = heading;
+  const gb = document.getElementById('grade-badge');
+  gb.className = 'grade ' + gradeClass;
+  gb.textContent = gradeText;
+
+  document.getElementById('results-screen').classList.add('show');
+}
+</script>
+</body>
+</html>
