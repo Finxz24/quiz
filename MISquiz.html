@@ -395,7 +395,7 @@
   <div class="quiz-container">
     <div class="quiz-header">
       <h1>MIS Midterm Quiz</h1>
-      <p>Management Information Systems</p>
+      <p>Management Information Systems - STI Handouts</p>
       <div class="header-buttons">
         <button class="header-btn" onclick="shuffleQuestions()">🔀 Shuffle Questions</button>
         <button class="header-btn" onclick="restartQuiz()">🔄 New Quiz</button>
@@ -451,90 +451,90 @@
   </div>
 
   <script>
-    // MIS Midterm Questions from STI PDF Handouts
+    // MIS Midterm Questions - EXACT wording from PDF
     const allQuestions = [
       // End-User Computing (from Handout 04)
       { topic: "End-User Computing", question: "What is End-User Computing (EUC)?", options: ["Computer systems that allow non-programmers to create applications", "Systems for programming developers", "Hardware-only solutions", "Network infrastructure"], correct: 0 },
       { topic: "End-User Computing", question: "Which is NOT a type of EUC?", options: ["Mainframe Computers", "Desktop and Laptop Computers", "Smartphones and Wearables", "Mobile, Web, and Cloud Applications"], correct: 0 },
-      { topic: "End-User Computing", question: "What is End-User Development (EUD)?", options: ["Practice allowing end-users to develop systems with IT support", "Only IT professionals developing systems", "Hardware maintenance", "Network administration"], correct: 0 },
-      { topic: "End-User Computing", question: "Which is a benefit of End-User Computing?", options: ["Enhanced productivity of workers", "Increased documentation requirements", "Higher DP professional needs", "Reduced system responsiveness"], correct: 0 },
+      { topic: "End-User Computing", question: "What is End-User Development (EUD)?", options: ["End-users develop their information systems with IT support", "Only IT professionals develop systems", "Hardware maintenance by users", "Network administration"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is a benefit of End-User Computing?", options: ["Enhanced productivity of professional and white-collar workers", "Increased documentation requirements", "Higher DP professional needs", "Reduced system responsiveness"], correct: 0 },
       { topic: "End-User Computing", question: "Which is a risk of End-User Computing?", options: ["Errors in analysis", "Perfect documentation", "Guaranteed security", "Reduced productivity"], correct: 0 },
-      { topic: "End-User Computing", question: "What are Application Packages?", options: ["Pre-written software for standard business functions", "Custom hardware solutions", "Programming languages", "Network devices"], correct: 0 },
-      { topic: "End-User Computing", question: "Which is an example of Fourth-Generation Programming Language?", options: ["SQL", "C++", "Java", "Python"], correct: 0 },
+      { topic: "End-User Computing", question: "What are Application Packages?", options: ["Pre-written software packages marketed commercially", "Custom hardware solutions", "Programming languages", "Network devices"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is an example of Fourth-Generation Programming Language?", options: ["SQL query language", "C++", "Java", "Python"], correct: 0 },
       { topic: "End-User Computing", question: "Which is a Data Handling Tool in EUC?", options: ["Spreadsheets", "Email", "Fax", "Teleconferencing"], correct: 0 },
-      { topic: "End-User Computing", question: "Which is a Communication Tool in EUC?", options: ["Email and VoIP", "Spreadsheets", "Databases", "Project Management"], correct: 0 },
-      { topic: "End-User Computing", question: "Which is an Office Automation Tool in EUC?", options: ["Diary management and project management", "Programming languages", "Database systems", "Network devices"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is a Communication Tool in EUC?", options: ["e-mail, voice over IP (VoIP), fax", "Spreadsheets", "Databases", "Project Management"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is an Office Automation Tool in EUC?", options: ["diary management, electronic notebooks, project management tools", "Programming languages", "Database systems", "Network devices"], correct: 0 },
 
       // Office Automation (from Handout 04)
-      { topic: "Office Automation", question: "What is Office Automation?", options: ["Integration of basic office requirements", "Only word processing", "Hardware maintenance", "Network installation"], correct: 0 },
-      { topic: "Office Automation", question: "What is an Office Information System (OIS)?", options: ["System that uses software, hardware, and networking to improve workflow", "Only hardware system", "Programming language", "Database only"], correct: 0 },
-      { topic: "Office Automation", question: "Which is an example of Function in office automation?", options: ["Cut, Copy, Delete", "Microsoft Excel", "Adobe Photoshop", "MySQL"], correct: 0 },
-      { topic: "Office Automation", question: "Which is an example of Word Processing software?", options: ["Microsoft Word and Notepad", "Microsoft Excel", "Adobe Photoshop", "MySQL"], correct: 0 },
+      { topic: "Office Automation", question: "What is Office Automation?", options: ["Complete integration of basic office requirements", "Only word processing", "Hardware maintenance", "Network installation"], correct: 0 },
+      { topic: "Office Automation", question: "What is an Office Information System (OIS)?", options: ["Uses software, hardware, and networking to improve workflow and communication", "Only hardware system", "Programming language", "Database only"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Function in office automation?", options: ["Cut, Copy, Delete, Move, Search, Calculate, Change Font, and Print", "Microsoft Excel", "Adobe Photoshop", "MySQL"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Word Processing software?", options: ["Notepad and Microsoft Word", "Microsoft Excel", "Adobe Photoshop", "MySQL"], correct: 0 },
       { topic: "Office Automation", question: "Which is an example of Electronic Spreadsheet software?", options: ["Microsoft Excel", "Microsoft Word", "Adobe Photoshop", "Microsoft Outlook"], correct: 0 },
       { topic: "Office Automation", question: "Which is an example of Database Management software?", options: ["Microsoft Access and MySQL", "Microsoft Word", "Adobe Photoshop", "Microsoft PowerPoint"], correct: 0 },
-      { topic: "Office Automation", question: "Which is an example of Graphics Design software?", options: ["Adobe Photoshop and Microsoft PowerPoint", "Microsoft Excel", "Microsoft Access", "Notepad"], correct: 0 },
-      { topic: "Office Automation", question: "What does Project Management software allow?", options: ["Identify tasks, resources, and track progress", "Write documents only", "Send emails only", "Create databases"], correct: 0 },
-      { topic: "Office Automation", question: "What does Calendar software permit?", options: ["Schedule events on calendars", "Create spreadsheets", "Design graphics", "Manage databases"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Graphics Design software?", options: ["Microsoft PowerPoint and Adobe Photoshop", "Microsoft Excel", "Microsoft Access", "Notepad"], correct: 0 },
+      { topic: "Office Automation", question: "What does Project Management software allow?", options: ["Identify tasks, task relationships, resources, and time requirements", "Write documents only", "Send emails only", "Create databases"], correct: 0 },
+      { topic: "Office Automation", question: "What does Calendar software permit?", options: ["Schedule events on one or more calendars", "Create spreadsheets", "Design graphics", "Manage databases"], correct: 0 },
       { topic: "Office Automation", question: "Which is an example of Electronic Communication software?", options: ["Microsoft Outlook", "Adobe Photoshop", "Microsoft Excel", "AutoCAD"], correct: 0 },
 
       // Electronic Communication Systems (from Handout 06)
-      { topic: "Electronic Communication Systems", question: "What is an Electronic Communication System?", options: ["Provides fast and inexpensive communication channels", "Expensive communication method", "Manual paper-based system", "Only telephone system"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "Which is an example of Synchronous communication?", options: ["Chat rooms and instant messaging", "Email and forums", "Online bulletin boards", "Message boards"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "Which is an example of Asynchronous communication?", options: ["Email, forums, and bulletin boards", "Video conferencing", "Instant messaging", "Chat rooms"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What is Electronic Conferencing?", options: ["Synchronous component for collaboration between members", "Only email system", "Document storage", "Hardware maintenance"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What is Point-to-Point conferencing?", options: ["Involves two members communication", "Multiple members communication", "No communication", "Only video"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What is Multipoint conferencing?", options: ["Involves multiple members using central hub", "Only two people", "No network needed", "Manual system"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What is an Electronic Meeting System?", options: ["Can be synchronous or asynchronous for meeting facilitation", "Only for scheduling", "Hardware only", "Network equipment"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What does 'Pull' technology require?", options: ["User to do something to access information", "Automatic delivery", "No user action", "Constant connection"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What does 'Push' technology mean?", options: ["Information comes to user automatically", "User must log in", "Manual retrieval required", "No internet needed"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What is Electronic Publishing?", options: ["Digital publication of textual material", "Physical book printing", "Fax machine", "Postal mail"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "Which is an example of Portable Electronic Media?", options: ["CDs, DVDs, Flash Drives", "Blogs", "E-books", "Online newspapers"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "Which is an example of New Media in electronic publishing?", options: ["Blogs, Vlogs, Digital Platforms", "CDs and DVDs", "Flash drives", "External hard drives"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What is a benefit of Electronic Publishing?", options: ["Paperless, environment-friendly medium", "Requires more paper", "Higher distribution costs", "Slower distribution"], correct: 0 },
-      { topic: "Electronic Communication Systems", question: "What is a risk of Electronic Publishing?", options: ["Plagiarism and security issues", "Faster distribution", "Lower costs", "Environmental benefits"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is an Electronic Communication System?", options: ["Provides fast and inexpensive communication channels using telephony, computing hardware, networks, and Internet", "Expensive communication method", "Manual paper-based system", "Only telephone system"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of Synchronous communication?", options: ["Chat rooms, instant messaging, and audio/video teleconferencing", "Email and forums", "Online bulletin boards", "Message boards"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of Asynchronous communication?", options: ["Forums, email, and online bulletin boards", "Video conferencing", "Instant messaging", "Chat rooms"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Electronic Conferencing?", options: ["Mostly synchronous component for collaboration between members", "Only email system", "Document storage", "Hardware maintenance"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Point-to-Point conferencing?", options: ["Involves only two points between two members", "Multiple members communication", "No communication", "Only video"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Multipoint conferencing?", options: ["Involves multiple points between multiple members using central network hub", "Only two people", "No network needed", "Manual system"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is an Electronic Meeting System?", options: ["Can be either synchronous or asynchronous for meeting facilitation", "Only for scheduling", "Hardware only", "Network equipment"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What does Pull technology require?", options: ["User to do something to access the discussion", "Automatic delivery", "No user action", "Constant connection"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What does Push technology mean?", options: ["Discussion comes to the user automatically", "User must log in", "Manual retrieval required", "No internet needed"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Electronic Publishing?", options: ["Digital publication of textual material and readable information", "Physical book printing", "Fax machine", "Postal mail"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of Portable Electronic Media?", options: ["CDs/DVDs/BDs, Flash Drives, or External Hard Drives", "Blogs", "E-books", "Online newspapers"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of New Media in electronic publishing?", options: ["Blogs/Vlogs, and Digital Publication Platforms", "CDs and DVDs", "Flash drives", "External hard drives"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is a benefit of Electronic Publishing?", options: ["Paperless, Environment-Friendly Medium", "Requires more paper", "Higher distribution costs", "Slower distribution"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is a risk of Electronic Publishing?", options: ["Security Issues and Plagiarism", "Faster distribution", "Lower costs", "Environmental benefits"], correct: 0 },
 
       // Telecommunications (from Handout 07)
       { topic: "Telecommunications", question: "What is Telecommunication in business?", options: ["Sharing information over a distance", "Local storage only", "Manual filing", "Hardware installation"], correct: 0 },
-      { topic: "Telecommunications", question: "Which is an example of Internal Downward communication?", options: ["Memo from executives to departments", "Email from customer", "Vendor pitch", "Business proposal to client"], correct: 0 },
-      { topic: "Telecommunications", question: "Which is an example of Internal Upward communication?", options: ["Budget approval request to manager", "Executive memo to staff", "Customer email", "Vendor proposal"], correct: 0 },
-      { topic: "Telecommunications", question: "Which is an example of Internal Lateral communication?", options: ["Email between coworkers of same department", "Memo from CEO", "Customer complaint", "Vendor meeting"], correct: 0 },
-      { topic: "Telecommunications", question: "Which is an example of External communication?", options: ["Business pitch to client", "Memo to staff", "Internal meeting", "Department email"], correct: 0 },
-      { topic: "Telecommunications", question: "What is a Wheel Network?", options: ["Only one member allowed to send/receive communication", "All members equally communicate", "Chain sequence communication", "Circular communication"], correct: 0 },
-      { topic: "Telecommunications", question: "What is a Chain Network?", options: ["Communication follows hierarchical sequence", "Random communication order", "All-channel communication", "Circular pattern"], correct: 0 },
-      { topic: "Telecommunications", question: "What is a Circle Network?", options: ["Three-level hierarchy with cross-communication at operative level", "Only top-down communication", "All-channel network", "No communication"], correct: 0 },
+      { topic: "Telecommunications", question: "What is Internal, Downward communication?", options: ["Information from managers cascaded down to departments - memo from executives to various departments", "Email from customer", "Budget approval to manager", "Business pitch to client"], correct: 0 },
+      { topic: "Telecommunications", question: "What is Internal, Upward communication?", options: ["Subordinates sending information up hierarchy - budget approval document to manager", "Executive memo to staff", "Email between coworkers", "Vendor proposal"], correct: 0 },
+      { topic: "Telecommunications", question: "What is Internal, Lateral communication?", options: ["Email correspondence between employees of the same department", "Memo from CEO", "Customer complaint", "Vendor meeting"], correct: 0 },
+      { topic: "Telecommunications", question: "What is External communication?", options: ["Business pitch to customers, prospects, vendors, or partners", "Memo to staff", "Internal meeting", "Department email"], correct: 0 },
+      { topic: "Telecommunications", question: "What is Wheel Network?", options: ["Only one member allowed to send or receive communication", "All members equally communicate", "Chain sequence communication", "Circular communication"], correct: 0 },
+      { topic: "Telecommunications", question: "What is Chain Network?", options: ["Members communicate in a set sequence following organizational hierarchy", "Random communication order", "All-channel communication", "Circular pattern"], correct: 0 },
+      { topic: "Telecommunications", question: "What is Circle Network?", options: ["Three-level hierarchy with cross-communication at operative level", "Only top-down communication", "All-channel network", "No communication"], correct: 0 },
       { topic: "Telecommunications", question: "Star Network is also known as?", options: ["All-Channel Network", "Wheel Network", "Chain Network", "Circle Network"], correct: 0 },
       { topic: "Telecommunications", question: "What is the advantage of Star/All-Channel Network?", options: ["Highest participation and collaboration between all members", "Limited communication", "Slow information flow", "Single point of failure"], correct: 0 },
 
       // E-Business (from Handout 07)
-      { topic: "E-Business", question: "What is E-Business?", options: ["Applies IT and Internet to business processes", "Manual business operations", "Only physical stores", "Paper-based transactions"], correct: 0 },
+      { topic: "E-Business", question: "What is E-Business?", options: ["Applies electronically-controlled technologies and Internet to business processes", "Manual business operations", "Only physical stores", "Paper-based transactions"], correct: 0 },
       { topic: "E-Business", question: "What is a benefit of E-Business?", options: ["Operation Cost Reduction", "Higher operational costs", "Limited customer reach", "Slower service"], correct: 0 },
       { topic: "E-Business", question: "What is Customer-Centered Retailing?", options: ["Incorporating reviews from websites and services", "Only in-store shopping", "Manual price checks", "Phone orders only"], correct: 0 },
-      { topic: "E-Business", question: "What is an E-Commerce Support System?", options: ["Credit card processing and e-payment systems", "Manual ledger", "Paper receipts", "In-store cash register"], correct: 0 },
+      { topic: "E-Business", question: "What is an E-Commerce Support System?", options: ["Credit card transaction processing/e-payment systems", "Manual ledger", "Paper receipts", "In-store cash register"], correct: 0 },
       { topic: "E-Business", question: "What does E-Business enable?", options: ["24/7 business operation", "Limited business hours", "Physical store only", "Office hours only"], correct: 0 },
       { topic: "E-Business", question: "What is B2B e-commerce?", options: ["Business to Business transactions", "Business to Consumer", "Consumer to Business", "Government to Business"], correct: 0 },
       { topic: "E-Business", question: "What is B2C e-commerce?", options: ["Business to Consumer transactions", "Business to Business", "Consumer to Consumer", "Government to Business"], correct: 0 },
       { topic: "E-Business", question: "What is Wider Market Access in E-Business?", options: ["Broader reach to target market through Internet", "Limited to local area", "Only physical stores", "No marketing needed"], correct: 0 },
 
       // TPS - Transaction Processing Systems (from Handout 07)
-      { topic: "TPS", question: "What is a Transaction Processing System (TPS)?", options: ["System that records, processes, validates, and stores transactions", "Email system", "Word processing system", "Graphics design system"], correct: 0 },
-      { topic: "TPS", question: "Which is an example of Internal Transaction?", options: ["Recruitment Policy System", "Sales System", "Purchasing System", "Supply Chain System"], correct: 0 },
-      { topic: "TPS", question: "Which is an example of External Transaction?", options: ["Sales System and Purchasing System", "Recruitment System", "Approval System", "HR Policy System"], correct: 0 },
+      { topic: "TPS", question: "What is a Transaction Processing System (TPS)?", options: ["Records, processes, validates, and stores transactions for future retrieval", "Email system", "Word processing system", "Graphics design system"], correct: 0 },
+      { topic: "TPS", question: "Which is an example of Internal Transaction?", options: ["Recruitment Policy Systems and Approval Systems", "Sales System", "Purchasing System", "Supply Chain System"], correct: 0 },
+      { topic: "TPS", question: "Which is an example of External Transaction?", options: ["Purchasing Systems and Sales Systems", "Recruitment System", "Approval System", "HR Policy System"], correct: 0 },
       { topic: "TPS", question: "How can TPS record transactions?", options: ["Batch mode or online", "Only batch mode", "Only online mode", "Manual entry only"], correct: 0 },
-      { topic: "TPS", question: "Which is NOT a step in TPS processing?", options: ["Cooking food", "Data entry", "Data validation", "Output generation"], correct: 0 },
+      { topic: "TPS", question: "What are the six main steps in TPS processing?", options: ["Data entry, validation, processing, storage, output generation, query support", "Cooking food only", "Email sending", "Report printing"], correct: 0 },
       { topic: "TPS", question: "What are Source Documents in TPS?", options: ["Documents generated at point of transaction becoming input data", "Final reports", "Email messages", "Marketing materials"], correct: 0 },
-      { topic: "TPS", question: "What does Data Validation include?", options: ["Error detection and correction", "Data deletion", "Data encryption", "Data printing"], correct: 0 },
+      { topic: "TPS", question: "What does Data Validation include?", options: ["Error detection and error correction", "Data deletion", "Data encryption", "Data printing"], correct: 0 },
       { topic: "TPS", question: "How is Data Processing done in TPS?", options: ["Online or batch mode", "Only manual", "Only automatic", "Only weekly"], correct: 0 },
       { topic: "TPS", question: "What is required for Data Storage in TPS?", options: ["Carefully and properly stored for future use", "Random storage", "No storage needed", "Temporary only"], correct: 0 },
       { topic: "TPS", question: "What are examples of TPS Output?", options: ["Documents/reports and forms", "Cooking recipes", "Driving directions", "Entertainment videos"], correct: 0 },
       { topic: "TPS", question: "What does Query Support allow in TPS?", options: ["On-demand data retrieval with proper parameters", "Automatic deletion", "Random generation", "Manual input"], correct: 0 },
 
       // Operational Information System (from Handout 07)
-      { topic: "Operational IS", question: "What is an Operational Information System?", options: ["System that records, processes, and reports routine activities", "System for strategic decisions", "System for executives only", "System for marketing"], correct: 0 },
+      { topic: "Operational IS", question: "What is an Operational Information System?", options: ["Records, processes, and reports routine and repetitive activities", "System for strategic decisions", "System for executives only", "System for marketing"], correct: 0 },
       { topic: "Operational IS", question: "What is an advantage of Operational IS?", options: ["Reduced Cost through process streamlining", "Higher labor costs", "More manual work", "Slower processing"], correct: 0 },
       { topic: "Operational IS", question: "What does Operational IS increase?", options: ["Speed and Accuracy", "Human errors", "Manual tasks", "Processing time only"], correct: 0 },
       { topic: "Operational IS", question: "How does Operational IS improve Customer Service?", options: ["Streamlines customer service processes", "Adds more paperwork", "Slows down response", "Eliminates customer contact"], correct: 0 },
-      { topic: "Operational IS", question: "What data does Operational IS provide for decision making?", options: ["Reports, documents, and forms for managers/executives", "No useful data", "Only graphics", "Marketing only"], correct: 0 },
-      { topic: "Operational IS", question: "Operational IS reduces what?", options: ["Human error through fool-proof algorithms", "System accuracy", "Processing speed", "Data availability"], correct: 0 },
+      { topic: "Operational IS", question: "What data does Operational IS provide for decision making?", options: ["Reports, documents, and forms for managers and executives", "No useful data", "Only graphics", "Marketing only"], correct: 0 },
+      { topic: "Operational IS", question: "Operational IS reduces what?", options: ["Human error through fool-proof process algorithm", "System accuracy", "Processing speed", "Data availability"], correct: 0 },
       { topic: "Operational IS", question: "What processes does Operational IS automate?", options: ["Routine business processes", "Strategic planning", "Executive decisions", "Marketing campaigns"], correct: 0 },
       { topic: "Operational IS", question: "Operational IS is also known as?", options: ["Transaction Processing System", "Decision Support System", "Executive Support System", "Expert System"], correct: 0 }
     ];
@@ -558,7 +558,6 @@
     }
 
     function shuffleQuestions() {
-      // Create questions with shuffled options so answers aren't always at top
       let shuffledQuestions = shuffleArray(allQuestions).slice(0, 87);
       questions = shuffledQuestions.map(q => {
         const correctAnswerText = q.options[q.correct];
@@ -601,7 +600,6 @@
     }
 
     function initQuiz() {
-      // Create questions with shuffled options so answers aren't always at top
       let shuffledQuestions = shuffleArray(allQuestions).slice(0, 87);
       questions = shuffledQuestions.map(q => {
         const correctAnswerText = q.options[q.correct];
