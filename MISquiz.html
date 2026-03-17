@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIS Midterm Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 650px;
+      overflow: hidden;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .quiz-header {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      padding: 25px 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .quiz-header h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .quiz-header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .header-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .header-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .header-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .progress-container {
+      padding: 20px 30px 10px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .quiz-body {
+      padding: 25px 30px;
+    }
+
+    .topic-badge {
+      display: inline-block;
+      padding: 5px 14px;
+      background: #e8f4fd;
+      color: #1e3c72;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      color: #555;
+      background: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option:hover:not(.disabled) {
+      border-color: #1e3c72;
+      background: #f0f5ff;
+      transform: translateX(5px);
+    }
+
+    .option.selected {
+      border-color: #1e3c72;
+      background: #1e3c72;
+      color: white;
+    }
+
+    .option.correct {
+      border-color: #10b981;
+      background: #10b981;
+      color: white;
+      animation: pulse 0.5s ease;
+    }
+
+    .option.incorrect {
+      border-color: #ef4444;
+      background: #ef4444;
+      color: white;
+      animation: shake 0.5s ease;
+    }
+
+    .option.disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .option.selected .option-letter,
+    .option.correct .option-letter,
+    .option.incorrect .option-letter {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+
+    .quiz-footer {
+      padding: 20px 30px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #eee;
+    }
+
+    .score-display {
+      font-size: 0.9rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .score-display span {
+      color: #1e3c72;
+      font-weight: 700;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #1e3c72;
+      border: 2px solid #1e3c72;
+    }
+
+    .btn-secondary:hover {
+      background: #1e3c72;
+      color: white;
+    }
+
+    /* Results Screen */
+    .results-container {
+      text-align: center;
+      padding: 35px 25px;
+    }
+
+    .results-icon {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2.5rem;
+      color: white;
+      animation: bounce 1s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .results-title {
+      font-size: 1.6rem;
+      color: #222;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .results-score {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .results-message {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .results-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 25px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .stat-item.correct .stat-value {
+      color: #10b981;
+    }
+
+    .stat-item.incorrect .stat-value {
+      color: #ef4444;
+    }
+
+    .results-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .quiz-header h1 {
+        font-size: 1.3rem;
+      }
+      
+      .question-text {
+        font-size: 1rem;
+      }
+      
+      .option {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+      }
+      
+      .quiz-footer {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+
+      .results-stats {
+        gap: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <h1>MIS Midterm Quiz</h1>
+      <p>Management Information Systems</p>
+      <div class="header-buttons">
+        <button class="header-btn" onclick="shuffleQuestions()">🔀 Shuffle Questions</button>
+        <button class="header-btn" onclick="restartQuiz()">🔄 New Quiz</button>
+      </div>
+    </div>
+    
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text">
+        <span>Question <span id="currentQ">1</span> of <span id="totalQ">87</span></span>
+        <span>Score: <span id="score">0</span></span>
+      </div>
+    </div>
+
+    <div class="quiz-body" id="quizBody">
+      <span class="topic-badge" id="topicBadge">Topic</span>
+      <div class="question-container">
+        <h2 class="question-text" id="questionText"></h2>
+        <div class="options-container" id="optionsContainer"></div>
+      </div>
+    </div>
+
+    <div class="quiz-footer">
+      <button class="btn btn-secondary" onclick="shuffleOptions()">🔀 Shuffle Answers</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+    </div>
+
+    <!-- Results Screen (Hidden by default) -->
+    <div class="results-container" id="resultsContainer" style="display: none;">
+      <div class="results-icon" id="resultsIcon">🎉</div>
+      <h2 class="results-title">Quiz Complete!</h2>
+      <p class="results-score" id="resultsScore">0 / 87</p>
+      <p class="results-message" id="resultsMessage">Great job!</p>
+      
+      <div class="results-stats">
+        <div class="stat-item correct">
+          <div class="stat-value" id="correctCount">0</div>
+          <div class="stat-label">Correct</div>
+        </div>
+        <div class="stat-item incorrect">
+          <div class="stat-value" id="incorrectCount">0</div>
+          <div class="stat-label">Incorrect</div>
+        </div>
+      </div>
+      
+      <div class="results-buttons">
+        <button class="btn btn-primary" onclick="restartQuiz()">Try Again</button>
+        <button class="btn btn-secondary" onclick="showAnswers()">View Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // MIS Midterm Questions from STI PDF Handouts
+    const allQuestions = [
+      // End-User Computing (from Handout 04)
+      { topic: "End-User Computing", question: "What is End-User Computing (EUC)?", options: ["Computer systems that allow non-programmers to create applications", "Systems for programming developers", "Hardware-only solutions", "Network infrastructure"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is NOT a type of EUC?", options: ["Mainframe Computers", "Desktop and Laptop Computers", "Smartphones and Wearables", "Mobile, Web, and Cloud Applications"], correct: 0 },
+      { topic: "End-User Computing", question: "What is End-User Development (EUD)?", options: ["Practice allowing end-users to develop systems with IT support", "Only IT professionals developing systems", "Hardware maintenance", "Network administration"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is a benefit of End-User Computing?", options: ["Enhanced productivity of workers", "Increased documentation requirements", "Higher DP professional needs", "Reduced system responsiveness"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is a risk of End-User Computing?", options: ["Errors in analysis", "Perfect documentation", "Guaranteed security", "Reduced productivity"], correct: 0 },
+      { topic: "End-User Computing", question: "What are Application Packages?", options: ["Pre-written software for standard business functions", "Custom hardware solutions", "Programming languages", "Network devices"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is an example of Fourth-Generation Programming Language?", options: ["SQL", "C++", "Java", "Python"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is a Data Handling Tool in EUC?", options: ["Spreadsheets", "Email", "Fax", "Teleconferencing"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is a Communication Tool in EUC?", options: ["Email and VoIP", "Spreadsheets", "Databases", "Project Management"], correct: 0 },
+      { topic: "End-User Computing", question: "Which is an Office Automation Tool in EUC?", options: ["Diary management and project management", "Programming languages", "Database systems", "Network devices"], correct: 0 },
+
+      // Office Automation (from Handout 04)
+      { topic: "Office Automation", question: "What is Office Automation?", options: ["Integration of basic office requirements", "Only word processing", "Hardware maintenance", "Network installation"], correct: 0 },
+      { topic: "Office Automation", question: "What is an Office Information System (OIS)?", options: ["System that uses software, hardware, and networking to improve workflow", "Only hardware system", "Programming language", "Database only"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Function in office automation?", options: ["Cut, Copy, Delete", "Microsoft Excel", "Adobe Photoshop", "MySQL"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Word Processing software?", options: ["Microsoft Word and Notepad", "Microsoft Excel", "Adobe Photoshop", "MySQL"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Electronic Spreadsheet software?", options: ["Microsoft Excel", "Microsoft Word", "Adobe Photoshop", "Microsoft Outlook"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Database Management software?", options: ["Microsoft Access and MySQL", "Microsoft Word", "Adobe Photoshop", "Microsoft PowerPoint"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Graphics Design software?", options: ["Adobe Photoshop and Microsoft PowerPoint", "Microsoft Excel", "Microsoft Access", "Notepad"], correct: 0 },
+      { topic: "Office Automation", question: "What does Project Management software allow?", options: ["Identify tasks, resources, and track progress", "Write documents only", "Send emails only", "Create databases"], correct: 0 },
+      { topic: "Office Automation", question: "What does Calendar software permit?", options: ["Schedule events on calendars", "Create spreadsheets", "Design graphics", "Manage databases"], correct: 0 },
+      { topic: "Office Automation", question: "Which is an example of Electronic Communication software?", options: ["Microsoft Outlook", "Adobe Photoshop", "Microsoft Excel", "AutoCAD"], correct: 0 },
+
+      // Electronic Communication Systems (from Handout 06)
+      { topic: "Electronic Communication Systems", question: "What is an Electronic Communication System?", options: ["Provides fast and inexpensive communication channels", "Expensive communication method", "Manual paper-based system", "Only telephone system"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of Synchronous communication?", options: ["Chat rooms and instant messaging", "Email and forums", "Online bulletin boards", "Message boards"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of Asynchronous communication?", options: ["Email, forums, and bulletin boards", "Video conferencing", "Instant messaging", "Chat rooms"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Electronic Conferencing?", options: ["Synchronous component for collaboration between members", "Only email system", "Document storage", "Hardware maintenance"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Point-to-Point conferencing?", options: ["Involves two members communication", "Multiple members communication", "No communication", "Only video"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Multipoint conferencing?", options: ["Involves multiple members using central hub", "Only two people", "No network needed", "Manual system"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is an Electronic Meeting System?", options: ["Can be synchronous or asynchronous for meeting facilitation", "Only for scheduling", "Hardware only", "Network equipment"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What does 'Pull' technology require?", options: ["User to do something to access information", "Automatic delivery", "No user action", "Constant connection"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What does 'Push' technology mean?", options: ["Information comes to user automatically", "User must log in", "Manual retrieval required", "No internet needed"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is Electronic Publishing?", options: ["Digital publication of textual material", "Physical book printing", "Fax machine", "Postal mail"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of Portable Electronic Media?", options: ["CDs, DVDs, Flash Drives", "Blogs", "E-books", "Online newspapers"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "Which is an example of New Media in electronic publishing?", options: ["Blogs, Vlogs, Digital Platforms", "CDs and DVDs", "Flash drives", "External hard drives"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is a benefit of Electronic Publishing?", options: ["Paperless, environment-friendly medium", "Requires more paper", "Higher distribution costs", "Slower distribution"], correct: 0 },
+      { topic: "Electronic Communication Systems", question: "What is a risk of Electronic Publishing?", options: ["Plagiarism and security issues", "Faster distribution", "Lower costs", "Environmental benefits"], correct: 0 },
+
+      // Telecommunications (from Handout 07)
+      { topic: "Telecommunications", question: "What is Telecommunication in business?", options: ["Sharing information over a distance", "Local storage only", "Manual filing", "Hardware installation"], correct: 0 },
+      { topic: "Telecommunications", question: "Which is an example of Internal Downward communication?", options: ["Memo from executives to departments", "Email from customer", "Vendor pitch", "Business proposal to client"], correct: 0 },
+      { topic: "Telecommunications", question: "Which is an example of Internal Upward communication?", options: ["Budget approval request to manager", "Executive memo to staff", "Customer email", "Vendor proposal"], correct: 0 },
+      { topic: "Telecommunications", question: "Which is an example of Internal Lateral communication?", options: ["Email between coworkers of same department", "Memo from CEO", "Customer complaint", "Vendor meeting"], correct: 0 },
+      { topic: "Telecommunications", question: "Which is an example of External communication?", options: ["Business pitch to client", "Memo to staff", "Internal meeting", "Department email"], correct: 0 },
+      { topic: "Telecommunications", question: "What is a Wheel Network?", options: ["Only one member allowed to send/receive communication", "All members equally communicate", "Chain sequence communication", "Circular communication"], correct: 0 },
+      { topic: "Telecommunications", question: "What is a Chain Network?", options: ["Communication follows hierarchical sequence", "Random communication order", "All-channel communication", "Circular pattern"], correct: 0 },
+      { topic: "Telecommunications", question: "What is a Circle Network?", options: ["Three-level hierarchy with cross-communication at operative level", "Only top-down communication", "All-channel network", "No communication"], correct: 0 },
+      { topic: "Telecommunications", question: "Star Network is also known as?", options: ["All-Channel Network", "Wheel Network", "Chain Network", "Circle Network"], correct: 0 },
+      { topic: "Telecommunications", question: "What is the advantage of Star/All-Channel Network?", options: ["Highest participation and collaboration between all members", "Limited communication", "Slow information flow", "Single point of failure"], correct: 0 },
+
+      // E-Business (from Handout 07)
+      { topic: "E-Business", question: "What is E-Business?", options: ["Applies IT and Internet to business processes", "Manual business operations", "Only physical stores", "Paper-based transactions"], correct: 0 },
+      { topic: "E-Business", question: "What is a benefit of E-Business?", options: ["Operation Cost Reduction", "Higher operational costs", "Limited customer reach", "Slower service"], correct: 0 },
+      { topic: "E-Business", question: "What is Customer-Centered Retailing?", options: ["Incorporating reviews from websites and services", "Only in-store shopping", "Manual price checks", "Phone orders only"], correct: 0 },
+      { topic: "E-Business", question: "What is an E-Commerce Support System?", options: ["Credit card processing and e-payment systems", "Manual ledger", "Paper receipts", "In-store cash register"], correct: 0 },
+      { topic: "E-Business", question: "What does E-Business enable?", options: ["24/7 business operation", "Limited business hours", "Physical store only", "Office hours only"], correct: 0 },
+      { topic: "E-Business", question: "What is B2B e-commerce?", options: ["Business to Business transactions", "Business to Consumer", "Consumer to Business", "Government to Business"], correct: 0 },
+      { topic: "E-Business", question: "What is B2C e-commerce?", options: ["Business to Consumer transactions", "Business to Business", "Consumer to Consumer", "Government to Business"], correct: 0 },
+      { topic: "E-Business", question: "What is Wider Market Access in E-Business?", options: ["Broader reach to target market through Internet", "Limited to local area", "Only physical stores", "No marketing needed"], correct: 0 },
+
+      // TPS - Transaction Processing Systems (from Handout 07)
+      { topic: "TPS", question: "What is a Transaction Processing System (TPS)?", options: ["System that records, processes, validates, and stores transactions", "Email system", "Word processing system", "Graphics design system"], correct: 0 },
+      { topic: "TPS", question: "Which is an example of Internal Transaction?", options: ["Recruitment Policy System", "Sales System", "Purchasing System", "Supply Chain System"], correct: 0 },
+      { topic: "TPS", question: "Which is an example of External Transaction?", options: ["Sales System and Purchasing System", "Recruitment System", "Approval System", "HR Policy System"], correct: 0 },
+      { topic: "TPS", question: "How can TPS record transactions?", options: ["Batch mode or online", "Only batch mode", "Only online mode", "Manual entry only"], correct: 0 },
+      { topic: "TPS", question: "Which is NOT a step in TPS processing?", options: ["Cooking food", "Data entry", "Data validation", "Output generation"], correct: 0 },
+      { topic: "TPS", question: "What are Source Documents in TPS?", options: ["Documents generated at point of transaction becoming input data", "Final reports", "Email messages", "Marketing materials"], correct: 0 },
+      { topic: "TPS", question: "What does Data Validation include?", options: ["Error detection and correction", "Data deletion", "Data encryption", "Data printing"], correct: 0 },
+      { topic: "TPS", question: "How is Data Processing done in TPS?", options: ["Online or batch mode", "Only manual", "Only automatic", "Only weekly"], correct: 0 },
+      { topic: "TPS", question: "What is required for Data Storage in TPS?", options: ["Carefully and properly stored for future use", "Random storage", "No storage needed", "Temporary only"], correct: 0 },
+      { topic: "TPS", question: "What are examples of TPS Output?", options: ["Documents/reports and forms", "Cooking recipes", "Driving directions", "Entertainment videos"], correct: 0 },
+      { topic: "TPS", question: "What does Query Support allow in TPS?", options: ["On-demand data retrieval with proper parameters", "Automatic deletion", "Random generation", "Manual input"], correct: 0 },
+
+      // Operational Information System (from Handout 07)
+      { topic: "Operational IS", question: "What is an Operational Information System?", options: ["System that records, processes, and reports routine activities", "System for strategic decisions", "System for executives only", "System for marketing"], correct: 0 },
+      { topic: "Operational IS", question: "What is an advantage of Operational IS?", options: ["Reduced Cost through process streamlining", "Higher labor costs", "More manual work", "Slower processing"], correct: 0 },
+      { topic: "Operational IS", question: "What does Operational IS increase?", options: ["Speed and Accuracy", "Human errors", "Manual tasks", "Processing time only"], correct: 0 },
+      { topic: "Operational IS", question: "How does Operational IS improve Customer Service?", options: ["Streamlines customer service processes", "Adds more paperwork", "Slows down response", "Eliminates customer contact"], correct: 0 },
+      { topic: "Operational IS", question: "What data does Operational IS provide for decision making?", options: ["Reports, documents, and forms for managers/executives", "No useful data", "Only graphics", "Marketing only"], correct: 0 },
+      { topic: "Operational IS", question: "Operational IS reduces what?", options: ["Human error through fool-proof algorithms", "System accuracy", "Processing speed", "Data availability"], correct: 0 },
+      { topic: "Operational IS", question: "What processes does Operational IS automate?", options: ["Routine business processes", "Strategic planning", "Executive decisions", "Marketing campaigns"], correct: 0 },
+      { topic: "Operational IS", question: "Operational IS is also known as?", options: ["Transaction Processing System", "Decision Support System", "Executive Support System", "Expert System"], correct: 0 }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let correctAnswers = 0;
+    let incorrectAnswers = 0;
+    let selectedAnswer = null;
+    let userAnswers = [];
+    let questions = [];
+    let originalQuestions = [];
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function shuffleQuestions() {
+      // Create questions with shuffled options so answers aren't always at top
+      let shuffledQuestions = shuffleArray(allQuestions).slice(0, 87);
+      questions = shuffledQuestions.map(q => {
+        const correctAnswerText = q.options[q.correct];
+        const shuffledOptions = shuffleArray(q.options);
+        const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+        return {
+          ...q,
+          options: shuffledOptions,
+          correct: newCorrectIndex
+        };
+      });
+      originalQuestions = [...questions];
+      currentQuestion = 0;
+      score = 0;
+      correctAnswers = 0;
+      incorrectAnswers = 0;
+      userAnswers = [];
+      selectedAnswer = null;
+      
+      document.getElementById('totalQ').textContent = questions.length;
+      document.getElementById('quizBody').style.display = 'block';
+      document.getElementById('resultsContainer').style.display = 'none';
+      
+      loadQuestion();
+    }
+
+    function shuffleOptions() {
+      if (selectedAnswer !== null) return;
+      
+      const currentQ = questions[currentQuestion];
+      const correctAnswerText = currentQ.options[currentQ.correct];
+      
+      const shuffledOptions = shuffleArray(currentQ.options);
+      const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+      
+      currentQ.options = shuffledOptions;
+      currentQ.correct = newCorrectIndex;
+      
+      loadQuestion();
+    }
+
+    function initQuiz() {
+      // Create questions with shuffled options so answers aren't always at top
+      let shuffledQuestions = shuffleArray(allQuestions).slice(0, 87);
+      questions = shuffledQuestions.map(q => {
+        const correctAnswerText = q.options[q.correct];
+        const shuffledOptions = shuffleArray(q.options);
+        const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+        return {
+          ...q,
+          options: shuffledOptions,
+          correct: newCorrectIndex
+        };
+      });
+      originalQuestions = [...questions];
+      currentQuestion = 0;
+      score = 0;
+      correctAnswers = 0;
+      incorrectAnswers = 0;
+      userAnswers = [];
+      selectedAnswer = null;
+      
+      document.getElementById('totalQ').textContent = questions.length;
+      document.getElementById('quizBody').style.display = 'block';
+      document.getElementById('resultsContainer').style.display = 'none';
+      
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const question = questions[currentQuestion];
+      document.getElementById('questionText').textContent = question.question;
+      document.getElementById('topicBadge').textContent = question.topic;
+      document.getElementById('currentQ').textContent = currentQuestion + 1;
+      document.getElementById('score').textContent = score;
+      
+      const progress = ((currentQuestion + 1) / questions.length) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+      
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+      
+      const letters = ['A', 'B', 'C', 'D'];
+      question.options.forEach((option, index) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option';
+        optionDiv.innerHTML = `
+          <span class="option-letter">${letters[index]}</span>
+          <span>${option}</span>
+        `;
+        optionDiv.onclick = () => selectOption(index);
+        optionsContainer.appendChild(optionDiv);
+      });
+      
+      document.getElementById('nextBtn').disabled = true;
+      selectedAnswer = null;
+    }
+
+    function selectOption(index) {
+      if (selectedAnswer !== null) return;
+      
+      selectedAnswer = index;
+      const options = document.querySelectorAll('.option');
+      
+      options.forEach((option, i) => {
+        option.classList.add('disabled');
+        if (i === index) {
+          option.classList.add('selected');
+        }
+      });
+      
+      userAnswers.push({
+        question: questions[currentQuestion],
+        selected: index,
+        correct: index === questions[currentQuestion].correct
+      });
+      
+      if (index === questions[currentQuestion].correct) {
+        score += 1;
+        correctAnswers++;
+        options[index].classList.add('correct');
+        document.getElementById('score').textContent = score;
+      } else {
+        incorrectAnswers++;
+        options[index].classList.add('incorrect');
+        options[questions[currentQuestion].correct].classList.add('correct');
+      }
+      
+      document.getElementById('nextBtn').disabled = false;
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quizBody').style.display = 'none';
+      document.querySelector('.quiz-footer').style.display = 'none';
+      document.getElementById('resultsContainer').style.display = 'block';
+      
+      document.getElementById('resultsScore').textContent = `${score} / ${questions.length}`;
+      document.getElementById('correctCount').textContent = correctAnswers;
+      document.getElementById('incorrectCount').textContent = incorrectAnswers;
+      
+      let message = '';
+      let icon = '';
+      const percentage = (score / questions.length) * 100;
+      
+      if (percentage >= 90) {
+        message = 'Outstanding! You\'re an MIS Master! 🏆';
+        icon = '🏆';
+      } else if (percentage >= 70) {
+        message = 'Great job! You know your MIS! 🌟';
+        icon = '🌟';
+      } else if (percentage >= 50) {
+        message = 'Good effort! Keep studying! 📚';
+        icon = '📚';
+      } else {
+        message = 'Keep practicing! You\'ll get better! 💪';
+        icon = '💪';
+      }
+      
+      document.getElementById('resultsMessage').textContent = message;
+      document.getElementById('resultsIcon').textContent = icon;
+    }
+
+    function restartQuiz() {
+      document.querySelector('.quiz-footer').style.display = 'flex';
+      initQuiz();
+    }
+
+    function showAnswers() {
+      let answersHTML = '<div class="quiz-body"><div class="question-container">';
+      
+      userAnswers.forEach((answer, index) => {
+        const letters = ['A', 'B', 'C', 'D'];
+        answersHTML += `
+          <div style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 12px;">
+            <span class="topic-badge" style="font-size: 0.7rem; margin-bottom: 8px; display: inline-block;">${answer.question.topic}</span>
+            <h3 style="font-size: 0.95rem; color: #333; margin-bottom: 10px;">${index + 1}. ${answer.question.question}</h3>
+            <p style="color: ${answer.correct ? '#10b981' : '#ef4444'}; font-weight: 600; font-size: 0.9rem;">
+              ${answer.correct ? '✓' : '✗'} Your answer: ${letters[answer.selected]} - ${answer.question.options[answer.selected]}
+            </p>
+            ${!answer.correct ? `<p style="color: #10b981; margin-top: 5px; font-size: 0.9rem;">✓ Correct: ${letters[answer.question.correct]} - ${answer.question.options[answer.question.correct]}</p>` : ''}
+          </div>
+        `;
+      });
+      
+      answersHTML += '</div></div>';
+      
+      document.querySelector('.progress-container').style.display = 'none';
+      document.querySelector('.quiz-header').style.display = 'none';
+      document.getElementById('resultsContainer').style.display = 'none';
+      
+      const quizContainer = document.querySelector('.quiz-container');
+      quizContainer.innerHTML = `
+        <div style="padding: 25px; text-align: center;">
+          <h2 style="color: #1e3c72; margin-bottom: 5px;">Quiz Answers</h2>
+          <p style="color: #666; font-size: 0.9rem;">Review your answers below</p>
+        </div>
+        ${answersHTML}
+        <div style="padding: 20px 25px 25px; text-align: center;">
+          <button class="btn btn-primary" onclick="location.reload()">Back to Quiz</button>
+        </div>
+      `;
+    }
+
+    // Initialize quiz on page load
+    initQuiz();
+  </script>
+</body>
+</html>
